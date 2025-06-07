@@ -213,7 +213,7 @@ export function MapView({ sensors }: MapViewProps) {
       <div ref={mapRef} className="w-full h-full" />
 
       {/* Légende */}
-      <div className="absolute bottom-4 left-4 bg-white rounded-lg p-4 shadow-lg border z-[1000]">
+      <div className="absolute bottom-4 left-4 bg-white rounded-lg p-4 shadow-lg border z-1000">
         <h4 className="font-semibold text-gray-900 mb-3 text-sm">Légende</h4>
         <div className="space-y-2">
           <div className="flex items-center gap-2">

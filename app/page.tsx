@@ -127,7 +127,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
         <div className="glass-effect border-b">
           <div className="max-w-7xl mx-auto p-6">
             <div className="animate-pulse">
@@ -151,18 +151,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
       {/* Header */}
       <div className="glass-effect border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto p-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-air-quality-blue to-air-quality-purple flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-air-quality-blue to-air-quality-purple flex items-center justify-center">
                   <Activity className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold bg-linear-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                     AirWatch Bénin
                   </h1>
                   <p className="text-muted-foreground">Surveillance de la qualité de l'air en temps réel</p>
@@ -188,7 +188,7 @@ export default function Dashboard() {
             <div className="flex flex-col sm:flex-row gap-3">
               <ThemeToggle />
               <Link href="/sensors/new">
-                <Button className="bg-gradient-to-r from-air-quality-blue to-air-quality-purple hover:shadow-glow transition-all duration-300">
+                <Button className="bg-linear-to-r from-air-quality-blue to-air-quality-purple hover:shadow-glow transition-all duration-300">
                   <Plus className="w-4 h-4 mr-2" />
                   Ajouter un Capteur
                 </Button>
@@ -257,7 +257,7 @@ export default function Dashboard() {
                   <CardHeader className="pb-3">
                     <div className="flex items-start gap-3">
                       <div
-                        className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 shadow-lg transition-all duration-300 group-hover:scale-110"
+                        className="w-5 h-5 rounded-full shrink-0 mt-0.5 shadow-lg transition-all duration-300 group-hover:scale-110"
                         style={{
                           backgroundColor: getStatusColor(sensor.status),
                           boxShadow: `0 0 10px ${getStatusColor(sensor.status)}40`,
@@ -310,7 +310,7 @@ export default function Dashboard() {
         {filteredSensors.length === 0 && !loading && (
           <div className="text-center py-20 animate-fade-in">
             <div className="max-w-md mx-auto">
-              <div className="w-20 h-20 bg-gradient-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 float-animation">
+              <div className="w-20 h-20 bg-linear-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 float-animation">
                 <Search className="w-10 h-10 text-muted-foreground" />
               </div>
               <h3 className="text-xl font-semibold mb-3">
@@ -323,7 +323,7 @@ export default function Dashboard() {
               </p>
               {!searchTerm && (
                 <Link href="/sensors/new">
-                  <Button className="bg-gradient-to-r from-air-quality-blue to-air-quality-purple hover:shadow-glow transition-all duration-300">
+                  <Button className="bg-linear-to-r from-air-quality-blue to-air-quality-purple hover:shadow-glow transition-all duration-300">
                     <Plus className="w-4 h-4 mr-2" />
                     Ajouter le premier capteur
                   </Button>

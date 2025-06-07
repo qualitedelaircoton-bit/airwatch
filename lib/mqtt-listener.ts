@@ -32,8 +32,8 @@ class MQTTListener {
 
       const options: mqtt.IClientOptions = {
         clientId: `air-quality-listener-${Math.random().toString(16).substr(2, 8)}`,
-        username: process.env.MQTT_USERNAME,
-        password: process.env.MQTT_PASSWORD,
+        username: process.env.MQTT_USERNAME || "",
+        password: process.env.MQTT_PASSWORD || "",
         protocol: "mqtts",
         port: 8883,
         clean: true,

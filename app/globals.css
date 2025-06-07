@@ -1,146 +1,171 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 210 100% 50%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 98%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 98%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 210 100% 50%;
-    --radius: 0.75rem;
+/* Configuration Tailwind CSS 4.1 avec approche CSS-first */
+@theme {
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+  --color-muted: #f8fafc;
+  --color-muted-foreground: #64748b;
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #3b82f6;
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+  
+  --radius: 0.5rem;
+  
+  --font-family-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
 
-    /* Couleurs personnalisées pour la qualité de l'air */
-    --air-green: 142 71% 45%;
-    --air-orange: 43 96% 56%;
-    --air-red: 0 84% 60%;
-    --air-blue: 210 100% 50%;
-    --air-purple: 262 83% 58%;
-    --air-teal: 173 80% 40%;
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
+  --color-card: #1e293b;
+  --color-card-foreground: #f8fafc;
+  --color-popover: #1e293b;
+  --color-popover-foreground: #f8fafc;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #f8fafc;
+  --color-secondary: #1e293b;
+  --color-secondary-foreground: #f8fafc;
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+  --color-accent: #1e293b;
+  --color-accent-foreground: #f8fafc;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+  --color-border: #334155;
+  --color-input: #334155;
+  --color-ring: #3b82f6;
+}
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 50%) 0%, hsl(262 83% 58%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(173 80% 40%) 100%);
-    --gradient-warning: linear-gradient(135deg, hsl(43 96% 56%) 0%, hsl(0 84% 60%) 100%);
+/* Styles globaux pour l'application */
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-family-sans);
+}
+
+/* Classes utilitaires personnalisées */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Animation pour les graphiques */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 100% 50%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-
-    /* Couleurs sombres pour la qualité de l'air */
-    --air-green: 142 71% 45%;
-    --air-orange: 43 96% 56%;
-    --air-red: 0 84% 60%;
-    --air-blue: 210 100% 50%;
-    --air-purple: 262 83% 58%;
-    --air-teal: 173 80% 40%;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Styles personnalisés pour la plateforme */
+/* Styles pour les composants de qualité de l'air */
+.air-quality-good {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.air-quality-moderate {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.air-quality-poor {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.air-quality-very-poor {
+  background: linear-gradient(135deg, #7c2d12 0%, #451a03 100%);
+}
+
+/* Styles personnalisés pour la plateforme avec nouvelles syntaxes Tailwind 4.1 */
 .gradient-primary {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
 }
 
 .gradient-success {
-  background: var(--gradient-success);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
 .gradient-warning {
-  background: var(--gradient-warning);
+  background: linear-gradient(135deg, #f59e0b 0%, #dc2626 100%);
 }
 
+/* Nouveaux effets avec masking Tailwind 4.1 */
 .glass-effect {
-  @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-700/20;
+  backdrop-filter: blur(12px);
+  background: color-mix(in srgb, var(--color-background) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 20%, transparent);
 }
 
 .sensor-card {
-  @apply transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1;
+  transition: all 0.3s ease;
+  &:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(1.02) translateY(-4px);
+  }
 }
 
 .status-indicator {
-  @apply relative overflow-hidden;
-}
-
-.status-indicator::before {
-  content: "";
-  @apply absolute inset-0 opacity-10 animate-pulse;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    animation: pulse 2s ease-in-out infinite;
+  }
 }
 
 .status-green::before {
-  @apply bg-green-500;
+  background: #10b981;
 }
 
 .status-orange::before {
-  @apply bg-orange-500;
+  background: #f59e0b;
 }
 
 .status-red::before {
-  @apply bg-red-500;
+  background: #ef4444;
 }
 
-/* Animations personnalisées */
+/* Animations personnalisées avec nouvelles features CSS */
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes glow {
-  0%,
-  100% {
-    box-shadow: 0 0 5px currentColor;
-  }
-  50% {
-    box-shadow: 0 0 20px currentColor;
-  }
+  0%, 100% { filter: drop-shadow(0 0 5px currentColor); }
+  50% { filter: drop-shadow(0 0 20px currentColor); }
 }
 
 .float-animation {
@@ -157,95 +182,83 @@
   border: none !important;
   cursor: pointer;
   transition: transform 0.2s ease;
-}
-
-.custom-sensor-marker:hover {
-  transform: scale(1.2);
+  
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
 .custom-popup .leaflet-popup-content-wrapper {
-  @apply rounded-xl shadow-2xl border-0;
-  background: hsl(var(--card));
-  color: hsl(var(--card-foreground));
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: none;
+  background: var(--color-card);
+  color: var(--color-card-foreground);
 }
 
 .custom-popup .leaflet-popup-content {
-  @apply m-4;
+  margin: 1rem;
   line-height: 1.4;
 }
 
-.custom-popup .leaflet-popup-tip {
-  background: hsl(var(--card));
-}
-
 .sensor-popup {
-  min-width: 200px;
+  font-family: var(--font-family-sans);
 }
 
 .sensor-popup a {
+  color: var(--color-primary);
   text-decoration: none;
 }
 
-/* Amélioration des contrôles Leaflet pour le dark mode */
 .leaflet-container {
-  font-family: inherit;
+  font-family: var(--font-family-sans);
 }
 
 .leaflet-control-zoom a {
-  @apply bg-card text-card-foreground border border-border;
+  background-color: var(--color-card) !important;
+  color: var(--color-card-foreground) !important;
 }
 
 .leaflet-control-zoom a:hover {
-  @apply bg-accent;
+  background-color: var(--color-muted) !important;
 }
 
 .leaflet-popup-content p {
-  margin: 0;
+  margin: 0.5rem 0;
 }
 
 /* Scrollbar personnalisée */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-muted rounded-full;
+  background: var(--color-muted);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
+  background: var(--color-muted-foreground);
+  border-radius: 4px;
 }
 
-/* Styles pour les métriques */
+/* Cartes métriques avec nouveaux effets Tailwind 4.1 */
 .metric-card {
-  @apply relative overflow-hidden;
+  position: relative;
+  overflow: hidden;
 }
 
 .metric-card::before {
   content: "";
-  @apply absolute top-0 left-0 w-full h-1 opacity-80;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
 }
 
-.metric-pm25::before {
-  @apply bg-blue-500;
-}
-
-.metric-pm10::before {
-  @apply bg-purple-500;
-}
-
-.metric-o3::before {
-  @apply bg-green-500;
-}
-
-.metric-no2::before {
-  @apply bg-red-500;
-}
-
-.metric-co::before {
-  @apply bg-orange-500;
-}
-
-.metric-voc::before {
-  @apply bg-teal-500;
-}
+.metric-pm25::before { background: #8b5cf6; }
+.metric-pm10::before { background: #06b6d4; }
+.metric-o3::before { background: #10b981; }
+.metric-no2::before { background: #f59e0b; }
+.metric-co::before { background: #ef4444; }
+.metric-voc::before { background: #ec4899; }

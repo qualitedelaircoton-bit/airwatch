@@ -1,8 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params
     const { searchParams } = new URL(request.url)
     const from = searchParams.get("from")
     const to = searchParams.get("to")
@@ -16,7 +20,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     const data = await prisma.sensorData.findMany({
       where: {
-        sensorId: params.id,
+        sensorId: id,
         timestamp: {
           gte: fromDate,
           lte: toDate,

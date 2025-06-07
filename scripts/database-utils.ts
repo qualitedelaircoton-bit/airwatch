@@ -117,22 +117,22 @@ export class DatabaseUtils {
     })
 
     // Vérifier la cohérence des données (PM1.0 <= PM2.5 <= PM10)
-    const inconsistentData = await prisma.sensorData.findMany({
+    // Note: Les comparaisons directes entre champs nécessitent une requête SQL brute
+    // Pour l'instant, nous récupérons un échantillon et vérifions manuellement
+    const sampleData = await prisma.sensorData.findMany({
       where: {
-        OR: [
-          {
-            AND: [{ pm1_0: { not: null } }, { pm2_5: { not: null } }],
-            pm1_0: { gt: prisma.sensorData.fields.pm2_5 },
-          },
-          {
-            AND: [{ pm2_5: { not: null } }, { pm10: { not: null } }],
-            pm2_5: { gt: prisma.sensorData.fields.pm10 },
-          },
-        ],
+        // Récupérer des données qui ont des valeurs pour ces champs
+        pm1_0: { gte: 0 },
+        pm2_5: { gte: 0 },
+        pm10: { gte: 0 },
       },
       select: { id: true, sensorId: true, pm1_0: true, pm2_5: true, pm10: true },
-      take: 10,
+      take: 100,
     })
+
+    const inconsistentData = sampleData.filter(data => 
+      data.pm1_0 > data.pm2_5 || data.pm2_5 > data.pm10
+    )
 
     console.log(`📊 Capteurs sans données: ${sensorsWithoutData.length}`)
     console.log(`📊 Données suspectes: ${suspiciousData.length}`)
@@ -257,7 +257,7 @@ async function main() {
   try {
     switch (command) {
       case "clean":
-        const days = Number.parseInt(process.argv[3]) || 30
+        const days = Number.parseInt(process.argv[3] || "30") || 30
         await DatabaseUtils.cleanOldData(days)
         break
 
@@ -270,7 +270,7 @@ async function main() {
         break
 
       case "averages":
-        const hours = Number.parseInt(process.argv[3]) || 24
+        const hours = Number.parseInt(process.argv[3] || "24") || 24
         await DatabaseUtils.getSensorAverages(hours)
         break
 

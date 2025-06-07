@@ -9,6 +9,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { CalendarIcon, Download, CheckCircle2, Circle } from "lucide-react"
+import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 
 interface Sensor {
@@ -29,7 +30,7 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
     from: undefined,
     to: undefined,
   })
-  const [format, setFormat] = useState<"csv" | "json">("csv")
+  const [fileFormat, setFileFormat] = useState<"csv" | "json">("csv")
   const [isDownloading, setIsDownloading] = useState(false)
 
   const handleDownload = async () => {
@@ -44,7 +45,7 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
         sensors: selectedSensors.join(","),
         from: dateRange.from.toISOString(),
         to: dateRange.to.toISOString(),
-        format: format,
+        format: fileFormat,
       })
 
       const response = await fetch(`/api/sensors/data?${params}`)
@@ -54,7 +55,7 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
-        a.download = `sensor-data-${format === "csv" ? "export.csv" : "export.json"}`
+        a.download = `sensor-data-${fileFormat === "csv" ? "export.csv" : "export.json"}`
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)
@@ -71,7 +72,7 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
   const resetForm = () => {
     setSelectedSensors([])
     setDateRange({ from: undefined, to: undefined })
-    setFormat("csv")
+    setFileFormat("csv")
   }
 
   const handleClose = () => {
@@ -249,7 +250,7 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
             {/* Format de fichier */}
             <div className="space-y-3">
               <Label className="text-base font-medium">Format de fichier</Label>
-              <RadioGroup value={format} onValueChange={(value: "csv" | "json") => setFormat(value)}>
+              <RadioGroup value={fileFormat} onValueChange={(value: "csv" | "json") => setFileFormat(value)}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="csv" id="csv" />
                   <Label htmlFor="csv">CSV (Excel)</Label>

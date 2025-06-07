@@ -15,6 +15,7 @@ import Link from "next/link"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { use } from "react"
 
 interface Sensor {
   id: string
@@ -52,7 +53,8 @@ const METRICS = [
   { key: "voc_voltage_mv", label: "VOC (mV)", color: "#f59e0b", unit: "mV" },
 ]
 
-export default function SensorDetailPage({ params }: { params: { id: string } }) {
+export default function SensorDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const [sensor, setSensor] = useState<Sensor | null>(null)
   const [sensorData, setSensorData] = useState<SensorData[]>([])
   const [filteredData, setFilteredData] = useState<SensorData[]>([])
@@ -65,13 +67,13 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     fetchSensor()
-  }, [params.id])
+  }, [id])
 
   useEffect(() => {
     if (dateRange.from && dateRange.to) {
       fetchSensorData()
     }
-  }, [dateRange, params.id])
+  }, [dateRange, id])
 
   useEffect(() => {
     // Filter data based on date range
@@ -88,7 +90,7 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
 
   const fetchSensor = async () => {
     try {
-      const response = await fetch(`/api/sensors/${params.id}`)
+      const response = await fetch(`/api/sensors/${id}`)
       const data = await response.json()
       setSensor(data)
     } catch (error) {
@@ -106,7 +108,7 @@ export default function SensorDetailPage({ params }: { params: { id: string } })
         to: dateRange.to.toISOString(),
       })
 
-      const response = await fetch(`/api/sensors/${params.id}/data?${searchParams}`)
+      const response = await fetch(`/api/sensors/${id}/data?${searchParams}`)
       const data = await response.json()
       setSensorData(data)
     } catch (error) {

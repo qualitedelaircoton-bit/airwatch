@@ -1,51 +1,134 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres", "relationJoins", "typedSql"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Sensor {
   id        String   @id @default(cuid())
-  name      String
-  latitude  Float
-  longitude Float
-  frequency Int      // en minutes
+  name      String   @db.VarChar(255)
+  latitude  Float    @db.DoublePrecision
+  longitude Float    @db.DoublePrecision
+  frequency Int      @default(15) // en minutes
   lastSeen  DateTime?
   status    Status   @default(RED)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  location  String?  @db.VarChar(500) // Description de l'emplacement
+  metadata  Json?    // Métadonnées flexibles pour les capteurs
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
   
   data SensorData[]
+  alerts Alert[]
 
   @@map("sensors")
+  @@index([status, isActive])
+  @@index([latitude, longitude])
 }
 
 model SensorData {
   id               String   @id @default(cuid())
   sensorId         String
-  timestamp        DateTime @default(now())
-  pm1_0            Float
-  pm2_5            Float
-  pm10             Float
-  o3_raw           Float
-  o3_corrige       Float
-  no2_voltage_mv   Float
-  no2_ppb          Float
-  voc_voltage_mv   Float
-  co_voltage_mv    Float
-  co_ppb           Float
+  timestamp        DateTime @default(now()) @db.Timestamptz(6)
+  
+  // Particules (µg/m³)
+  pm1_0            Float    @db.DoublePrecision
+  pm2_5            Float    @db.DoublePrecision
+  pm10             Float    @db.DoublePrecision
+  
+  // Ozone
+  o3_raw           Float    @db.DoublePrecision
+  o3_corrige       Float    @db.DoublePrecision
+  
+  // Dioxyde d'azote
+  no2_voltage_mv   Float    @db.DoublePrecision
+  no2_ppb          Float    @db.DoublePrecision
+  
+  // Composés organiques volatils
+  voc_voltage_mv   Float    @db.DoublePrecision
+  voc_index        Float?   @db.DoublePrecision // Indice VOC calculé
+  
+  // Monoxyde de carbone
+  co_voltage_mv    Float    @db.DoublePrecision
+  co_ppb           Float    @db.DoublePrecision
+  
+  // Conditions météorologiques (optionnel)
+  temperature      Float?   @db.DoublePrecision
+  humidity         Float?   @db.DoublePrecision
+  pressure         Float?   @db.DoublePrecision
+  
+  // Qualité de l'air calculée
+  aqi              Int?     // Air Quality Index
+  aqiCategory      AQICategory?
+  
+  // Métadonnées
+  rawData          Json?    // Données brutes du capteur
+  processed        Boolean  @default(false)
   
   sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
 
   @@map("sensor_data")
   @@index([sensorId, timestamp])
+  @@index([timestamp])
+  @@index([aqi])
+  @@index([aqiCategory])
+}
+
+model Alert {
+  id          String      @id @default(cuid())
+  sensorId    String
+  type        AlertType
+  severity    AlertSeverity
+  message     String      @db.Text
+  threshold   Float       @db.DoublePrecision
+  actualValue Float       @db.DoublePrecision
+  isResolved  Boolean     @default(false)
+  resolvedAt  DateTime?   @db.Timestamptz(6)
+  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @db.Timestamptz(6)
+  
+  sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
+
+  @@map("alerts")
+  @@index([sensorId, isResolved])
+  @@index([type, severity])
+  @@index([createdAt])
 }
 
 enum Status {
   GREEN
   ORANGE
   RED
+}
+
+enum AQICategory {
+  GOOD           // 0-50
+  MODERATE       // 51-100
+  UNHEALTHY_SENSITIVE // 101-150
+  UNHEALTHY      // 151-200
+  VERY_UNHEALTHY // 201-300
+  HAZARDOUS      // 301+
+}
+
+enum AlertType {
+  PM25_HIGH
+  PM10_HIGH
+  O3_HIGH
+  NO2_HIGH
+  CO_HIGH
+  VOC_HIGH
+  SENSOR_OFFLINE
+  DATA_ANOMALY
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
 }

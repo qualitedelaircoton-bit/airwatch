@@ -2,13 +2,17 @@ import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { calculateSensorStatus } from "@/lib/status-calculator"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params
     // Recalculer le statut avant de retourner
-    const newStatus = await calculateSensorStatus(params.id)
+    const newStatus = await calculateSensorStatus(id)
 
     const sensor = await prisma.sensor.update({
-      where: { id: params.id },
+      where: { id },
       data: { status: newStatus },
     })
 
