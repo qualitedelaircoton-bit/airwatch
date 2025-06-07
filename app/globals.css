@@ -1,0 +1,251 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 98%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 210 100% 50%;
+    --radius: 0.75rem;
+
+    /* Couleurs personnalisées pour la qualité de l'air */
+    --air-green: 142 71% 45%;
+    --air-orange: 43 96% 56%;
+    --air-red: 0 84% 60%;
+    --air-blue: 210 100% 50%;
+    --air-purple: 262 83% 58%;
+    --air-teal: 173 80% 40%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 50%) 0%, hsl(262 83% 58%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(173 80% 40%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(43 96% 56%) 0%, hsl(0 84% 60%) 100%);
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    /* Couleurs sombres pour la qualité de l'air */
+    --air-green: 142 71% 45%;
+    --air-orange: 43 96% 56%;
+    --air-red: 0 84% 60%;
+    --air-blue: 210 100% 50%;
+    --air-purple: 262 83% 58%;
+    --air-teal: 173 80% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Styles personnalisés pour la plateforme */
+.gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.gradient-success {
+  background: var(--gradient-success);
+}
+
+.gradient-warning {
+  background: var(--gradient-warning);
+}
+
+.glass-effect {
+  @apply backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-700/20;
+}
+
+.sensor-card {
+  @apply transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1;
+}
+
+.status-indicator {
+  @apply relative overflow-hidden;
+}
+
+.status-indicator::before {
+  content: "";
+  @apply absolute inset-0 opacity-10 animate-pulse;
+}
+
+.status-green::before {
+  @apply bg-green-500;
+}
+
+.status-orange::before {
+  @apply bg-orange-500;
+}
+
+.status-red::before {
+  @apply bg-red-500;
+}
+
+/* Animations personnalisées */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 20px currentColor;
+  }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+.glow-animation {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Styles pour les marqueurs et popups Leaflet */
+.custom-sensor-marker {
+  background: none !important;
+  border: none !important;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.custom-sensor-marker:hover {
+  transform: scale(1.2);
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  @apply rounded-xl shadow-2xl border-0;
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+}
+
+.custom-popup .leaflet-popup-content {
+  @apply m-4;
+  line-height: 1.4;
+}
+
+.custom-popup .leaflet-popup-tip {
+  background: hsl(var(--card));
+}
+
+.sensor-popup {
+  min-width: 200px;
+}
+
+.sensor-popup a {
+  text-decoration: none;
+}
+
+/* Amélioration des contrôles Leaflet pour le dark mode */
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-control-zoom a {
+  @apply bg-card text-card-foreground border border-border;
+}
+
+.leaflet-control-zoom a:hover {
+  @apply bg-accent;
+}
+
+.leaflet-popup-content p {
+  margin: 0;
+}
+
+/* Scrollbar personnalisée */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-muted rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
+}
+
+/* Styles pour les métriques */
+.metric-card {
+  @apply relative overflow-hidden;
+}
+
+.metric-card::before {
+  content: "";
+  @apply absolute top-0 left-0 w-full h-1 opacity-80;
+}
+
+.metric-pm25::before {
+  @apply bg-blue-500;
+}
+
+.metric-pm10::before {
+  @apply bg-purple-500;
+}
+
+.metric-o3::before {
+  @apply bg-green-500;
+}
+
+.metric-no2::before {
+  @apply bg-red-500;
+}
+
+.metric-co::before {
+  @apply bg-orange-500;
+}
+
+.metric-voc::before {
+  @apply bg-teal-500;
+}

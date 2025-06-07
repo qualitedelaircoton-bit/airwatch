@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Sensor {
+  id        String   @id @default(cuid())
+  name      String
+  latitude  Float
+  longitude Float
+  frequency Int      // en minutes
+  lastSeen  DateTime?
+  status    Status   @default(RED)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  data SensorData[]
+
+  @@map("sensors")
+}
+
+model SensorData {
+  id               String   @id @default(cuid())
+  sensorId         String
+  timestamp        DateTime @default(now())
+  pm1_0            Float
+  pm2_5            Float
+  pm10             Float
+  o3_raw           Float
+  o3_corrige       Float
+  no2_voltage_mv   Float
+  no2_ppb          Float
+  voc_voltage_mv   Float
+  co_voltage_mv    Float
+  co_ppb           Float
+  
+  sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
+
+  @@map("sensor_data")
+  @@index([sensorId, timestamp])
+}
+
+enum Status {
+  GREEN
+  ORANGE
+  RED
+}
