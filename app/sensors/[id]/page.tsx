@@ -169,26 +169,26 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
   if (!sensor) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="bg-white border-b shadow-sm">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+        <div className="glass-effect border-b sticky top-0 z-40">
           <div className="max-w-7xl mx-auto p-6">
             <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-              <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+              <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+              <div className="h-6 bg-muted rounded w-1/4"></div>
             </div>
           </div>
         </div>
         <div className="max-w-7xl mx-auto p-6">
-          <div className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>
+          <div className="h-64 bg-muted rounded-lg animate-pulse"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Header */}
-      <div className="bg-white border-b shadow-sm">
+      <div className="glass-effect border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto p-6">
           <div className="mb-4">
             <Link href="/">
@@ -202,7 +202,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-3">
-                <h1 className="text-3xl font-bold text-gray-900">{sensor.name}</h1>
+                <h1 className="text-3xl font-bold text-foreground">{sensor.name}</h1>
                 <Badge
                   variant="secondary"
                   className="text-sm font-medium"
@@ -217,19 +217,19 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <span className="text-gray-600 block">Dernière émission</span>
-                  <span className="font-medium text-gray-900">{formatLastSeen(sensor.lastSeen)}</span>
+                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
+                  <span className="text-muted-foreground block">Dernière émission</span>
+                  <span className="font-medium text-foreground">{formatLastSeen(sensor.lastSeen)}</span>
                 </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <span className="text-gray-600 block">Coordonnées</span>
-                  <span className="font-medium text-gray-900">
+                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
+                  <span className="text-muted-foreground block">Coordonnées</span>
+                  <span className="font-medium text-foreground">
                     {sensor.latitude}, {sensor.longitude}
                   </span>
                 </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <span className="text-gray-600 block">Fréquence</span>
-                  <span className="font-medium text-gray-900">{sensor.frequency} minutes</span>
+                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
+                  <span className="text-muted-foreground block">Fréquence</span>
+                  <span className="font-medium text-foreground">{sensor.frequency} minutes</span>
                 </div>
               </div>
             </div>
@@ -240,7 +240,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Filters */}
-        <Card className="shadow-sm">
+        <Card className="glass-effect border-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Filter className="w-5 h-5" />
@@ -306,7 +306,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
               <Label className="text-sm font-medium mb-3 block">Métriques à afficher</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {METRICS.map((metric) => (
-                  <div key={metric.key} className="flex items-center space-x-2 p-2 rounded border bg-white">
+                  <div key={metric.key} className="flex items-center space-x-2 p-2 rounded border border-border bg-card">
                     <Checkbox
                       id={metric.key}
                       checked={selectedMetrics.includes(metric.key)}
@@ -322,8 +322,8 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             {filteredData.length > 0 && (
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <p className="text-sm text-blue-800">
+              <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800/30">
+                <p className="text-sm text-blue-800 dark:text-blue-300">
                   <strong>{filteredData.length}</strong> mesures trouvées pour la période sélectionnée
                 </p>
               </div>
@@ -333,7 +333,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
         {/* Data Visualization */}
         <Tabs defaultValue="graph" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-white shadow-sm">
+          <TabsList className="grid w-full grid-cols-2 glass-effect">
             <TabsTrigger value="graph" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
               Graphique
@@ -345,7 +345,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
           </TabsList>
 
           <TabsContent value="graph" className="mt-6">
-            <Card className="shadow-sm">
+            <Card className="glass-effect border-2">
               <CardHeader>
                 <CardTitle>Évolution des données dans le temps</CardTitle>
               </CardHeader>
@@ -357,20 +357,21 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                 ) : filteredData.length > 0 ? (
                   <ResponsiveContainer width="100%" height={500}>
                     <LineChart data={filteredData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                       <XAxis
                         dataKey="timestamp"
                         tickFormatter={(value) => format(new Date(value), "dd/MM HH:mm")}
-                        stroke="#666"
+                        stroke="var(--color-muted-foreground)"
                       />
-                      <YAxis stroke="#666" />
+                      <YAxis stroke="var(--color-muted-foreground)" />
                       <Tooltip
                         labelFormatter={(value) => format(new Date(value), "dd/MM/yyyy HH:mm")}
                         contentStyle={{
-                          backgroundColor: "white",
-                          border: "1px solid #e5e7eb",
+                          backgroundColor: "var(--color-card)",
+                          color: "var(--color-card-foreground)",
+                          border: "1px solid var(--color-border)",
                           borderRadius: "8px",
-                          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                          boxShadow: "var(--shadow-md)",
                         }}
                       />
                       <Legend />
@@ -392,8 +393,8 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-96 flex flex-col items-center justify-center text-gray-500">
-                    <BarChart3 className="w-16 h-16 mb-4 text-gray-300" />
+                  <div className="h-96 flex flex-col items-center justify-center text-muted-foreground">
+                    <BarChart3 className="w-16 h-16 mb-4 text-muted-foreground/50" />
                     <h3 className="text-lg font-medium mb-2">Aucune donnée disponible</h3>
                     <p className="text-center">Aucune mesure trouvée pour la période sélectionnée.</p>
                   </div>
@@ -403,7 +404,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
           </TabsContent>
 
           <TabsContent value="table" className="mt-6">
-            <Card className="shadow-sm">
+            <Card className="glass-effect border-2">
               <CardHeader>
                 <CardTitle>Données brutes</CardTitle>
               </CardHeader>
@@ -429,7 +430,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                       </TableHeader>
                       <TableBody>
                         {filteredData.slice(0, 100).map((data) => (
-                          <TableRow key={data.id} className="hover:bg-gray-50">
+                          <TableRow key={data.id} className="hover:bg-muted/50">
                             <TableCell className="font-mono text-sm">
                               {format(new Date(data.timestamp), "dd/MM/yyyy HH:mm:ss")}
                             </TableCell>
@@ -445,16 +446,16 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                       </TableBody>
                     </Table>
                     {filteredData.length > 100 && (
-                      <div className="mt-4 p-3 bg-gray-50 rounded-lg text-center">
-                        <p className="text-sm text-gray-600">
+                      <div className="mt-4 p-3 bg-muted/50 rounded-lg text-center border border-border/50">
+                        <p className="text-sm text-muted-foreground">
                           Affichage des 100 premiers résultats sur <strong>{filteredData.length}</strong> au total
                         </p>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="h-96 flex flex-col items-center justify-center text-gray-500">
-                    <TableIcon className="w-16 h-16 mb-4 text-gray-300" />
+                  <div className="h-96 flex flex-col items-center justify-center text-muted-foreground">
+                    <TableIcon className="w-16 h-16 mb-4 text-muted-foreground/50" />
                     <h3 className="text-lg font-medium mb-2">Aucune donnée disponible</h3>
                     <p className="text-center">Aucune mesure trouvée pour la période sélectionnée.</p>
                   </div>
