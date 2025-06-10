@@ -217,6 +217,58 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
                 <CalendarIcon className="w-4 h-4 text-primary" />
                 Période de données
               </Label>
+              
+              {/* Périodes prédéfinies */}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const now = new Date()
+                    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+                    setDateRange({ from: yesterday, to: now })
+                  }}
+                  className="text-xs hover:scale-105 transition-all duration-200"
+                >
+                  Dernières 24h
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const now = new Date()
+                    const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+                    setDateRange({ from: lastWeek, to: now })
+                  }}
+                  className="text-xs hover:scale-105 transition-all duration-200"
+                >
+                  7 derniers jours
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const now = new Date()
+                    const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+                    setDateRange({ from: lastMonth, to: now })
+                  }}
+                  className="text-xs hover:scale-105 transition-all duration-200"
+                >
+                  30 derniers jours
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const now = new Date()
+                    const lastQuarter = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+                    setDateRange({ from: lastQuarter, to: now })
+                  }}
+                  className="text-xs hover:scale-105 transition-all duration-200"
+                >
+                  3 derniers mois
+                </Button>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-sm text-muted-foreground">Date de début</Label>

@@ -13,8 +13,14 @@ interface Sensor {
   frequency: number
 }
 
+interface CenterOptions {
+  center: [number, number]
+  zoom: number
+}
+
 interface MapViewProps {
   sensors: Sensor[]
+  centerOptions?: CenterOptions | undefined
 }
 
 declare global {
@@ -23,7 +29,7 @@ declare global {
   }
 }
 
-export function MapView({ sensors }: MapViewProps) {
+export function MapView({ sensors, centerOptions }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
   const markersRef = useRef<any[]>([])
@@ -90,11 +96,16 @@ export function MapView({ sensors }: MapViewProps) {
 
     // Coordonnées du Bénin : centre approximatif
     const beninCenter: [number, number] = [9.3077, 2.3158]
+    const defaultZoom = 7
+
+    // Utiliser les options de centrage si fournies, sinon utiliser les valeurs par défaut
+    const mapCenter = centerOptions?.center || beninCenter
+    const mapZoom = centerOptions?.zoom || defaultZoom
 
     // Initialiser la carte
     const map = window.L.map(mapRef.current, {
-      center: beninCenter,
-      zoom: 7,
+      center: mapCenter,
+      zoom: mapZoom,
       zoomControl: true,
       scrollWheelZoom: true,
       doubleClickZoom: true,

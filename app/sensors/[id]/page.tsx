@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ArrowLeft, CalendarIcon, BarChart3, TableIcon, Filter } from "lucide-react"
+import { ArrowLeft, CalendarIcon, BarChart3, TableIcon, Filter, Download } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
@@ -60,10 +60,11 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
   const [filteredData, setFilteredData] = useState<SensorData[]>([])
   const [loading, setLoading] = useState(true)
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+    from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
     to: new Date(),
   })
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["pm2_5", "pm10", "o3_corrige"])
+  const [activePreset, setActivePreset] = useState<string>("7days")
 
   useEffect(() => {
     fetchSensor()
@@ -161,10 +162,11 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     )
   }
 
-  const setDatePreset = (hours: number) => {
+  const setDatePreset = (hours: number, presetId: string) => {
     const now = new Date()
     const from = new Date(now.getTime() - hours * 60 * 60 * 1000)
     setDateRange({ from, to: now })
+    setActivePreset(presetId)
   }
 
   if (!sensor) {
@@ -221,9 +223,12 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                   <span className="text-muted-foreground block">Dernière émission</span>
                   <span className="font-medium text-foreground">{formatLastSeen(sensor.lastSeen)}</span>
                 </div>
-                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
-                  <span className="text-muted-foreground block">Coordonnées</span>
-                  <span className="font-medium text-foreground">
+                <div 
+                  className="bg-muted/50 p-3 rounded-lg border border-border/50 hover:bg-accent/50 cursor-pointer transition-all duration-200 group"
+                  onClick={() => window.open(`/?view=map&center=${sensor.latitude},${sensor.longitude}&zoom=15`, '_blank')}
+                >
+                  <span className="text-muted-foreground block group-hover:text-primary transition-colors">📍 Coordonnées (cliquer pour voir sur la carte)</span>
+                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">
                     {sensor.latitude}, {sensor.longitude}
                   </span>
                 </div>
@@ -251,16 +256,36 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
             <div>
               <Label className="text-sm font-medium mb-3 block">Période de données</Label>
               <div className="flex flex-wrap gap-2 mb-4">
-                <Button variant="outline" size="sm" onClick={() => setDatePreset(1)}>
+                <Button 
+                  variant={activePreset === "1hour" ? "default" : "outline"} 
+                  size="sm" 
+                  onClick={() => setDatePreset(1, "1hour")}
+                  className={activePreset === "1hour" ? "bg-primary text-primary-foreground" : ""}
+                >
                   Dernière heure
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setDatePreset(24)}>
+                <Button 
+                  variant={activePreset === "24hours" ? "default" : "outline"} 
+                  size="sm" 
+                  onClick={() => setDatePreset(24, "24hours")}
+                  className={activePreset === "24hours" ? "bg-primary text-primary-foreground" : ""}
+                >
                   Dernières 24h
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setDatePreset(168)}>
+                <Button 
+                  variant={activePreset === "7days" ? "default" : "outline"} 
+                  size="sm" 
+                  onClick={() => setDatePreset(168, "7days")}
+                  className={activePreset === "7days" ? "bg-primary text-primary-foreground" : ""}
+                >
                   7 derniers jours
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setDatePreset(720)}>
+                <Button 
+                  variant={activePreset === "30days" ? "default" : "outline"} 
+                  size="sm" 
+                  onClick={() => setDatePreset(720, "30days")}
+                  className={activePreset === "30days" ? "bg-primary text-primary-foreground" : ""}
+                >
                   30 derniers jours
                 </Button>
               </div>
@@ -277,7 +302,10 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                     <Calendar
                       mode="single"
                       selected={dateRange.from}
-                      onSelect={(date) => setDateRange((prev) => ({ ...prev, from: date }))}
+                      onSelect={(date) => {
+                        setDateRange((prev) => ({ ...prev, from: date }))
+                        setActivePreset("")
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
@@ -294,7 +322,10 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                     <Calendar
                       mode="single"
                       selected={dateRange.to}
-                      onSelect={(date) => setDateRange((prev) => ({ ...prev, to: date }))}
+                      onSelect={(date) => {
+                        setDateRange((prev) => ({ ...prev, to: date }))
+                        setActivePreset("")
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
@@ -333,16 +364,51 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
         {/* Data Visualization */}
         <Tabs defaultValue="graph" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 glass-effect">
-            <TabsTrigger value="graph" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              Graphique
-            </TabsTrigger>
-            <TabsTrigger value="table" className="flex items-center gap-2">
-              <TableIcon className="w-4 h-4" />
-              Tableau
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex justify-between items-center mb-6">
+            <TabsList className="grid grid-cols-2 glass-effect">
+              <TabsTrigger value="graph" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <BarChart3 className="w-4 h-4" />
+                Graphique
+              </TabsTrigger>
+              <TabsTrigger value="table" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <TableIcon className="w-4 h-4" />
+                Tableau
+              </TabsTrigger>
+            </TabsList>
+            
+            <Button
+              variant="outline"
+              onClick={async () => {
+                if (!dateRange.from || !dateRange.to) return
+                try {
+                  const params = new URLSearchParams({
+                    sensors: sensor.id,
+                    from: dateRange.from.toISOString(),
+                    to: dateRange.to.toISOString(),
+                    format: "csv",
+                  })
+                  const response = await fetch(`/api/sensors/data?${params}`)
+                  if (response.ok) {
+                    const blob = await response.blob()
+                    const url = window.URL.createObjectURL(blob)
+                    const a = document.createElement("a")
+                    a.href = url
+                    a.download = `${sensor.name}-data-export.csv`
+                    document.body.appendChild(a)
+                    a.click()
+                    window.URL.revokeObjectURL(url)
+                    document.body.removeChild(a)
+                  }
+                } catch (error) {
+                  console.error("Error downloading data:", error)
+                }
+              }}
+              className="border-2 hover:bg-accent/50 transition-all duration-300"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Télécharger CSV
+            </Button>
+          </div>
 
           <TabsContent value="graph" className="mt-6">
             <Card className="glass-effect border-2">
@@ -419,13 +485,14 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                       <TableHeader>
                         <TableRow>
                           <TableHead className="font-semibold">Timestamp</TableHead>
-                          <TableHead className="font-semibold">PM1.0 (µg/m³)</TableHead>
-                          <TableHead className="font-semibold">PM2.5 (µg/m³)</TableHead>
-                          <TableHead className="font-semibold">PM10 (µg/m³)</TableHead>
-                          <TableHead className="font-semibold">O3 Corrigé (ppb)</TableHead>
-                          <TableHead className="font-semibold">NO2 (ppb)</TableHead>
-                          <TableHead className="font-semibold">CO (ppb)</TableHead>
-                          <TableHead className="font-semibold">VOC (mV)</TableHead>
+                          {selectedMetrics.map((metricKey) => {
+                            const metric = METRICS.find((m) => m.key === metricKey)
+                            return metric ? (
+                              <TableHead key={metricKey} className="font-semibold">
+                                {metric.label}
+                              </TableHead>
+                            ) : null
+                          })}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -434,13 +501,14 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                             <TableCell className="font-mono text-sm">
                               {format(new Date(data.timestamp), "dd/MM/yyyy HH:mm:ss")}
                             </TableCell>
-                            <TableCell>{data.pm1_0.toFixed(2)}</TableCell>
-                            <TableCell>{data.pm2_5.toFixed(2)}</TableCell>
-                            <TableCell>{data.pm10.toFixed(2)}</TableCell>
-                            <TableCell>{data.o3_corrige.toFixed(2)}</TableCell>
-                            <TableCell>{data.no2_ppb.toFixed(2)}</TableCell>
-                            <TableCell>{data.co_ppb.toFixed(2)}</TableCell>
-                            <TableCell>{data.voc_voltage_mv.toFixed(2)}</TableCell>
+                            {selectedMetrics.map((metricKey) => {
+                              const metric = METRICS.find((m) => m.key === metricKey)
+                              return metric ? (
+                                <TableCell key={metricKey}>
+                                  {(data[metricKey as keyof SensorData] as number).toFixed(2)}
+                                </TableCell>
+                              ) : null
+                            })}
                           </TableRow>
                         ))}
                       </TableBody>
