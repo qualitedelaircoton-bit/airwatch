@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { type Prisma } from "@prisma/client"
 
 function convertToCSV(data: any[]) {
   if (data.length === 0) return ""
@@ -43,8 +44,13 @@ export async function GET(request: NextRequest) {
       orderBy: [{ sensorId: "asc" }, { timestamp: "asc" }],
     })
 
+    // Type pour les données avec sensor inclus
+    type SensorDataWithSensor = Prisma.SensorDataGetPayload<{
+      include: { sensor: { select: { name: true } } }
+    }>
+
     // Transformer les données pour l'export
-    const exportData = data.map((item) => ({
+    const exportData = data.map((item: SensorDataWithSensor) => ({
       sensorId: item.sensorId,
       sensorName: item.sensor.name,
       timestamp: item.timestamp.toISOString(),
