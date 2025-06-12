@@ -20,8 +20,8 @@ export async function GET() {
           Math.floor((Date.now() - stats.connectedAt.getTime()) / 1000) : null
       } : null,
       broker: {
-        url: process.env.MQTT_BROKER_URL || 'mqtts://z166d525.ala.us-east-1.emqxsl.com:8883',
-        port: process.env.MQTT_PORT || '8883',
+        url: process.env.MQTT_BROKER_URL || '',
+        port: process.env.MQTT_SECURE_PORT || '8883',
         hasCredentials: !!(process.env.MQTT_USERNAME && process.env.MQTT_PASSWORD)
       }
     }
