@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "scripts",
+    "**/*.test.ts",
+    "**/*.test.tsx", 
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+    "**/*.stories.ts",
+    "**/*.stories.tsx"
+  ]
+} 

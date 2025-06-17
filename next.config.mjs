@@ -15,6 +15,9 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  typescript: {
+    tsconfigPath: process.env.NODE_ENV === 'production' ? './tsconfig.build.json' : './tsconfig.json',
+  },
   poweredByHeader: false,
   compress: true,
   images: {
