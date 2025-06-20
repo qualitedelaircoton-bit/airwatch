@@ -18,7 +18,7 @@ const createPrismaClient = () => {
   })
 
   return new PrismaClient({
-    adapter,
+    adapter: adapter as any, // Type assertion pour contourner le problème de compatibilité
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   })
 }

@@ -204,6 +204,12 @@ class MQTTListener {
 
       const sensorId = topicParts[1]
 
+      // Validation que l'ID du capteur existe
+      if (!sensorId || sensorId.trim() === '') {
+        console.warn("⚠️ ID de capteur manquant dans le topic:", topic)
+        return
+      }
+
       // Validation du contenu JSON
       let rawData: any
       try {
@@ -304,9 +310,16 @@ class MQTTListener {
       // Transformer le timestamp
       let timestamp: string
       if (typeof rawData.ts === 'number') {
-        // Si le nombre est petit (< 10000000000), c'est probablement en secondes depuis epoch Unix
-        const tsValue = rawData.ts < 10000000000 ? rawData.ts * 1000 : rawData.ts
-        timestamp = new Date(tsValue).toISOString()
+        // Si le nombre est très petit (< 1000000), c'est probablement un compteur relatif
+        // Dans ce cas, utiliser l'heure actuelle
+        if (rawData.ts < 1000000) {
+          timestamp = new Date().toISOString()
+          console.log(`📅 Timestamp relatif détecté (${rawData.ts}), utilisation de l'heure actuelle`)
+        } else {
+          // Si le nombre est petit (< 10000000000), c'est probablement en secondes depuis epoch Unix
+          const tsValue = rawData.ts < 10000000000 ? rawData.ts * 1000 : rawData.ts
+          timestamp = new Date(tsValue).toISOString()
+        }
       } else {
         timestamp = new Date().toISOString()
       }
