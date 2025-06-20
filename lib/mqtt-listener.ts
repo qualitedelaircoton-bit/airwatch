@@ -44,51 +44,39 @@ class MQTTListener {
 
   private connect() {
     try {
-      const brokerUrl = process.env.MQTT_BROKER_URL || ""
-      const port = parseInt(process.env.MQTT_SECURE_PORT || "8883", 10)
+      const brokerHost = process.env.MQTT_HOST || process.env.MQTT_BROKER_URL || ""
+      const port = Number.parseInt(process.env.MQTT_PORT || "1883", 10)
       
-      // Configuration sécurisée selon les meilleures pratiques 2025
+      // Configuration identique au simulateur qui fonctionne
       const options: mqtt.IClientOptions = {
-        clientId: `air-quality-listener-${Math.random().toString(16).substr(2, 8)}`,
-        username: process.env.MQTT_USERNAME || "",
-        password: process.env.MQTT_PASSWORD || "",
-        protocol: "mqtts" as const,
+        host: brokerHost,
         port: port,
-        host: brokerUrl, // IP address directly
+        protocol: "mqtt" as const,
+        clientId: `air-quality-listener-${Math.random().toString(16).substr(2, 8)}`,
         clean: true,
-        reconnectPeriod: 5000, // 5 secondes de reconnexion
-        connectTimeout: 30000, // 30 secondes timeout
-        keepalive: 60, // Keep-alive de 60 secondes
-        reschedulePings: true,
+        connectTimeout: 10000,
+        reconnectPeriod: 1000,
+        keepalive: 60,
+        rejectUnauthorized: false,
         protocolVersion: 4, // MQTT 3.1.1 pour compatibilité
         
-        // Configuration TLS/SSL renforcée (compatible mqtt.js)
-        rejectUnauthorized: true,
-        
-        // Gestion des sessions persistantes
-        properties: {
-          sessionExpiryInterval: 3600, // 1 heure pour MQTT 5.0 (si supporté)
-          receiveMaximum: 100, // Limiter le nombre de messages non-ACK
-        },
+
         
         // Will message pour notification de déconnexion
         will: {
-          topic: 'system/air-quality-listener/status',
-          payload: Buffer.from(JSON.stringify({
-            status: 'offline',
-            timestamp: new Date().toISOString(),
-            clientId: `air-quality-listener-${Math.random().toString(16).substr(2, 8)}`
-          })),
+          topic: `system/air-quality-listener/status`,
+          payload: "offline",
           qos: 1,
-          retain: true
+          retain: false,
         }
       }
 
-      console.log(`🔌 Tentative de connexion à ${brokerUrl}:${port}`)
-      this.client = mqtt.connect(options)
+      console.log(`🔌 Tentative de connexion à ${brokerHost}:${port}`)
+      const brokerUrl = `${options.protocol}://${brokerHost}:${port}`
+      this.client = mqtt.connect(brokerUrl, options)
 
       this.client.on("connect", (connack) => {
-        console.log("✅ Connecté au broker MQTT EMQX avec TLS/SSL sécurisé")
+        console.log("✅ Connecté au broker MQTT en mode standard")
         this.connectionStats.connectedAt = new Date()
         this.reconnectAttempts = 0
         this.connectionStats.reconnectCount = this.reconnectAttempts
@@ -205,7 +193,7 @@ class MQTTListener {
     )
   }
 
-  private async handleMessage(topic: string, message: Buffer) {
+    private async handleMessage(topic: string, message: Buffer) {
     try {
       // Validation du format du topic
       const topicParts = topic.split("/")
@@ -215,25 +203,26 @@ class MQTTListener {
       }
 
       const sensorId = topicParts[1]
-      
+
       // Validation du contenu JSON
-      let data: MQTTSensorData
+      let rawData: any
       try {
-        data = JSON.parse(message.toString())
+        rawData = JSON.parse(message.toString())
       } catch (parseError) {
         console.error("❌ Erreur parsing JSON:", parseError)
         return
       }
 
-      // Validation des données requises
-      if (!this.validateSensorData(data)) {
-        console.warn("⚠️ Données de capteur invalides:", sensorId)
+      // Transformer les données du format de l'appareil vers le format attendu
+      const transformedData = this.transformDeviceData(rawData, sensorId)
+      if (!transformedData) {
+        console.warn("⚠️ Format de données de l'appareil invalide:", sensorId, rawData)
         return
       }
 
-      // Valider que l'ID du capteur correspond
-      if (data.sensorId !== sensorId) {
-        console.warn("⚠️ ID de capteur incohérent:", { topic: sensorId, data: data.sensorId })
+      // Validation des données transformées
+      if (!this.validateSensorData(transformedData)) {
+        console.warn("⚠️ Données de capteur invalides après transformation:", sensorId)
         return
       }
 
@@ -252,18 +241,19 @@ class MQTTListener {
         // Enregistrer les données
         await tx.sensorData.create({
           data: {
-            sensorId: data.sensorId,
-            timestamp: new Date(data.timestamp),
-            pm1_0: data.pm1_0,
-            pm2_5: data.pm2_5,
-            pm10: data.pm10,
-            o3_raw: data.o3_raw,
-            o3_corrige: data.o3_corrige,
-            no2_voltage_mv: data.no2_voltage_mv,
-            no2_ppb: data.no2_ppb,
-            voc_voltage_mv: data.voc_voltage_mv,
-            co_voltage_mv: data.co_voltage_mv,
-            co_ppb: data.co_ppb,
+            sensorId: transformedData.sensorId,
+            timestamp: new Date(transformedData.timestamp),
+            pm1_0: transformedData.pm1_0,
+            pm2_5: transformedData.pm2_5,
+            pm10: transformedData.pm10,
+            o3_raw: transformedData.o3_raw,
+            o3_corrige: transformedData.o3_corrige,
+            no2_voltage_mv: transformedData.no2_voltage_mv,
+            no2_ppb: transformedData.no2_ppb,
+            voc_voltage_mv: transformedData.voc_voltage_mv,
+            co_voltage_mv: transformedData.co_voltage_mv,
+            co_ppb: transformedData.co_ppb,
+            rawData: rawData, // Conserver les données brutes originales
           },
         })
 
@@ -285,6 +275,60 @@ class MQTTListener {
     } catch (error) {
       console.error("❌ Erreur lors du traitement des données MQTT:", error)
       this.connectionStats.errors++
+    }
+  }
+
+  // Fonction pour transformer les données de l'appareil vers le format attendu
+  private transformDeviceData(rawData: any, sensorId: string): MQTTSensorData | null {
+    try {
+      // Format attendu de l'appareil : {"ts":113,"PM1":12,"PM25":17,"PM10":20,"O3":83,"O3c":53,"NO2v":0.01,"NO2":0,"VOCv":0.08,"COv":0.40,"CO":0}
+      
+      // Validation des champs requis du format de l'appareil
+      const requiredDeviceFields = ['ts', 'PM1', 'PM25', 'PM10', 'O3', 'O3c', 'NO2v', 'NO2', 'VOCv', 'COv', 'CO']
+      
+      for (const field of requiredDeviceFields) {
+        if (!(field in rawData)) {
+          console.warn(`⚠️ Champ manquant du format appareil: ${field}`)
+          return null
+        }
+      }
+
+      // Validation des types numériques
+      for (const field of requiredDeviceFields) {
+        if (typeof rawData[field] !== 'number' || isNaN(rawData[field])) {
+          console.warn(`⚠️ Valeur numérique invalide pour ${field}: ${rawData[field]}`)
+          return null
+        }
+      }
+
+      // Transformer le timestamp
+      let timestamp: string
+      if (typeof rawData.ts === 'number') {
+        // Si le nombre est petit (< 10000000000), c'est probablement en secondes depuis epoch Unix
+        const tsValue = rawData.ts < 10000000000 ? rawData.ts * 1000 : rawData.ts
+        timestamp = new Date(tsValue).toISOString()
+      } else {
+        timestamp = new Date().toISOString()
+      }
+
+      // Transformer vers le format attendu
+      return {
+        sensorId,
+        timestamp,
+        pm1_0: Number(rawData.PM1),
+        pm2_5: Number(rawData.PM25),
+        pm10: Number(rawData.PM10),
+        o3_raw: Number(rawData.O3),
+        o3_corrige: Number(rawData.O3c),
+        no2_voltage_mv: Number(rawData.NO2v),
+        no2_ppb: Number(rawData.NO2),
+        voc_voltage_mv: Number(rawData.VOCv),
+        co_voltage_mv: Number(rawData.COv),
+        co_ppb: Number(rawData.CO),
+      }
+    } catch (error) {
+      console.error("❌ Erreur lors de la transformation des données de l'appareil:", error)
+      return null
     }
   }
 

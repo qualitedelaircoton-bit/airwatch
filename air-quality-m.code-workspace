@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../air-quality-simulator"
+		},
+		{
+			"path": "../blo_coton"
+		}
+	],
+	"settings": {
+		"powershell.cwd": "air-quality-platform"
+	}
+}
