@@ -68,11 +68,27 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
   useEffect(() => {
     fetchSensor()
+    
+    // Rafraîchissement automatique toutes les 30 secondes
+    const interval = setInterval(() => {
+      fetchSensor()
+    }, 30000) // 30 secondes
+    
+    return () => clearInterval(interval)
   }, [id])
 
   useEffect(() => {
     if (dateRange.from && dateRange.to) {
       fetchSensorData()
+      
+      // Rafraîchissement automatique des données toutes les 15 secondes
+      const interval = setInterval(() => {
+        if (dateRange.from && dateRange.to) {
+          fetchSensorData()
+        }
+      }, 15000) // 15 secondes pour les données
+      
+      return () => clearInterval(interval)
     }
   }, [dateRange, id])
 

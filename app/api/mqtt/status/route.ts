@@ -1,43 +1,52 @@
 import { NextResponse } from "next/server"
-import { getMQTTStats, isMQTTConnected } from "@/lib/mqtt-listener"
+import { startMQTTListener, stopMQTTListener, isMQTTConnected, getMQTTStats } from "@/lib/mqtt-listener"
 
 export async function GET() {
   try {
     const isConnected = isMQTTConnected()
     const stats = getMQTTStats()
     
-    const response = {
+    return NextResponse.json({
       connected: isConnected,
-      status: isConnected ? 'connected' : 'disconnected',
-      timestamp: new Date().toISOString(),
-      stats: stats ? {
-        connectedAt: stats.connectedAt,
-        lastMessage: stats.lastMessage,
-        messagesReceived: stats.messagesReceived,
-        reconnectCount: stats.reconnectCount,
-        errors: stats.errors,
-        uptime: stats.connectedAt ? 
-          Math.floor((Date.now() - stats.connectedAt.getTime()) / 1000) : null
-      } : null,
-      broker: {
-        url: process.env.MQTT_BROKER_URL || '',
-        port: process.env.MQTT_SECURE_PORT || '8883',
-        hasCredentials: !!(process.env.MQTT_USERNAME && process.env.MQTT_PASSWORD)
-      }
-    }
-
-    return NextResponse.json(response)
+      stats: stats,
+      timestamp: new Date().toISOString()
+    })
   } catch (error) {
-    console.error("❌ Erreur lors de la récupération du statut MQTT:", error)
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    }, { status: 500 })
+  }
+}
+
+export async function POST() {
+  try {
+    console.log("🔧 Redémarrage du MQTT Listener demandé via API...")
     
-    return NextResponse.json(
-      {
-        connected: false,
-        status: 'error',
-        error: 'Erreur lors de la récupération du statut',
-        timestamp: new Date().toISOString()
-      },
-      { status: 500 }
-    )
+    // Arrêter le listener actuel
+    await stopMQTTListener()
+    
+    // Attendre un peu
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Redémarrer
+    startMQTTListener()
+    
+    // Attendre et vérifier
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    
+    const isConnected = isMQTTConnected()
+    const stats = getMQTTStats()
+    
+    return NextResponse.json({
+      message: "MQTT Listener redémarré",
+      connected: isConnected,
+      stats: stats,
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    console.error("Erreur lors du redémarrage MQTT:", error)
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    }, { status: 500 })
   }
 } 

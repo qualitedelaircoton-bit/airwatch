@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
   const [isAddSensorModalOpen, setIsAddSensorModalOpen] = useState(false)
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
 
   // Gérer les paramètres URL pour centrer la carte
   const urlView = searchParams.get('view')
@@ -43,6 +44,7 @@ export default function Dashboard() {
       const response = await fetch("/api/sensors")
       const data = await response.json()
       setSensors(data)
+      setLastRefresh(new Date())
     } catch (error) {
       console.error("Error fetching sensors:", error)
     } finally {
@@ -52,6 +54,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchSensors()
+    
+    // Rafraîchissement automatique toutes les 30 secondes
+    const interval = setInterval(() => {
+      fetchSensors()
+    }, 30000) // 30 secondes
+    
+    return () => clearInterval(interval)
   }, [])
 
   // Définir le mode de vue basé sur l'URL
@@ -132,23 +141,30 @@ export default function Dashboard() {
                 <StatusIndicators statusCounts={statusCounts} />
               </div>
 
-              <div className="flex flex-row gap-3 lg:items-center">
-                <ThemeToggle />
-                <Button 
-                  onClick={() => setIsAddSensorModalOpen(true)}
-                  className="gradient-primary text-white hover:scale-105 hover:shadow-xl transition-all duration-300"
-                >
-                  <Plus className="w-4 h-4 mr-2 hidden sm:block" />
-                  Ajouter un Capteur
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsDownloadModalOpen(true)}
-                  className="border-2 hover:bg-accent/50 transition-all duration-300"
-                >
-                  <Download className="w-4 h-4 mr-2 hidden sm:block" />
-                  Télécharger
-                </Button>
+              <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
+                <div className="text-xs text-muted-foreground text-right lg:text-left">
+                  Dernière mise à jour: {lastRefresh.toLocaleTimeString('fr-FR')}
+                  <br />
+                  <span className="text-green-600">• Actualisation auto (30s)</span>
+                </div>
+                <div className="flex flex-row gap-3">
+                  <ThemeToggle />
+                  <Button 
+                    onClick={() => setIsAddSensorModalOpen(true)}
+                    className="gradient-primary text-white hover:scale-105 hover:shadow-xl transition-all duration-300"
+                  >
+                    <Plus className="w-4 h-4 mr-2 hidden sm:block" />
+                    Ajouter un Capteur
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDownloadModalOpen(true)}
+                    className="border-2 hover:bg-accent/50 transition-all duration-300"
+                  >
+                    <Download className="w-4 h-4 mr-2 hidden sm:block" />
+                    Télécharger
+                  </Button>
+                </div>
               </div>
             </div>
 
