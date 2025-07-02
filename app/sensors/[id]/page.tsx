@@ -322,7 +322,6 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                         setDateRange((prev) => ({ ...prev, from: date }))
                         setActivePreset("")
                       }}
-                      initialFocus
                     />
                   </PopoverContent>
                 </Popover>
@@ -342,7 +341,6 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                         setDateRange((prev) => ({ ...prev, to: date }))
                         setActivePreset("")
                       }}
-                      initialFocus
                     />
                   </PopoverContent>
                 </Popover>

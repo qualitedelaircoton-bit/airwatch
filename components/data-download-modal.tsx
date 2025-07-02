@@ -287,7 +287,6 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
                         mode="single"
                         selected={dateRange.from}
                         onSelect={(date) => setDateRange((prev) => ({ ...prev, from: date }))}
-                        initialFocus
                       />
                     </PopoverContent>
                   </Popover>
@@ -310,7 +309,6 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
                         mode="single"
                         selected={dateRange.to}
                         onSelect={(date) => setDateRange((prev) => ({ ...prev, to: date }))}
-                        initialFocus
                       />
                     </PopoverContent>
                   </Popover>
