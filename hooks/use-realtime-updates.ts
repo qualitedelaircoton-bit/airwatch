@@ -8,7 +8,6 @@ interface RealtimeUpdate {
 
 interface UseRealtimeUpdatesOptions {
   onWebhookUpdate?: (update: RealtimeUpdate) => void
-  onStatusUpdate?: () => void
   enablePolling?: boolean
   pollingInterval?: number
 }
@@ -16,9 +15,8 @@ interface UseRealtimeUpdatesOptions {
 export function useRealtimeUpdates(options: UseRealtimeUpdatesOptions = {}) {
   const {
     onWebhookUpdate,
-    onStatusUpdate,
-    enablePolling = true,
-    pollingInterval = 30000
+    enablePolling = false,
+    pollingInterval = 0
   } = options
 
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
@@ -42,26 +40,12 @@ export function useRealtimeUpdates(options: UseRealtimeUpdatesOptions = {}) {
     onWebhookUpdate?.(update)
   }, [onWebhookUpdate])
 
+  // Vérification des mises à jour webhook seulement si activé
   useEffect(() => {
     if (!enablePolling) return
 
-    // Polling automatique
-    const interval = setInterval(() => {
-      setLastUpdate(new Date())
-      onStatusUpdate?.()
-    }, pollingInterval)
-
-    return () => clearInterval(interval)
-  }, [enablePolling, pollingInterval, onStatusUpdate])
-
-  // Écouter les événements de mise à jour webhook (si on était côté serveur)
-  useEffect(() => {
-    // En production, on pourrait utiliser WebSocket ou Server-Sent Events ici
-    // Pour l'instant, on se contente du polling avec une optimisation
-    
     const checkForWebhookUpdates = async () => {
       try {
-        // Vérifier s'il y a eu des mises à jour récentes via une API
         const response = await fetch('/api/sensors/last-updates', {
           method: 'GET',
           headers: {
@@ -73,7 +57,14 @@ export function useRealtimeUpdates(options: UseRealtimeUpdatesOptions = {}) {
           const data = await response.json()
           if (data.lastWebhookUpdate && data.lastWebhookUpdate > lastUpdate.getTime()) {
             setLastUpdate(new Date())
-            onStatusUpdate?.()
+            // Déclencher une mise à jour webhook simulée
+            const update: RealtimeUpdate = {
+              sensorId: 'webhook-update',
+              data: { timestamp: new Date(data.lastWebhookUpdate) },
+              timestamp: new Date(data.lastWebhookUpdate)
+            }
+            setLastWebhookUpdate(update)
+            onWebhookUpdate?.(update)
           }
         }
       } catch (error) {
@@ -81,11 +72,11 @@ export function useRealtimeUpdates(options: UseRealtimeUpdatesOptions = {}) {
       }
     }
 
-    // Vérifier les mises à jour webhook plus fréquemment
-    const webhookInterval = setInterval(checkForWebhookUpdates, 5000) // Toutes les 5 secondes
+    // Vérifier les mises à jour webhook toutes les 5 secondes seulement si activé
+    const webhookInterval = setInterval(checkForWebhookUpdates, 5000)
 
     return () => clearInterval(webhookInterval)
-  }, [lastUpdate, onStatusUpdate])
+  }, [lastUpdate, onWebhookUpdate, enablePolling])
 
   return {
     lastUpdate,

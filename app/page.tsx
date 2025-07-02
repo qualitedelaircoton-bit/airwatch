@@ -17,7 +17,6 @@ import { PWAInstall } from "@/components/pwa-install"
 import { useRealtimeUpdates } from "@/hooks/use-realtime-updates"
 import { WebhookNotification } from "@/components/webhook-notification"
 import { RealtimeIndicator } from "@/components/realtime-indicator"
-import { RealtimeStats } from "@/components/realtime-stats"
 
 interface Sensor {
   id: string
@@ -62,19 +61,15 @@ export default function Dashboard() {
     }
   }
 
-  // Hook temps réel
+  // Hook temps réel - seulement pour les webhooks, pas de polling
   const { lastUpdate, lastWebhookUpdate, forceUpdate } = useRealtimeUpdates({
-    onStatusUpdate: () => {
-      console.log("🔄 Mise à jour automatique déclenchée")
-      fetchSensors()
-    },
     onWebhookUpdate: (update) => {
       console.log("🚀 Mise à jour webhook reçue:", update)
       // Mise à jour immédiate quand on reçoit un webhook
       fetchSensors()
     },
-    enablePolling: true,
-    pollingInterval: 30000 // 30 secondes
+    enablePolling: false, // Pas de polling automatique
+    pollingInterval: 0
   })
 
   useEffect(() => {
@@ -167,7 +162,7 @@ export default function Dashboard() {
                     isConnected={true}
                     className="mb-2"
                   />
-                  <span className="text-green-600">• Actualisation auto (30s)</span>
+                  <span className="text-blue-600">• Temps réel via webhook</span>
                 </div>
                 <div className="flex flex-row gap-3">
                   <Button
@@ -241,14 +236,6 @@ export default function Dashboard() {
 
         {/* Content */}
         <div className="max-w-7xl mx-auto p-6">
-          {/* Statistiques temps réel */}
-          <div className="mb-8">
-            <RealtimeStats 
-              sensors={sensors}
-              lastWebhookUpdate={lastWebhookUpdate}
-            />
-          </div>
-
           {viewMode === "map" ? (
             <div className="animate-fade-in">
               <MapView sensors={filteredSensors} centerOptions={mapCenterOptions} />
