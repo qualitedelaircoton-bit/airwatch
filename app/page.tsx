@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, Download, Search, Activity, Grid3X3, MapPin } from "lucide-react"
+import { Plus, Download, Search, Activity, Grid3X3, MapPin, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { MapView } from "@/components/map-view"
 import { DataDownloadModal } from "@/components/data-download-modal"
@@ -14,6 +14,10 @@ import { SensorCard } from "@/components/sensor-card"
 import { StatusIndicators } from "@/components/status-indicators"
 import { ProjectDescription } from "@/components/project-description"
 import { PWAInstall } from "@/components/pwa-install"
+import { useRealtimeUpdates } from "@/hooks/use-realtime-updates"
+import { WebhookNotification } from "@/components/webhook-notification"
+import { RealtimeIndicator } from "@/components/realtime-indicator"
+import { RealtimeStats } from "@/components/realtime-stats"
 
 interface Sensor {
   id: string
@@ -33,35 +37,48 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
   const [isAddSensorModalOpen, setIsAddSensorModalOpen] = useState(false)
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date())
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   // Gérer les paramètres URL pour centrer la carte
   const urlView = searchParams.get('view')
   const urlCenter = searchParams.get('center')
   const urlZoom = searchParams.get('zoom')
 
-  const fetchSensors = async () => {
+  const fetchSensors = async (showLoading = false) => {
+    if (showLoading) setIsRefreshing(true)
     try {
-      const response = await fetch("/api/sensors")
+      const response = await fetch("/api/sensors", {
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      })
       const data = await response.json()
       setSensors(data)
-      setLastRefresh(new Date())
     } catch (error) {
       console.error("Error fetching sensors:", error)
     } finally {
       setLoading(false)
+      setIsRefreshing(false)
     }
   }
 
-  useEffect(() => {
-    fetchSensors()
-    
-    // Rafraîchissement automatique toutes les 30 secondes
-    const interval = setInterval(() => {
+  // Hook temps réel
+  const { lastUpdate, lastWebhookUpdate, forceUpdate } = useRealtimeUpdates({
+    onStatusUpdate: () => {
+      console.log("🔄 Mise à jour automatique déclenchée")
       fetchSensors()
-    }, 30000) // 30 secondes
-    
-    return () => clearInterval(interval)
+    },
+    onWebhookUpdate: (update) => {
+      console.log("🚀 Mise à jour webhook reçue:", update)
+      // Mise à jour immédiate quand on reçoit un webhook
+      fetchSensors()
+    },
+    enablePolling: true,
+    pollingInterval: 30000 // 30 secondes
+  })
+
+  useEffect(() => {
+    fetchSensors(true)
   }, [])
 
   // Définir le mode de vue basé sur l'URL
@@ -144,11 +161,28 @@ export default function Dashboard() {
 
               <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
                 <div className="text-xs text-muted-foreground text-right lg:text-left">
-                  Dernière mise à jour: {lastRefresh.toLocaleTimeString('fr-FR')}
-                  <br />
+                  <RealtimeIndicator 
+                    lastUpdate={lastUpdate}
+                    lastWebhookUpdate={lastWebhookUpdate}
+                    isConnected={true}
+                    className="mb-2"
+                  />
                   <span className="text-green-600">• Actualisation auto (30s)</span>
                 </div>
                 <div className="flex flex-row gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      forceUpdate()
+                      fetchSensors(true)
+                    }}
+                    disabled={isRefreshing}
+                    className="border-2 hover:bg-accent/50 transition-all duration-300"
+                  >
+                    <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    Actualiser
+                  </Button>
                   <ThemeToggle />
                   <Button 
                     onClick={() => setIsAddSensorModalOpen(true)}
@@ -207,6 +241,14 @@ export default function Dashboard() {
 
         {/* Content */}
         <div className="max-w-7xl mx-auto p-6">
+          {/* Statistiques temps réel */}
+          <div className="mb-8">
+            <RealtimeStats 
+              sensors={sensors}
+              lastWebhookUpdate={lastWebhookUpdate}
+            />
+          </div>
+
           {viewMode === "map" ? (
             <div className="animate-fade-in">
               <MapView sensors={filteredSensors} centerOptions={mapCenterOptions} />
@@ -263,6 +305,14 @@ export default function Dashboard() {
       
       {/* Composant d'installation PWA */}
       <PWAInstall />
+
+      {/* Notification des mises à jour webhook */}
+      <WebhookNotification 
+        lastWebhookUpdate={lastWebhookUpdate}
+        onDismiss={() => {
+          // Optionnel: réinitialiser la notification
+        }}
+      />
     </div>
   )
 }

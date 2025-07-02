@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { calculateSensorStatus } from "@/lib/status-calculator"
+import { realtimeService } from "@/lib/realtime-service"
 
 interface WebhookPayload {
   clientid: string
@@ -114,6 +115,14 @@ export async function POST(request: NextRequest) {
         lastSeen: timestamp,
         isActive: true
       }
+    })
+
+    // Déclencher une mise à jour immédiate via le service temps réel
+    await realtimeService.triggerWebhookUpdate(sensorId, {
+      sensorName: sensor.name,
+      status: status,
+      timestamp: timestamp,
+      data: sensorData
     })
 
     console.log("✅ Données sauvegardées avec succès")
