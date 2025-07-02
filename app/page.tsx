@@ -13,6 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { SensorCard } from "@/components/sensor-card"
 import { StatusIndicators } from "@/components/status-indicators"
 import { ProjectDescription } from "@/components/project-description"
+import { PWAInstall } from "@/components/pwa-install"
 
 interface Sensor {
   id: string
@@ -259,6 +260,9 @@ export default function Dashboard() {
         onClose={() => setIsAddSensorModalOpen(false)} 
         onSensorAdded={fetchSensors}
       />
+      
+      {/* Composant d'installation PWA */}
+      <PWAInstall />
     </div>
   )
 }

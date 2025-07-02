@@ -77,6 +77,7 @@
     "zod": "^3.25.56"
   },
   "devDependencies": {
+    "@types/minimatch": "^5.1.2",
     "@types/node": "^22.15.30",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.6",
@@ -91,7 +92,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@prisma/client",
-      "@prisma/engines", 
+      "@prisma/engines",
       "prisma",
       "esbuild",
       "sharp",
