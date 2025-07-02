@@ -16,7 +16,6 @@ import { ProjectDescription } from "@/components/project-description"
 import { PWAInstall } from "@/components/pwa-install"
 import { useRealtimeUpdates } from "@/hooks/use-realtime-updates"
 import { WebhookNotification } from "@/components/webhook-notification"
-import { RealtimeIndicator } from "@/components/realtime-indicator"
 
 interface Sensor {
   id: string
@@ -156,13 +155,7 @@ export default function Dashboard() {
 
               <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
                 <div className="text-xs text-muted-foreground text-right lg:text-left">
-                  <RealtimeIndicator 
-                    lastUpdate={lastUpdate}
-                    lastWebhookUpdate={lastWebhookUpdate}
-                    isConnected={true}
-                    className="mb-2"
-                  />
-                  <span className="text-blue-600">• Temps réel via webhook</span>
+                  Dernière mise à jour: {lastUpdate.toLocaleTimeString('fr-FR')}
                 </div>
                 <div className="flex flex-row gap-3">
                   <Button
