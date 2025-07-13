@@ -5,8 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { CalendarIcon, Download, CheckCircle2, Circle, FileText, FileCode, Sparkles } from "lucide-react"
 import { format } from "date-fns"
@@ -22,13 +21,21 @@ interface DataDownloadModalProps {
   isOpen: boolean
   onClose: () => void
   sensors: Sensor[]
+  preselectedSensors?: string[]
+  preselectedDateRange?: { from: Date | undefined; to: Date | undefined }
 }
 
-export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModalProps) {
-  const [selectedSensors, setSelectedSensors] = useState<string[]>([])
+export function DataDownloadModal({ 
+  isOpen, 
+  onClose, 
+  sensors, 
+  preselectedSensors = [], 
+  preselectedDateRange 
+}: DataDownloadModalProps) {
+  const [selectedSensors, setSelectedSensors] = useState<string[]>(preselectedSensors)
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: undefined,
-    to: undefined,
+    from: preselectedDateRange?.from,
+    to: preselectedDateRange?.to,
   })
   const [fileFormat, setFileFormat] = useState<"csv" | "json">("csv")
   const [isDownloading, setIsDownloading] = useState(false)
@@ -269,50 +276,46 @@ export function DataDownloadModal({ isOpen, onClose, sensors }: DataDownloadModa
                   3 derniers mois
                 </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-sm text-muted-foreground">Date de début</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-start glass-effect border-2 hover:border-primary/50 transition-all duration-200"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dateRange.from ? format(dateRange.from, "dd/MM/yyyy", { locale: fr }) : "Sélectionner..."}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 glass-effect border-2" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={dateRange.from}
-                        onSelect={(date) => setDateRange((prev) => ({ ...prev, from: date }))}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <Label className="text-sm font-medium text-foreground">Date de début</Label>
+                  <div className="relative">
+                    <Input
+                      type="date"
+                      value={dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : ""}
+                      onChange={(e) => {
+                        const date = e.target.value ? new Date(e.target.value) : undefined
+                        setDateRange((prev) => ({ ...prev, from: date }))
+                      }}
+                      className="glass-effect border-2 hover:border-primary/50 focus:border-primary transition-all duration-200"
+                      max={dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : undefined}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm text-muted-foreground">Date de fin</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-start glass-effect border-2 hover:border-primary/50 transition-all duration-200"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dateRange.to ? format(dateRange.to, "dd/MM/yyyy", { locale: fr }) : "Sélectionner..."}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 glass-effect border-2" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={dateRange.to}
-                        onSelect={(date) => setDateRange((prev) => ({ ...prev, to: date }))}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <Label className="text-sm font-medium text-foreground">Date de fin</Label>
+                  <div className="relative">
+                    <Input
+                      type="date"
+                      value={dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : ""}
+                      onChange={(e) => {
+                        const date = e.target.value ? new Date(e.target.value) : undefined
+                        setDateRange((prev) => ({ ...prev, to: date }))
+                      }}
+                      className="glass-effect border-2 hover:border-primary/50 focus:border-primary transition-all duration-200"
+                      min={dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : undefined}
+                    />
+                  </div>
                 </div>
+
+                {/* Validation message */}
+                {dateRange.from && dateRange.to && dateRange.from > dateRange.to && (
+                  <div className="text-sm text-red-500 flex items-center gap-2">
+                    <span>⚠️</span>
+                    <span>La date de fin doit être après la date de début</span>
+                  </div>
+                )}
               </div>
             </div>
 

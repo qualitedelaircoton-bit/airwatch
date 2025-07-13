@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu"
@@ -18,6 +17,7 @@ import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { use } from "react"
+import { DataDownloadModal } from "@/components/data-download-modal"
 
 interface Sensor {
   id: string
@@ -68,6 +68,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["pm2_5", "pm10", "o3_corrige"])
   const [activePreset, setActivePreset] = useState<string>("7days")
   const [displayedRows, setDisplayedRows] = useState<number>(50)
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
 
   useEffect(() => {
     fetchSensor()
@@ -185,6 +186,14 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     setSelectedMetrics((prev) =>
       prev.includes(metricKey) ? prev.filter((m) => m !== metricKey) : [...prev, metricKey],
     )
+  }
+
+  const selectAllMetrics = () => {
+    setSelectedMetrics(METRICS.map(metric => metric.key))
+  }
+
+  const deselectAllMetrics = () => {
+    setSelectedMetrics([])
   }
 
   const setDatePreset = (hours: number, presetId: string) => {
@@ -366,6 +375,26 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
+                  <div className="px-2 py-1 border-b border-border">
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={selectAllMetrics}
+                        className="h-7 px-2 text-xs flex-1"
+                      >
+                        Tout cocher
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={deselectAllMetrics}
+                        className="h-7 px-2 text-xs flex-1"
+                      >
+                        Tout décocher
+                      </Button>
+                    </div>
+                  </div>
                   {METRICS.map((metric) => (
                     <DropdownMenuCheckboxItem
                       key={metric.key}
@@ -381,48 +410,40 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Dates personnalisées - Desktop */}
-              <div className="hidden md:flex gap-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <CalendarIcon className="w-4 h-4 mr-2" />
-                      {dateRange.from ? format(dateRange.from, "dd/MM", { locale: fr }) : "Début"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.from}
-                      onSelect={(date) => {
-                        setDateRange((prev) => ({ ...prev, from: date }))
-                        setActivePreset("")
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <CalendarIcon className="w-4 h-4 mr-2" />
-                      {dateRange.to ? format(dateRange.to, "dd/MM", { locale: fr }) : "Fin"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.to}
-                      onSelect={(date) => {
-                        setDateRange((prev) => ({ ...prev, to: date }))
-                        setActivePreset("")
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
+              {/* Dates personnalisées - Sélecteurs améliorés */}
+              <div className="hidden md:flex gap-2 items-center">
+                <div className="flex items-center gap-1">
+                  <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+                  <Input
+                    type="date"
+                    value={dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : ""}
+                    onChange={(e) => {
+                      const date = e.target.value ? new Date(e.target.value) : undefined
+                      setDateRange((prev) => ({ ...prev, from: date }))
+                      setActivePreset("")
+                    }}
+                    className="w-[140px] h-9 text-xs border-2 hover:border-primary/50 focus:border-primary transition-all duration-200"
+                    max={dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : undefined}
+                  />
+                </div>
+                <span className="text-xs text-muted-foreground">→</span>
+                <div className="flex items-center gap-1">
+                  <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+                  <Input
+                    type="date"
+                    value={dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : ""}
+                    onChange={(e) => {
+                      const date = e.target.value ? new Date(e.target.value) : undefined
+                      setDateRange((prev) => ({ ...prev, to: date }))
+                      setActivePreset("")
+                    }}
+                    className="w-[140px] h-9 text-xs border-2 hover:border-primary/50 focus:border-primary transition-all duration-200"
+                    min={dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : undefined}
+                  />
+                </div>
               </div>
 
-              {/* Dates personnalisées - Mobile (dropdown) */}
+              {/* Dates personnalisées - Mobile */}
               <div className="md:hidden">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -431,14 +452,48 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                       Dates
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-48">
-                    <div className="p-2 space-y-2">
-                      <div className="text-xs font-medium text-muted-foreground">Période personnalisée</div>
-                      <div className="text-xs">
-                        Du: {dateRange.from ? format(dateRange.from, "dd/MM/yyyy", { locale: fr }) : "Non défini"}
-                      </div>
-                      <div className="text-xs">
-                        Au: {dateRange.to ? format(dateRange.to, "dd/MM/yyyy", { locale: fr }) : "Non défini"}
+                  <DropdownMenuContent className="w-72 p-4">
+                    <div className="space-y-4">
+                      <div className="text-sm font-medium text-foreground">Période personnalisée</div>
+                      
+                      <div className="space-y-3">
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-muted-foreground">Date de début</label>
+                          <Input
+                            type="date"
+                            value={dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : ""}
+                            onChange={(e) => {
+                              const date = e.target.value ? new Date(e.target.value) : undefined
+                              setDateRange((prev) => ({ ...prev, from: date }))
+                              setActivePreset("")
+                            }}
+                            className="w-full text-xs border-2 hover:border-primary/50 focus:border-primary transition-all duration-200"
+                            max={dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : undefined}
+                          />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-muted-foreground">Date de fin</label>
+                          <Input
+                            type="date"
+                            value={dateRange.to ? format(dateRange.to, "yyyy-MM-dd") : ""}
+                            onChange={(e) => {
+                              const date = e.target.value ? new Date(e.target.value) : undefined
+                              setDateRange((prev) => ({ ...prev, to: date }))
+                              setActivePreset("")
+                            }}
+                            className="w-full text-xs border-2 hover:border-primary/50 focus:border-primary transition-all duration-200"
+                            min={dateRange.from ? format(dateRange.from, "yyyy-MM-dd") : undefined}
+                          />
+                        </div>
+
+                        {/* Message de validation pour mobile */}
+                        {dateRange.from && dateRange.to && dateRange.from > dateRange.to && (
+                          <div className="text-xs text-red-500 flex items-center gap-1">
+                            <span>⚠️</span>
+                            <span>Date de fin invalide</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </DropdownMenuContent>
@@ -454,31 +509,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={async () => {
-                      if (!dateRange.from || !dateRange.to) return
-                      try {
-                        const params = new URLSearchParams({
-                          sensors: sensor.id,
-                          from: dateRange.from.toISOString(),
-                          to: dateRange.to.toISOString(),
-                          format: "csv",
-                        })
-                        const response = await fetch(`/api/sensors/data?${params}`)
-                        if (response.ok) {
-                          const blob = await response.blob()
-                          const url = window.URL.createObjectURL(blob)
-                          const a = document.createElement("a")
-                          a.href = url
-                          a.download = `${sensor.name}-data-export.csv`
-                          document.body.appendChild(a)
-                          a.click()
-                          window.URL.revokeObjectURL(url)
-                          document.body.removeChild(a)
-                        }
-                      } catch (error) {
-                        console.error("Error downloading data:", error)
-                      }
-                    }}
+                    onClick={() => setIsDownloadModalOpen(true)}
                     className="px-2"
                   >
                     <Download className="w-4 h-4" />
@@ -627,6 +658,17 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Modal de téléchargement avec options présélectionnées */}
+      {sensor && (
+        <DataDownloadModal 
+          isOpen={isDownloadModalOpen} 
+          onClose={() => setIsDownloadModalOpen(false)} 
+          sensors={[sensor]}
+          preselectedSensors={[sensor.id]}
+          preselectedDateRange={dateRange}
+        />
+      )}
     </div>
   )
 }

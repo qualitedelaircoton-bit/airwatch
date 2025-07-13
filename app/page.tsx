@@ -270,11 +270,13 @@ export default function Dashboard() {
                   activityFilter={activityFilter}
                   onFrequencyFilterChange={setFrequencyFilter}
                   onActivityFilterChange={setActivityFilter}
+                  disabled={viewMode === "map"}
                 />
                 
                 <SortOptions 
                   sortBy={sortBy}
                   onSortChange={setSortBy}
+                  disabled={viewMode === "map"}
                 />
               </div>
 

@@ -14,18 +14,18 @@ export async function calculateSensorStatus(sensorId: string): Promise<Status> {
   const lastSeenTime = new Date(sensor.lastSeen)
   const timeDifferenceMinutes = (now.getTime() - lastSeenTime.getTime()) / (1000 * 60)
 
-  // Vert : dans les temps (moins de 1.5x la fréquence)
-  if (timeDifferenceMinutes <= sensor.frequency * 1.5) {
-    return Status.GREEN
+  // Rouge : hors ligne après une journée (1440 minutes)
+  if (timeDifferenceMinutes >= 1440) {
+    return Status.RED
   }
 
-  // Orange : en retard (entre 1.5x et 3x la fréquence)
-  if (timeDifferenceMinutes <= sensor.frequency * 3) {
+  // Orange : en retard après 4 manques de données (4 x fréquence)
+  if (timeDifferenceMinutes > sensor.frequency * 4) {
     return Status.ORANGE
   }
 
-  // Rouge : hors ligne (plus de 3x la fréquence)
-  return Status.RED
+  // Vert : dans les temps (moins ou égal à 4x la fréquence et moins d'une journée)
+  return Status.GREEN
 }
 
 export async function updateAllSensorStatuses() {

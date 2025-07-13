@@ -9,13 +9,15 @@ interface AdvancedFiltersProps {
   activityFilter: string | null
   onFrequencyFilterChange: (filter: string | null) => void
   onActivityFilterChange: (filter: string | null) => void
+  disabled?: boolean
 }
 
 export function AdvancedFilters({ 
   frequencyFilter, 
   activityFilter, 
   onFrequencyFilterChange, 
-  onActivityFilterChange 
+  onActivityFilterChange,
+  disabled = false 
 }: AdvancedFiltersProps) {
   return (
     <DropdownMenu>
@@ -23,7 +25,12 @@ export function AdvancedFilters({
         <Button 
           variant="outline" 
           size="sm"
-          className="border-2 hover:bg-accent/50 transition-all duration-300"
+          disabled={disabled}
+          className={`border-2 transition-all duration-300 ${
+            disabled 
+              ? 'opacity-50 cursor-not-allowed' 
+              : 'hover:bg-accent/50'
+          }`}
         >
           <SlidersHorizontal className="w-4 h-4 mr-2" />
           Filtres

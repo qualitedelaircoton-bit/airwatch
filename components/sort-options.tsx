@@ -9,9 +9,10 @@ export type SortOption = 'newest' | 'oldest' | 'name-asc' | 'name-desc' | 'frequ
 interface SortOptionsProps {
   sortBy: SortOption
   onSortChange: (sort: SortOption) => void
+  disabled?: boolean
 }
 
-export function SortOptions({ sortBy, onSortChange }: SortOptionsProps) {
+export function SortOptions({ sortBy, onSortChange, disabled = false }: SortOptionsProps) {
   const getSortLabel = (sort: SortOption) => {
     switch (sort) {
       case 'newest': return 'Plus récent'
@@ -47,7 +48,12 @@ export function SortOptions({ sortBy, onSortChange }: SortOptionsProps) {
         <Button 
           variant="outline" 
           size="sm"
-          className="border-2 hover:bg-accent/50 transition-all duration-300"
+          disabled={disabled}
+          className={`border-2 transition-all duration-300 ${
+            disabled 
+              ? 'opacity-50 cursor-not-allowed' 
+              : 'hover:bg-accent/50'
+          }`}
         >
           {getSortIcon(sortBy)}
           <span className="ml-2 hidden sm:inline">{getSortLabel(sortBy)}</span>
