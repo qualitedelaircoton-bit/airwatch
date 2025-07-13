@@ -11,8 +11,21 @@ interface StatusIndicatorsProps {
 }
 
 export function StatusIndicators({ statusCounts, onStatusFilter, activeFilter }: StatusIndicatorsProps) {
+  const totalCount = statusCounts.GREEN + statusCounts.ORANGE + statusCounts.RED
+
   return (
     <div className="flex flex-nowrap gap-2 sm:gap-4 text-sm overflow-x-auto">
+      {/* Bouton "Tous" */}
+      <div 
+        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-full bg-slate-50 border border-slate-200 dark:bg-slate-900/20 dark:border-slate-700/30 whitespace-nowrap ${
+          onStatusFilter ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/30 transition-colors' : ''
+        } ${activeFilter === null ? 'ring-2 ring-slate-500' : ''}`}
+        onClick={() => onStatusFilter?.(null)}
+      >
+        <div className="w-3 h-3 rounded-full bg-slate-500 hidden sm:block"></div>
+        <span className="font-medium text-slate-700 dark:text-slate-300">{totalCount} tous</span>
+      </div>
+      
       <div 
         className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-full bg-green-50 border border-green-200 dark:bg-green-950/20 dark:border-green-800/30 whitespace-nowrap ${
           onStatusFilter ? 'cursor-pointer hover:bg-green-100 dark:hover:bg-green-950/30 transition-colors' : ''
