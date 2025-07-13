@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Plus, Download, Search, Activity, Grid3X3, MapPin } from "lucide-react"
@@ -19,6 +19,8 @@ import { WebhookNotification } from "@/components/webhook-notification"
 import { AdvancedFilters } from "@/components/advanced-filters"
 import { ActiveFilters } from "@/components/active-filters"
 import { SortOptions, type SortOption } from "@/components/sort-options"
+import { useAuth } from "@/contexts/auth-context"
+import { Loader2 } from "lucide-react"
 
 interface Sensor {
   id: string
@@ -32,6 +34,9 @@ interface Sensor {
 
 export default function Dashboard() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const { user, userProfile, loading: authLoading } = useAuth()
+  
   const [sensors, setSensors] = useState<Sensor[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -42,6 +47,26 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
   const [isAddSensorModalOpen, setIsAddSensorModalOpen] = useState(false)
+
+  // Protection d'authentification
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push('/landing')
+        return
+      }
+      
+      if (!user.emailVerified) {
+        router.push('/auth/verify-email')
+        return
+      }
+      
+      if (!userProfile?.isApproved) {
+        router.push('/auth/pending-approval')
+        return
+      }
+    }
+  }, [user, userProfile, authLoading, router])
 
   // Gérer les paramètres URL pour centrer la carte
   const urlView = searchParams.get('view')
@@ -168,6 +193,23 @@ export default function Dashboard() {
     setStatusFilter(null)
     setFrequencyFilter(null)
     setActivityFilter(null)
+  }
+
+  // Afficher l'écran de chargement pendant l'authentification
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-emerald-600 mx-auto mb-4" />
+          <p className="text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Retourner null si l'utilisateur n'est pas authentifié (la redirection se fait dans useEffect)
+  if (!user || !user.emailVerified || !userProfile?.isApproved) {
+    return null
   }
 
   // Préparer les options de centrage pour la carte
