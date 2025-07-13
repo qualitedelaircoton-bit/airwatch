@@ -10,7 +10,9 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ArrowLeft, CalendarIcon, BarChart3, TableIcon, Filter, Download } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu"
+import { ArrowLeft, CalendarIcon, BarChart3, TableIcon, Filter, Download, Clock, Settings } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
@@ -65,14 +67,15 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
   })
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["pm2_5", "pm10", "o3_corrige"])
   const [activePreset, setActivePreset] = useState<string>("7days")
+  const [displayedRows, setDisplayedRows] = useState<number>(50)
 
   useEffect(() => {
     fetchSensor()
     
-    // Rafraîchissement automatique toutes les 30 secondes
+    // Rafraîchissement automatique toutes les 60 secondes
     const interval = setInterval(() => {
       fetchSensor()
-    }, 30000) // 30 secondes
+    }, 60000) // 60 secondes
     
     return () => clearInterval(interval)
   }, [id])
@@ -81,28 +84,34 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     if (dateRange.from && dateRange.to) {
       fetchSensorData()
       
-      // Rafraîchissement automatique des données toutes les 15 secondes
+      // Rafraîchissement automatique des données toutes les 30 secondes
       const interval = setInterval(() => {
         if (dateRange.from && dateRange.to) {
-          fetchSensorData()
+          fetchSensorData(false) // Pas de loading pour les rafraîchissements automatiques
         }
-      }, 15000) // 15 secondes pour les données
+      }, 30000) // 30 secondes pour les données
       
       return () => clearInterval(interval)
     }
   }, [dateRange, id])
 
   useEffect(() => {
-    // Filter data based on date range
+    // Filter data based on date range and sort by timestamp descending (most recent first)
     if (sensorData.length > 0 && dateRange.from && dateRange.to) {
       const filtered = sensorData.filter((data) => {
         const dataDate = new Date(data.timestamp)
         return dataDate >= dateRange.from! && dataDate <= dateRange.to!
       })
-      setFilteredData(filtered)
+      // Sort by timestamp descending (most recent first)
+      const sorted = filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      setFilteredData(sorted)
     } else {
-      setFilteredData(sensorData)
+      // Sort by timestamp descending (most recent first)
+      const sorted = [...sensorData].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      setFilteredData(sorted)
     }
+    // Reset displayed rows when data changes
+    setDisplayedRows(50)
   }, [sensorData, dateRange])
 
   const fetchSensor = async () => {
@@ -115,10 +124,10 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     }
   }
 
-  const fetchSensorData = async () => {
+  const fetchSensorData = async (showLoading = true) => {
     if (!dateRange.from || !dateRange.to) return
 
-    setLoading(true)
+    if (showLoading) setLoading(true)
     try {
       const searchParams = new URLSearchParams({
         from: dateRange.from.toISOString(),
@@ -131,7 +140,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     } catch (error) {
       console.error("Error fetching sensor data:", error)
     } finally {
-      setLoading(false)
+      if (showLoading) setLoading(false)
     }
   }
 
@@ -219,38 +228,81 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-4 mb-3">
-                <h1 className="text-3xl font-bold text-foreground">{sensor.name}</h1>
-                <Badge
-                  variant="secondary"
-                  className="text-sm font-medium"
-                  style={{
-                    backgroundColor: `${getStatusColor(sensor.status)}15`,
-                    color: getStatusColor(sensor.status),
-                    border: `1px solid ${getStatusColor(sensor.status)}30`,
-                  }}
-                >
-                  {getStatusText(sensor.status)}
-                </Badge>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
-                  <span className="text-muted-foreground block">Dernière émission</span>
+              {/* Informations compactes sur une ligne - Desktop */}
+              <div className="hidden md:flex flex-wrap items-center gap-4 text-sm bg-muted/30 p-4 rounded-lg border border-border/50">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-bold text-foreground">{sensor.name}</h1>
+                  <Badge
+                    variant="secondary"
+                    className="text-xs font-medium"
+                    style={{
+                      backgroundColor: `${getStatusColor(sensor.status)}15`,
+                      color: getStatusColor(sensor.status),
+                      border: `1px solid ${getStatusColor(sensor.status)}30`,
+                    }}
+                  >
+                    {getStatusText(sensor.status)}
+                  </Badge>
+                </div>
+                
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <span>Dernière émission</span>
                   <span className="font-medium text-foreground">{formatLastSeen(sensor.lastSeen)}</span>
                 </div>
+                
                 <div 
-                  className="bg-muted/50 p-3 rounded-lg border border-border/50 hover:bg-accent/50 cursor-pointer transition-all duration-200 group"
+                  className="flex items-center gap-1 hover:text-primary cursor-pointer transition-colors group"
                   onClick={() => window.open(`/?view=map&center=${sensor.latitude},${sensor.longitude}&zoom=15`, '_blank')}
                 >
-                  <span className="text-muted-foreground block group-hover:text-primary transition-colors">📍 Coordonnées (cliquer pour voir sur la carte)</span>
-                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                  <span className="text-muted-foreground group-hover:text-primary">📍 Coordonnées (cliquer pour voir sur la carte)</span>
+                  <span className="font-medium text-foreground group-hover:text-primary">
                     {sensor.latitude}, {sensor.longitude}
                   </span>
                 </div>
-                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
-                  <span className="text-muted-foreground block">Fréquence</span>
+                
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <span>Fréquence</span>
                   <span className="font-medium text-foreground">{sensor.frequency} minutes</span>
+                </div>
+              </div>
+
+              {/* Informations compactes - Mobile */}
+              <div className="md:hidden space-y-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <h1 className="text-lg font-bold text-foreground truncate">{sensor.name}</h1>
+                  <Badge
+                    variant="secondary"
+                    className="text-xs font-medium shrink-0"
+                    style={{
+                      backgroundColor: `${getStatusColor(sensor.status)}15`,
+                      color: getStatusColor(sensor.status),
+                      border: `1px solid ${getStatusColor(sensor.status)}30`,
+                    }}
+                  >
+                    {getStatusText(sensor.status)}
+                  </Badge>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-muted/30 p-2 rounded">
+                    <div className="text-muted-foreground">Dernière émission</div>
+                    <div className="font-medium text-foreground">{formatLastSeen(sensor.lastSeen)}</div>
+                  </div>
+                  
+                  <div className="bg-muted/30 p-2 rounded">
+                    <div className="text-muted-foreground">Fréquence</div>
+                    <div className="font-medium text-foreground">{sensor.frequency} min</div>
+                  </div>
+                </div>
+                
+                <div 
+                  className="bg-muted/30 p-2 rounded cursor-pointer hover:bg-muted/50 transition-colors text-xs"
+                  onClick={() => window.open(`/?view=map&center=${sensor.latitude},${sensor.longitude}&zoom=15`, '_blank')}
+                >
+                  <div className="text-muted-foreground">📍 Coordonnées</div>
+                  <div className="font-medium text-foreground">
+                    {sensor.latitude}, {sensor.longitude}
+                  </div>
                 </div>
               </div>
             </div>
@@ -260,58 +312,82 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Filters */}
-        <Card className="glass-effect border-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Filter className="w-5 h-5" />
-              Filtres de données
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <Label className="text-sm font-medium mb-3 block">Période de données</Label>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Button 
-                  variant={activePreset === "1hour" ? "default" : "outline"} 
-                  size="sm" 
-                  onClick={() => setDatePreset(1, "1hour")}
-                  className={activePreset === "1hour" ? "bg-primary text-primary-foreground" : ""}
-                >
-                  Dernière heure
-                </Button>
-                <Button 
-                  variant={activePreset === "24hours" ? "default" : "outline"} 
-                  size="sm" 
-                  onClick={() => setDatePreset(24, "24hours")}
-                  className={activePreset === "24hours" ? "bg-primary text-primary-foreground" : ""}
-                >
-                  Dernières 24h
-                </Button>
-                <Button 
-                  variant={activePreset === "7days" ? "default" : "outline"} 
-                  size="sm" 
-                  onClick={() => setDatePreset(168, "7days")}
-                  className={activePreset === "7days" ? "bg-primary text-primary-foreground" : ""}
-                >
-                  7 derniers jours
-                </Button>
-                <Button 
-                  variant={activePreset === "30days" ? "default" : "outline"} 
-                  size="sm" 
-                  onClick={() => setDatePreset(720, "30days")}
-                  className={activePreset === "30days" ? "bg-primary text-primary-foreground" : ""}
-                >
-                  30 derniers jours
-                </Button>
-              </div>
+        {/* Data Visualization avec filtres compacts */}
+        <Tabs defaultValue="table" className="w-full">
+          <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-6">
+            <TabsList className="grid grid-cols-2 glass-effect hidden md:grid">
+              <TabsTrigger value="graph" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <BarChart3 className="w-4 h-4" />
+                Graphique
+              </TabsTrigger>
+              <TabsTrigger value="table" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <TableIcon className="w-4 h-4" />
+                Tableau
+              </TabsTrigger>
+            </TabsList>
+            
+            {/* Titre mobile */}
+            <div className="md:hidden">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <TableIcon className="w-5 h-5" />
+                Données du capteur
+              </h2>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Filtres compacts */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Période prédéfinie */}
+              <Select value={activePreset} onValueChange={(value) => {
+                if (value === "1hour") setDatePreset(1, "1hour")
+                else if (value === "24hours") setDatePreset(24, "24hours")
+                else if (value === "7days") setDatePreset(168, "7days")
+                else if (value === "30days") setDatePreset(720, "30days")
+              }}>
+                <SelectTrigger className="w-[120px] md:w-[150px]">
+                  <Clock className="w-4 h-4 mr-1 md:mr-2" />
+                  <SelectValue placeholder="Période" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1hour">Dernière heure</SelectItem>
+                  <SelectItem value="24hours">Dernières 24h</SelectItem>
+                  <SelectItem value="7days">7 derniers jours</SelectItem>
+                  <SelectItem value="30days">30 derniers jours</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Sélection de métriques */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Settings className="w-4 h-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">Métriques</span>
+                    <span className="sm:hidden">Données</span>
+                    <span className="ml-1">({selectedMetrics.length})</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  {METRICS.map((metric) => (
+                    <DropdownMenuCheckboxItem
+                      key={metric.key}
+                      checked={selectedMetrics.includes(metric.key)}
+                      onCheckedChange={() => handleMetricToggle(metric.key)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: metric.color }} />
+                        {metric.label}
+                      </div>
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Dates personnalisées - Desktop */}
+              <div className="hidden md:flex gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="justify-start">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.from ? format(dateRange.from, "dd/MM/yyyy HH:mm", { locale: fr }) : "Date de début"}
+                    <Button variant="outline" size="sm">
+                      <CalendarIcon className="w-4 h-4 mr-2" />
+                      {dateRange.from ? format(dateRange.from, "dd/MM", { locale: fr }) : "Début"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -328,9 +404,9 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="justify-start">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.to ? format(dateRange.to, "dd/MM/yyyy HH:mm", { locale: fr }) : "Date de fin"}
+                    <Button variant="outline" size="sm">
+                      <CalendarIcon className="w-4 h-4 mr-2" />
+                      {dateRange.to ? format(dateRange.to, "dd/MM", { locale: fr }) : "Fin"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -345,83 +421,71 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                   </PopoverContent>
                 </Popover>
               </div>
-            </div>
 
-            <div>
-              <Label className="text-sm font-medium mb-3 block">Métriques à afficher</Label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {METRICS.map((metric) => (
-                  <div key={metric.key} className="flex items-center space-x-2 p-2 rounded border border-border bg-card">
-                    <Checkbox
-                      id={metric.key}
-                      checked={selectedMetrics.includes(metric.key)}
-                      onCheckedChange={() => handleMetricToggle(metric.key)}
-                    />
-                    <Label htmlFor={metric.key} className="text-sm cursor-pointer flex-1">
-                      {metric.label}
-                    </Label>
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: metric.color }} />
+              {/* Dates personnalisées - Mobile (dropdown) */}
+              <div className="md:hidden">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <CalendarIcon className="w-4 h-4 mr-1" />
+                      Dates
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-48">
+                    <div className="p-2 space-y-2">
+                      <div className="text-xs font-medium text-muted-foreground">Période personnalisée</div>
+                      <div className="text-xs">
+                        Du: {dateRange.from ? format(dateRange.from, "dd/MM/yyyy", { locale: fr }) : "Non défini"}
+                      </div>
+                      <div className="text-xs">
+                        Au: {dateRange.to ? format(dateRange.to, "dd/MM/yyyy", { locale: fr }) : "Non défini"}
+                      </div>
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Résultat et téléchargement */}
+              {filteredData.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <div className="text-xs text-muted-foreground bg-primary/10 px-2 py-1 rounded whitespace-nowrap">
+                    {filteredData.length} mesures
                   </div>
-                ))}
-              </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      if (!dateRange.from || !dateRange.to) return
+                      try {
+                        const params = new URLSearchParams({
+                          sensors: sensor.id,
+                          from: dateRange.from.toISOString(),
+                          to: dateRange.to.toISOString(),
+                          format: "csv",
+                        })
+                        const response = await fetch(`/api/sensors/data?${params}`)
+                        if (response.ok) {
+                          const blob = await response.blob()
+                          const url = window.URL.createObjectURL(blob)
+                          const a = document.createElement("a")
+                          a.href = url
+                          a.download = `${sensor.name}-data-export.csv`
+                          document.body.appendChild(a)
+                          a.click()
+                          window.URL.revokeObjectURL(url)
+                          document.body.removeChild(a)
+                        }
+                      } catch (error) {
+                        console.error("Error downloading data:", error)
+                      }
+                    }}
+                    className="px-2"
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
             </div>
-
-            {filteredData.length > 0 && (
-              <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800/30">
-                <p className="text-sm text-blue-800 dark:text-blue-300">
-                  <strong>{filteredData.length}</strong> mesures trouvées pour la période sélectionnée
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Data Visualization */}
-        <Tabs defaultValue="graph" className="w-full">
-          <div className="flex justify-between items-center mb-6">
-            <TabsList className="grid grid-cols-2 glass-effect">
-              <TabsTrigger value="graph" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <BarChart3 className="w-4 h-4" />
-                Graphique
-              </TabsTrigger>
-              <TabsTrigger value="table" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <TableIcon className="w-4 h-4" />
-                Tableau
-              </TabsTrigger>
-            </TabsList>
-            
-            <Button
-              variant="outline"
-              onClick={async () => {
-                if (!dateRange.from || !dateRange.to) return
-                try {
-                  const params = new URLSearchParams({
-                    sensors: sensor.id,
-                    from: dateRange.from.toISOString(),
-                    to: dateRange.to.toISOString(),
-                    format: "csv",
-                  })
-                  const response = await fetch(`/api/sensors/data?${params}`)
-                  if (response.ok) {
-                    const blob = await response.blob()
-                    const url = window.URL.createObjectURL(blob)
-                    const a = document.createElement("a")
-                    a.href = url
-                    a.download = `${sensor.name}-data-export.csv`
-                    document.body.appendChild(a)
-                    a.click()
-                    window.URL.revokeObjectURL(url)
-                    document.body.removeChild(a)
-                  }
-                } catch (error) {
-                  console.error("Error downloading data:", error)
-                }
-              }}
-              className="border-2 hover:bg-accent/50 transition-all duration-300"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Télécharger CSV
-            </Button>
           </div>
 
           <TabsContent value="graph" className="mt-6">
@@ -498,27 +562,36 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="font-semibold">Timestamp</TableHead>
+                          <TableHead className="font-semibold min-w-[140px]">
+                            <span className="hidden sm:inline">Timestamp</span>
+                            <span className="sm:hidden">Date/Heure</span>
+                          </TableHead>
                           {selectedMetrics.map((metricKey) => {
                             const metric = METRICS.find((m) => m.key === metricKey)
                             return metric ? (
-                              <TableHead key={metricKey} className="font-semibold">
-                                {metric.label}
+                              <TableHead key={metricKey} className="font-semibold min-w-[80px]">
+                                <span className="hidden sm:inline">{metric.label}</span>
+                                <span className="sm:hidden">{metric.label.split(' ')[0]}</span>
                               </TableHead>
                             ) : null
                           })}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredData.slice(0, 100).map((data) => (
+                        {filteredData.slice(0, displayedRows).map((data) => (
                           <TableRow key={data.id} className="hover:bg-muted/50">
-                            <TableCell className="font-mono text-sm">
-                              {format(new Date(data.timestamp), "dd/MM/yyyy HH:mm:ss")}
+                            <TableCell className="font-mono text-xs sm:text-sm">
+                              <span className="hidden sm:inline">
+                                {format(new Date(data.timestamp), "dd/MM/yyyy HH:mm:ss")}
+                              </span>
+                              <span className="sm:hidden">
+                                {format(new Date(data.timestamp), "dd/MM HH:mm")}
+                              </span>
                             </TableCell>
                             {selectedMetrics.map((metricKey) => {
                               const metric = METRICS.find((m) => m.key === metricKey)
                               return metric ? (
-                                <TableCell key={metricKey}>
+                                <TableCell key={metricKey} className="text-xs sm:text-sm">
                                   {(data[metricKey as keyof SensorData] as number).toFixed(2)}
                                 </TableCell>
                               ) : null
@@ -527,11 +600,18 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                         ))}
                       </TableBody>
                     </Table>
-                    {filteredData.length > 100 && (
+                    {filteredData.length > displayedRows && (
                       <div className="mt-4 p-3 bg-muted/50 rounded-lg text-center border border-border/50">
-                        <p className="text-sm text-muted-foreground">
-                          Affichage des 100 premiers résultats sur <strong>{filteredData.length}</strong> au total
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Affichage des {displayedRows} premiers résultats sur <strong>{filteredData.length}</strong> au total
                         </p>
+                        <Button
+                          variant="outline"
+                          onClick={() => setDisplayedRows(prev => Math.min(prev + 50, filteredData.length))}
+                          className="transition-all duration-300"
+                        >
+                          Voir plus de données ({Math.min(50, filteredData.length - displayedRows)} suivantes)
+                        </Button>
                       </div>
                     )}
                   </div>

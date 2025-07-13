@@ -4,7 +4,9 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, Download, Search, Activity, Grid3X3, MapPin, RefreshCw } from "lucide-react"
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+// import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
+import { Plus, Download, Search, Activity, Grid3X3, MapPin, RefreshCw, X, Filter, Clock, SlidersHorizontal } from "lucide-react"
 import Link from "next/link"
 import { MapView } from "@/components/map-view"
 import { DataDownloadModal } from "@/components/data-download-modal"
@@ -32,6 +34,9 @@ export default function Dashboard() {
   const [sensors, setSensors] = useState<Sensor[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState<string | null>(null)
+  // const [frequencyFilter, setFrequencyFilter] = useState<string | null>(null)
+  // const [activityFilter, setActivityFilter] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
   const [isAddSensorModalOpen, setIsAddSensorModalOpen] = useState(false)
@@ -82,9 +87,11 @@ export default function Dashboard() {
     }
   }, [urlView])
 
-  const filteredSensors = sensors.filter((sensor) =>
-    sensor.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredSensors = sensors.filter((sensor) => {
+    const matchesSearch = sensor.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = !statusFilter || sensor.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
 
   const getStatusCounts = () => {
     const counts = { GREEN: 0, ORANGE: 0, RED: 0 }
@@ -123,12 +130,12 @@ export default function Dashboard() {
       <div className="lg:mr-[400px]">
         {/* Header */}
         <div className="glass-effect border-b sticky top-0 z-40">
-          <div className="max-w-7xl mx-auto p-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg">
-                    <Activity className="w-6 h-6 text-white" />
+          <div className="max-w-7xl mx-auto p-4 sm:p-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg">
+                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div 
                     className="lg:cursor-default cursor-pointer select-none lg:select-auto"
@@ -140,17 +147,22 @@ export default function Dashboard() {
                       }
                     }}
                   >
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                    <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                       AirWatch Bénin
                     </h1>
-                    <p className="text-muted-foreground">
-                      Surveillance de la qualité de l'air en temps réel
+                    <p className="text-sm sm:text-base text-muted-foreground">
+                      <span className="hidden sm:inline">Surveillance de la qualité de l'air en temps réel</span>
+                      <span className="sm:hidden">Qualité de l'air en temps réel</span>
                       <span className="lg:hidden text-xs ml-2 opacity-60">(toucher pour plus d'infos)</span>
                     </p>
                   </div>
                 </div>
 
-                <StatusIndicators statusCounts={statusCounts} />
+                <StatusIndicators 
+                  statusCounts={statusCounts} 
+                  onStatusFilter={setStatusFilter}
+                  activeFilter={statusFilter}
+                />
               </div>
 
               <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
@@ -192,35 +204,63 @@ export default function Dashboard() {
             </div>
 
             {/* Controls */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mt-8 pt-6 border-t border-border/50">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Rechercher par nom de capteur..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 glass-effect border-2 focus:border-primary/50 transition-all duration-300"
-                />
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">
+              <div className="flex flex-1 gap-2 sm:gap-3 max-w-4xl">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Rechercher par nom..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 glass-effect border-2 focus:border-primary/50 transition-all duration-300 text-sm sm:text-base"
+                  />
+                </div>
+
+                                {/* Filtres additionnels - Temporairement désactivés */}
+                <div className="flex items-center gap-2">
+                  <div className="text-xs text-muted-foreground">
+                    Filtres avancés bientôt disponibles
+                  </div>
+                </div>
+                
+                {/* Filtres actifs */}
+                {(searchTerm || statusFilter) && (
+                  <div className="flex items-center gap-1 overflow-x-auto">
+                    {statusFilter && (
+                      <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-full text-xs whitespace-nowrap">
+                        <Filter className="w-3 h-3" />
+                        <span className="hidden sm:inline">
+                          {statusFilter === 'GREEN' ? 'En ligne' : statusFilter === 'ORANGE' ? 'En retard' : 'Hors ligne'}
+                        </span>
+                        <span className="sm:hidden">
+                          {statusFilter === 'GREEN' ? 'Online' : statusFilter === 'ORANGE' ? 'Late' : 'Offline'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <Button
                   variant={viewMode === "grid" ? "default" : "outline"}
                   onClick={() => setViewMode("grid")}
                   size="sm"
-                  className="transition-all duration-300"
+                  className="transition-all duration-300 flex-1 sm:flex-none"
                 >
-                  <Grid3X3 className="w-4 h-4 mr-2" />
-                  Vue Grille
+                  <Grid3X3 className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Vue Grille</span>
+                  <span className="sm:hidden">Grille</span>
                 </Button>
                 <Button
                   variant={viewMode === "map" ? "default" : "outline"}
                   onClick={() => setViewMode("map")}
                   size="sm"
-                  className="transition-all duration-300"
+                  className="transition-all duration-300 flex-1 sm:flex-none"
                 >
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Vue Carte
+                  <MapPin className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Vue Carte</span>
+                  <span className="sm:hidden">Carte</span>
                 </Button>
               </div>
             </div>
@@ -228,13 +268,13 @@ export default function Dashboard() {
         </div>
 
         {/* Content */}
-        <div className="max-w-7xl mx-auto p-6">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6">
           {viewMode === "map" ? (
             <div className="animate-fade-in">
               <MapView sensors={filteredSensors} centerOptions={mapCenterOptions} />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 animate-fade-in">
               {filteredSensors.map((sensor, index) => (
                 <SensorCard
                   key={sensor.id}
@@ -248,15 +288,15 @@ export default function Dashboard() {
           )}
 
           {filteredSensors.length === 0 && !loading && (
-            <div className="text-center py-20 animate-fade-in">
-              <div className="max-w-md mx-auto">
-                <div className="w-20 h-20 bg-gradient-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-float">
-                  <Search className="w-10 h-10 text-muted-foreground" />
+            <div className="text-center py-12 sm:py-20 animate-fade-in">
+              <div className="max-w-md mx-auto px-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 animate-float">
+                  <Search className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">
                   {searchTerm ? "Aucun capteur trouvé" : "Aucun capteur enregistré"}
                 </h3>
-                <p className="text-muted-foreground mb-8 leading-relaxed">
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
                   {searchTerm
                     ? "Essayez de modifier votre recherche ou d'effacer les filtres."
                     : "Commencez par ajouter votre premier capteur pour surveiller la qualité de l'air."}
@@ -267,7 +307,8 @@ export default function Dashboard() {
                     className="gradient-primary text-white hover:scale-105 hover:shadow-xl transition-all duration-300"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Ajouter le premier capteur
+                    <span className="hidden sm:inline">Ajouter le premier capteur</span>
+                    <span className="sm:hidden">Ajouter un capteur</span>
                   </Button>
                 )}
               </div>
