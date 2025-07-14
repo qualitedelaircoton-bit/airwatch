@@ -2,14 +2,49 @@ import { Target, Shield, Globe, Users, BarChart3, Zap, Info, X, Activity, Heart,
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
+import { useAuth } from "@/contexts/auth-context";
+import Link from 'next/link';
+
 interface ProjectDescriptionProps {
   isModal?: boolean
   onClose?: () => void
 }
 
-function ProjectDescriptionContent({ isModal = false, onClose }: ProjectDescriptionProps) {
-  return (
+function ProjectDescriptionContent({ isModal = false, onClose, pendingUserCount = 0 }: ProjectDescriptionProps & { pendingUserCount?: number }) {
+  const { userProfile, logout } = useAuth();
+  const isAdmin = userProfile?.role === 'admin';
+    return (
     <div className="space-y-6">
+      {/* User Profile Section */}
+      {userProfile && (
+        <div className="glass-effect rounded-2xl p-6 border border-border/50 shadow-xl">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+              <Users className="w-4 h-4 text-white" />
+            </div>
+            <h2 className="text-xl font-semibold">Profil</h2>
+          </div>
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <p><span className="font-semibold text-foreground">Email:</span> {userProfile.email}</p>
+            <p className="capitalize"><span className="font-semibold text-foreground">Rôle:</span> {userProfile.role}</p>
+            {isAdmin && (
+              <Link href="/admin" className="-mx-2 flex items-center gap-2 rounded-md p-2 text-base font-semibold text-primary transition-colors hover:bg-primary/10">
+                <Shield className="h-5 w-5" />
+                <span>Panneau d'administration</span>
+                {pendingUserCount > 0 && (
+                  <span className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white animate-pulse">
+                    {pendingUserCount}
+                  </span>
+                )}
+              </Link>
+            )}
+          </div>
+          <Button onClick={logout} variant="outline" className="w-full mt-6">
+            Déconnexion
+          </Button>
+        </div>
+      )}
+
       {/* Header pour le modal */}
       {isModal && (
         <div className="flex items-center justify-between mb-6">
@@ -156,7 +191,7 @@ function ProjectDescriptionContent({ isModal = false, onClose }: ProjectDescript
   )
 }
 
-export function ProjectDescription() {
+export function ProjectDescription({ pendingUserCount }: { pendingUserCount: number }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
@@ -164,7 +199,7 @@ export function ProjectDescription() {
       {/* Version colonne pour grand écran - hauteur complète de l'écran */}
       <div className="hidden lg:flex flex-col fixed right-0 top-0 w-[400px] h-screen bg-background/95 backdrop-blur-sm border-l border-border/50 z-30">
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-          <ProjectDescriptionContent />
+          <ProjectDescriptionContent pendingUserCount={pendingUserCount} />
         </div>
       </div>
 
@@ -188,7 +223,7 @@ export function ProjectDescription() {
           {/* Modal content */}
           <div className="relative flex flex-col h-full">
             <div className="flex-1 bg-background border-l border-border/50 ml-8 overflow-y-auto p-6">
-              <ProjectDescriptionContent isModal onClose={() => setIsModalOpen(false)} />
+              <ProjectDescriptionContent isModal onClose={() => setIsModalOpen(false)} pendingUserCount={pendingUserCount} />
             </div>
           </div>
         </div>

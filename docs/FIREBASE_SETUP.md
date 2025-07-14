@@ -68,27 +68,60 @@ Remplacez les règles par défaut par :
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Règles pour les utilisateurs
+
+    // Helper function to check if a user is an admin
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Helper function to check if a user is approved
+    function isApproved() {
+        return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isApproved == true;
+    }
+
+    // Rules for the 'users' collection
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow read: if request.auth != null && 
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+      // ANY authenticated user can create their own profile upon signup
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // An admin can read any profile
+      // An authenticated user can read their own profile
+      allow get: if isAdmin() || request.auth.uid == userId;
+
+      // Admins can list all users
+      allow list: if isAdmin();
+      
+      // An admin can update any field for any user
+      // A user can update their own profile, but cannot change their role or approval status
+      allow update: if isAdmin() || (
+        request.auth.uid == userId &&
+        !('role' in request.resource.data) &&
+        !('isApproved' in request.resource.data)
+      );
+
+      // Only admins can delete users
+      allow delete: if isAdmin();
     }
-    
-    // Règles pour les capteurs
+
+    // Rules for the 'sensors' collection
     match /sensors/{sensorId} {
-      allow read: if request.auth != null && 
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isApproved == true;
-      allow write: if request.auth != null && 
-                      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
-    }
-    
-    // Règles pour les données des capteurs
-    match /sensor-data/{dataId} {
-      allow read: if request.auth != null && 
-                     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isApproved == true;
-      allow write: if request.auth != null && 
-                      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+      // Any approved user can read sensor data and list sensors
+      allow get, list: if isApproved();
+
+      // Only admins can create, update, or delete sensors
+      allow create, update, delete: if isAdmin();
+
+      // Rules for the 'sensorData' subcollection
+      match /sensorData/{dataId} {
+        // Any approved user can read historical data
+        allow get, list: if isApproved();
+
+        // No one can write directly to the sensorData subcollection from the client.
+        // This must be done by a trusted server environment (like our MQTT listener).
+        allow write: if false;
+      }
     }
   }
 }

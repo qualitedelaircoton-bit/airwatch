@@ -1,5 +1,5 @@
 {
-  "name": "my-v0-project",
+  "name": "AirWatchBenin",
   "version": "0.1.0",
   "private": true,
   "prisma": {
@@ -11,12 +11,14 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
+    "deploy:rules": "firebase deploy --only firestore:rules",
     "db:test-connection": "dotenv -- tsx scripts/test-connection.ts",
     "db:migrate-2025": "dotenv -- tsx scripts/migration-2025.ts",
     "test:config": "dotenv -- tsx scripts/test-new-config.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "migrate:firestore": "dotenv -- tsx scripts/migrate-prisma-to-firestore.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -58,6 +60,8 @@
     "date-fns": "latest",
     "embla-carousel-react": "8.6.0",
     "events": "latest",
+    "firebase": "^11.10.0",
+    "firebase-admin": "^13.4.0",
     "input-otp": "1.4.2",
     "lucide-react": "^0.513.0",
     "mqtt": "latest",
@@ -83,6 +87,7 @@
     "@types/react-dom": "^19.1.6",
     "dotenv": "^16.5.0",
     "dotenv-cli": "^8.0.0",
+    "firebase-tools": "^14.10.1",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
     "ts-node": "^10.9.2",

@@ -1,6 +1,7 @@
 import mqtt from "mqtt"
-import { prisma } from "./prisma"
-import { calculateSensorStatus } from "./status-calculator"
+import { db } from "./firebase"
+import { doc, getDoc, collection, writeBatch, addDoc, serverTimestamp } from "firebase/firestore"
+import { calculateSensorStatus } from "./firestore-status-calculator"
 
 interface MQTTSensorData {
   sensorId: string
@@ -232,52 +233,39 @@ class MQTTListener {
         return
       }
 
-      // Vérifier que le capteur existe
-      const sensor = await prisma.sensor.findUnique({
-        where: { id: sensorId },
-      })
+      // Vérifier que le capteur existe dans Firestore
+      const sensorRef = doc(db, "sensors", sensorId);
+      const sensorSnap = await getDoc(sensorRef);
 
-      if (!sensor) {
-        console.warn("⚠️ Capteur inconnu:", sensorId)
-        return
+      if (!sensorSnap.exists()) {
+        console.warn("⚠️ Capteur inconnu dans Firestore:", sensorId);
+        return;
       }
+      const sensor = sensorSnap.data();
 
-      // Transaction pour garantir la cohérence des données
-      await prisma.$transaction(async (tx) => {
-        // Enregistrer les données
-        await tx.sensorData.create({
-          data: {
-            sensorId: transformedData.sensorId,
-            timestamp: new Date(transformedData.timestamp),
-            pm1_0: transformedData.pm1_0,
-            pm2_5: transformedData.pm2_5,
-            pm10: transformedData.pm10,
-            o3_raw: transformedData.o3_raw,
-            o3_corrige: transformedData.o3_corrige,
-            no2_voltage_mv: transformedData.no2_voltage_mv,
-            no2_ppb: transformedData.no2_ppb,
-            voc_voltage_mv: transformedData.voc_voltage_mv,
-            co_voltage_mv: transformedData.co_voltage_mv,
-            co_ppb: transformedData.co_ppb,
-            rawData: rawData, // Conserver les données brutes originales
-          },
-        })
+      // Utiliser un batch pour garantir l'atomicité des écritures
+      const batch = writeBatch(db);
 
-        // Mettre à jour lastSeen et recalculer le statut
-        const now = new Date()
-        await tx.sensor.update({
-          where: { id: sensorId },
-          data: { lastSeen: now },
-        })
+      // 1. Ajouter les nouvelles données dans la sous-collection 'data'
+      const sensorDataRef = collection(db, "sensors", sensorId, "data");
+      batch.set(doc(sensorDataRef), {
+        ...transformedData,
+        timestamp: new Date(transformedData.timestamp), // Assurer que le timestamp est un objet Date Firestore
+        receivedAt: serverTimestamp(), // Ajouter un timestamp serveur
+        rawData: rawData, // Conserver les données brutes originales
+      });
 
-        const newStatus = await calculateSensorStatus(sensorId)
-        await tx.sensor.update({
-          where: { id: sensorId },
-          data: { status: newStatus },
-        })
-      })
+      // 2. Mettre à jour 'lastSeen' et le statut du capteur
+      const newStatus = await calculateSensorStatus(sensorId);
+      batch.update(sensorRef, {
+        lastSeen: serverTimestamp(),
+        status: newStatus,
+      });
 
-      console.log(`📊 Données reçues et traitées pour le capteur ${sensor.name} (${sensorId})`)
+      // Exécuter le batch
+      await batch.commit();
+
+      console.log(`📊 Données reçues et traitées pour le capteur ${sensor.name} (${sensorId}) via Firestore`)
     } catch (error) {
       console.error("❌ Erreur lors du traitement des données MQTT:", error)
       this.connectionStats.errors++

@@ -12,7 +12,7 @@ import {
   updateProfile,
   sendEmailVerification
 } from "firebase/auth"
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase"
 
 // Types
@@ -38,6 +38,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>
   updateUserProfile: (updates: Partial<UserProfile>) => Promise<void>
   resendEmailVerification: () => Promise<void>
+  requestAccess: (email: string, reason: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -210,6 +211,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
+  // Fonction pour demander un accès
+  const requestAccess = async (email: string, reason: string): Promise<void> => {
+    try {
+      const accessRequestsCollection = collection(db, "accessRequests");
+      await addDoc(accessRequestsCollection, {
+        email,
+        reason,
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Error submitting access request:", error);
+      throw error;
+    }
+  };
+
   // Écouter les changements d'authentification
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -250,6 +267,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     resetPassword,
     updateUserProfile,
     resendEmailVerification,
+    requestAccess,
   }
 
   return (
