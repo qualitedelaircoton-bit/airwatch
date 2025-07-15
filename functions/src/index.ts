@@ -1,4 +1,4 @@
-import * as functions from "firebase-functions";
+import {onCall, HttpsError} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 
 admin.initializeApp();
@@ -7,21 +7,23 @@ admin.initializeApp();
  * Callable function to approve an access request.
  * Creates a new user in Firebase Auth and a user profile in Firestore.
  */
-export const approveAccessRequest = functions.https.onCall(async (data, context) => {
+export const approveAccessRequest = onCall(async (request) => {
+  const { data, auth } = request;
+
   // 1. Check for authentication and admin role
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!auth) {
+    throw new HttpsError(
       "unauthenticated",
       "The function must be called while authenticated."
     );
   }
 
-  const adminUid = context.auth.uid;
+  const adminUid = auth.uid;
   const adminUserDoc = await admin.firestore().collection("users").doc(adminUid).get();
   const adminProfile = adminUserDoc.data();
 
   if (adminProfile?.role !== "admin") {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "permission-denied",
       "The function must be called by an admin user."
     );
@@ -30,7 +32,7 @@ export const approveAccessRequest = functions.https.onCall(async (data, context)
   // 2. Get data from the client
   const { email, requestId } = data;
   if (!email || !requestId) {
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "invalid-argument",
       "The function must be called with an 'email' and 'requestId' argument."
     );
@@ -70,7 +72,7 @@ export const approveAccessRequest = functions.https.onCall(async (data, context)
     return { success: true, message: `User ${email} created successfully.` };
   } catch (error) {
     console.error("Error approving access request:", error);
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       "internal",
       "An internal error occurred while creating the user.",
       error

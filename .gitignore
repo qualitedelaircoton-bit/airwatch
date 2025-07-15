@@ -2,6 +2,13 @@
 
 # dependencies
 /node_modules
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Cloud Functions
+functions/node_modules
+functions/package-lock.json
 
 # next.js
 /.next/
