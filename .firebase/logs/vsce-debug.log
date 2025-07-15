@@ -691,3 +691,34 @@ E0715 17:31:45.952154   20564 load.go:23] Could not load config from "d:\\Projet
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0715 17:36:16.045827   20564 load.go:23] Could not load config from \"d:\\\\Projet\\\\coton\\\\air-quality-platform\\\\dataconnect\": could not find dataconnect.yaml in `d:\\Projet\\coton\\air-quality-platform\\dataconnect`\n"}}
 [info] [Firebase Plugin] Stopping Data Connect toolkit
 [warn] !  Data Connect Emulator has exited upon receiving signal: SIGKILL 
+[debug] [2025-07-15T16:41:04.318Z] [Firebase Plugin] Activating Firebase extension.
+[info] [Firebase Plugin] Checked firebase-tools, is up to date!
+[debug] [2025-07-15T16:41:21.310Z] [Firebase Plugin] requireAuthWrapper
+[debug] [2025-07-15T16:41:21.353Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-15T16:41:21.355Z] > authorizing via signed-in user (qualitedelaircoton@gmail.com)
+[debug] [2025-07-15T16:41:21.380Z] Checked if tokens are valid: true, expires at: 1752598647523
+[debug] [2025-07-15T16:41:21.384Z] Checked if tokens are valid: true, expires at: 1752598647523
+[debug] [2025-07-15T16:41:21.385Z] [Firebase Plugin] User found:  qualitedelaircoton@gmail.com
+[info] [Firebase Plugin] (Core:Project) New user detected, fetching projects
+[debug] [2025-07-15T16:41:21.395Z] Checked if tokens are valid: true, expires at: 1752598647523
+[debug] [2025-07-15T16:41:21.404Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2025-07-15T16:41:21.488Z] [Firebase Plugin] VSCode notification server listening on port 40001
+[info] [Firebase Plugin] Starting Data Connect toolkit (version 2.8.0) on port 50001
+[debug] [2025-07-15T16:41:23.485Z] 'fdc build' failed with error: Unable to build your Data Connect schema and connectors (exit code 1): E0715 17:41:23.472040    7272 cmd.go:43] Error loading data connect config: could not find dataconnect.yaml in `d:\Projet\coton\air-quality-platform\dataconnect`
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"'fdc build' failed with error: Unable to build your Data Connect schema and connectors (exit code 1): E0715 17:41:23.472040    7272 cmd.go:43] Error loading data connect config: could not find dataconnect.yaml in `d:\\Projet\\coton\\air-quality-platform\\dataconnect`\n"}}
+[debug] [2025-07-15T16:41:23.487Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-07-15T16:41:23.536Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"dataconnect"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-07-15T16:41:23.536Z] Starting Data Connect Emulator with command {"binary":"C:\\Users\\DELL\\.cache\\firebase\\emulators\\dataconnect-emulator-2.8.0.exe","args":["--logtostderr","-v=2","dev","--listen=localhost:50001","--config_dir=d:\\Projet\\coton\\air-quality-platform\\dataconnect","--enable_output_schema_extensions=true","--enable_output_generated_sdk=true"],"optionalArgs":["listen","config_dir","enable_output_schema_extensions","enable_output_generated_sdk"],"joinArgs":true,"shell":false,"port":9399} {"metadata":{"emulator":{"name":"dataconnect"},"message":"Starting Data Connect Emulator with command {\"binary\":\"C:\\\\Users\\\\DELL\\\\.cache\\\\firebase\\\\emulators\\\\dataconnect-emulator-2.8.0.exe\",\"args\":[\"--logtostderr\",\"-v=2\",\"dev\",\"--listen=localhost:50001\",\"--config_dir=d:\\\\Projet\\\\coton\\\\air-quality-platform\\\\dataconnect\",\"--enable_output_schema_extensions=true\",\"--enable_output_generated_sdk=true\"],\"optionalArgs\":[\"listen\",\"config_dir\",\"enable_output_schema_extensions\",\"enable_output_generated_sdk\"],\"joinArgs\":true,\"shell\":false,\"port\":9399}"}}
+[info] i  dataconnect: Data Connect Emulator logging to dataconnect-debug.log {"metadata":{"emulator":{"name":"dataconnect"},"message":"Data Connect Emulator logging to \u001b[1mdataconnect-debug.log\u001b[22m"}}
+[debug] [2025-07-15T16:41:23.723Z] E0715 17:41:23.705019   18128 load.go:23] Could not load config from "d:\\Projet\\coton\\air-quality-platform\\dataconnect": could not find dataconnect.yaml in `d:\Projet\coton\air-quality-platform\dataconnect`
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0715 17:41:23.705019   18128 load.go:23] Could not load config from \"d:\\\\Projet\\\\coton\\\\air-quality-platform\\\\dataconnect\": could not find dataconnect.yaml in `d:\\Projet\\coton\\air-quality-platform\\dataconnect`\n"}}
+[debug] [2025-07-15T16:41:23.771Z] E0715 17:41:23.725137   18128 watch.go:76] watchAllDir unable to walk dir `d:\Projet\coton\air-quality-platform\dataconnect`: on path "d:\\Projet\\coton\\air-quality-platform\\dataconnect" (DirEntry: <nil>): CreateFile d:\Projet\coton\air-quality-platform\dataconnect: The system cannot find the file specified.
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0715 17:41:23.725137   18128 watch.go:76] watchAllDir unable to walk dir `d:\\Projet\\coton\\air-quality-platform\\dataconnect`: on path \"d:\\\\Projet\\\\coton\\\\air-quality-platform\\\\dataconnect\" (DirEntry: <nil>): CreateFile d:\\Projet\\coton\\air-quality-platform\\dataconnect: The system cannot find the file specified.\n"}}
+[debug] [2025-07-15T16:41:23.846Z] I0715 17:41:23.836905   18128 dev.go:95] Listening on address (HTTP + gRPC): 127.0.0.1:50001
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0715 17:41:23.836905   18128 dev.go:95] Listening on address (HTTP + gRPC): 127.0.0.1:50001\n"}}
+[error] [Firebase Plugin] error:  {}
+[debug] [2025-07-15T16:41:24.843Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2025-07-15T16:41:24.846Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[debug] [2025-07-15T16:41:47.884Z] E0715 17:41:33.738461   18128 load.go:23] Could not load config from "d:\\Projet\\coton\\air-quality-platform\\dataconnect": could not find dataconnect.yaml in `d:\Projet\coton\air-quality-platform\dataconnect`
+E0715 17:41:43.738322   18128 load.go:23] Could not load config from "d:\\Projet\\coton\\air-quality-platform\\dataconnect": could not find dataconnect.yaml in `d:\Projet\coton\air-quality-platform\dataconnect`
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"E0715 17:41:33.738461   18128 load.go:23] Could not load config from \"d:\\\\Projet\\\\coton\\\\air-quality-platform\\\\dataconnect\": could not find dataconnect.yaml in `d:\\Projet\\coton\\air-quality-platform\\dataconnect`\nE0715 17:41:43.738322   18128 load.go:23] Could not load config from \"d:\\\\Projet\\\\coton\\\\air-quality-platform\\\\dataconnect\": could not find dataconnect.yaml in `d:\\Projet\\coton\\air-quality-platform\\dataconnect`\n"}}
