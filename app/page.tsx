@@ -15,8 +15,20 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const cookieStore = await cookies();
+  // Vérifie la présence d'un cookie de session. Le nom exact peut varier,
+  // mais la présence d'un cookie lié à Firebase est un bon indicateur.
+  // Une solution plus robuste utiliserait le SDK Admin pour valider le cookie.
+  const sessionCookie = cookieStore.get("__session"); // Nom de cookie courant pour les sessions
+
+  if (sessionCookie) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950">
       {/* Header */}

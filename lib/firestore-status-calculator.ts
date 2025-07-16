@@ -1,5 +1,5 @@
-import { db } from "./firebase";
-import { doc, getDoc, collection, getDocs, writeBatch, serverTimestamp, Timestamp } from "firebase/firestore";
+import { adminDb } from "./firebase-admin";
+import { Timestamp } from "firebase-admin/firestore";
 
 // Remplacement de l'enum Prisma
 export type Status = "GREEN" | "ORANGE" | "RED";
@@ -18,14 +18,19 @@ interface SensorData {
  * @returns Le nouveau statut du capteur.
  */
 export async function calculateSensorStatus(sensorId: string): Promise<Status> {
-  const sensorRef = doc(db, "sensors", sensorId);
-  const sensorSnap = await getDoc(sensorRef);
+  if (!adminDb) {
+    throw new Error("Firebase Admin SDK not initialized. Check environment variables.");
+  }
+  const sensorRef = adminDb.collection("sensors").doc(sensorId);
+  const sensorSnap = await sensorRef.get();
 
-  if (!sensorSnap.exists() || !sensorSnap.data().lastSeen) {
+  const sensorData = sensorSnap.data();
+
+  if (!sensorSnap.exists || !sensorData?.lastSeen) {
     return "RED";
   }
 
-  const sensor = sensorSnap.data() as SensorData;
+  const sensor = sensorData as SensorData;
   const now = new Date();
   const lastSeenTime = sensor.lastSeen!.toDate();
   const timeDifferenceMinutes = (now.getTime() - lastSeenTime.getTime()) / (1000 * 60);
@@ -48,9 +53,12 @@ export async function calculateSensorStatus(sensorId: string): Promise<Status> {
  * Met à jour le statut de tous les capteurs de la base de données.
  */
 export async function updateAllSensorStatuses() {
-  const sensorsRef = collection(db, "sensors");
-  const querySnapshot = await getDocs(sensorsRef);
-  const batch = writeBatch(db);
+  if (!adminDb) {
+    throw new Error("Firebase Admin SDK not initialized. Check environment variables.");
+  }
+  const sensorsRef = adminDb.collection("sensors");
+  const querySnapshot = await sensorsRef.get();
+  const batch = adminDb.batch();
   let updates = 0;
 
   for (const docSnap of querySnapshot.docs) {
@@ -58,8 +66,8 @@ export async function updateAllSensorStatuses() {
     const newStatus = await calculateSensorStatus(sensor.id);
 
     if (sensor.status !== newStatus) {
-      const sensorRef = doc(db, "sensors", sensor.id);
-      batch.update(sensorRef, { status: newStatus });
+      const sensorDocRef = adminDb.collection("sensors").doc(sensor.id);
+      batch.update(sensorDocRef, { status: newStatus });
       updates++;
     }
   }

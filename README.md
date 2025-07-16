@@ -266,6 +266,40 @@ pnpm db:check           # Vérifier l'intégrité des données
 ### Système
 - `GET /api/health` - Health check de l'API
 
+## 📨 Payload MQTT
+
+Les données des capteurs sont envoyées sur le topic `sensors/{sensorId}/data` au format JSON. Voici la structure attendue :
+
+```json
+{
+  "ts": 1672531200,
+  "PM1": 10.1,
+  "PM25": 25.2,
+  "PM10": 50.3,
+  "O3": 0.45,
+  "O3c": 0.42,
+  "NO2v": 1.23,
+  "NO2": 55.6,
+  "VOCv": 0.88,
+  "COv": 2.15,
+  "CO": 150.7
+}
+```
+
+| Champ  | Type   | Unité          | Description                                  |
+| :----- | :----- | :------------- | :------------------------------------------- |
+| `ts`   | Number | Unix Timestamp | Timestamp de la mesure (secondes ou ms)      |
+| `PM1`  | Number | µg/m³          | Particules fines PM1.0                       |
+| `PM25` | Number | µg/m³          | Particules fines PM2.5                       |
+| `PM10` | Number | µg/m³          | Particules fines PM10                        |
+| `O3`   | Number | Volts          | Tension brute du capteur O3                  |
+| `O3c`  | Number | ppb            | Concentration O3 corrigée                    |
+| `NO2v` | Number | Volts          | Tension brute du capteur NO2                 |
+| `NO2`  | Number | ppb            | Concentration NO2                            |
+| `VOCv` | Number | Volts          | Tension brute du capteur VOC                 |
+| `COv`  | Number | Volts          | Tension brute du capteur CO                  |
+| `CO`   | Number | ppb            | Concentration CO                             |
+
 ## 🔐 Sécurité
 
 - **Validation des données** avec Zod schemas

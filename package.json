@@ -1,30 +1,22 @@
 {
-  "name": "AirWatchBenin",
+  "name": "air-watch-benin",
   "version": "0.1.0",
   "private": true,
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
+
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
     "deploy:rules": "firebase deploy --only firestore:rules",
-    "db:test-connection": "dotenv -- tsx scripts/test-connection.ts",
-    "db:migrate-2025": "dotenv -- tsx scripts/migration-2025.ts",
-    "test:config": "dotenv -- tsx scripts/test-new-config.ts",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:seed": "prisma db seed",
-    "migrate:firestore": "dotenv -- tsx scripts/migrate-prisma-to-firestore.ts"
+    "db:reset-firestore": "dotenv -- tsx scripts/reset-firestore.ts",
+    "db:stats-firestore": "dotenv -- tsx scripts/get-firestore-stats.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
     "@neondatabase/serverless": "^1.0.1",
-    "@prisma/adapter-neon": "^6.9.0",
-    "@prisma/client": "6.9.0",
+
+
     "@radix-ui/react-accordion": "1.2.11",
     "@radix-ui/react-alert-dialog": "1.1.14",
     "@radix-ui/react-aspect-ratio": "1.1.7",
@@ -67,7 +59,7 @@
     "mqtt": "latest",
     "next": "15.3.3",
     "next-themes": "latest",
-    "prisma": "6.9.0",
+
     "react": "^19.1.0",
     "react-day-picker": "9.1.0",
     "react-dom": "^19.1.0",

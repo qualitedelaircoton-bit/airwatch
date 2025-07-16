@@ -1,9 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { calculateSensorStatus } from "@/lib/status-calculator"
+import { db } from "@/lib/firebase"
+import { collection, getDocs, addDoc, updateDoc, doc, getDoc, query, where, orderBy } from "firebase/firestore"
+import { calculateSensorStatus } from "@/lib/firestore-status-calculator"
 
 export async function GET(
-  request: NextRequest, 
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -19,16 +20,15 @@ export async function GET(
     const fromDate = new Date(from)
     const toDate = new Date(to)
 
-    const data = await prisma.sensorData.findMany({
-      where: {
-        sensorId: id,
-        timestamp: {
-          gte: fromDate,
-          lte: toDate,
-        },
-      },
-      orderBy: { timestamp: "asc" },
-    })
+    const dataRef = collection(db, "sensors", id, "data")
+    const q = query(
+      dataRef,
+      where("timestamp", ">=", fromDate),
+      where("timestamp", "<=", toDate),
+      orderBy("timestamp", "asc")
+    )
+    const snapshot = await getDocs(q)
+    const data = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
 
     return NextResponse.json(data)
   } catch (error) {
@@ -47,63 +47,49 @@ export async function POST(
 
     console.log(`📊 Données reçues pour capteur ${sensorId}:`, body)
 
-    // Transformer le format de données de l'appareil vers le format de la base
+    // Transformer le format de données de l'appareil vers Firestore
     const transformedData = transformSensorData(body, sensorId)
-    
     if (!transformedData) {
       console.error("❌ Format de données invalide:", body)
       return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
     }
 
     // Vérifier que le capteur existe
-    const sensor = await prisma.sensor.findUnique({
-      where: { id: sensorId },
-    })
-
-    if (!sensor) {
+    const sensorRef = doc(db, "sensors", sensorId)
+    const sensorSnap = await getDoc(sensorRef)
+    if (!sensorSnap.exists()) {
       console.warn("⚠️ Capteur inconnu:", sensorId)
       return NextResponse.json({ error: "Sensor not found" }, { status: 404 })
     }
+    const sensorData = sensorSnap.data() as any
 
-    // Transaction pour garantir la cohérence des données
-    await prisma.$transaction(async (tx) => {
-      // Enregistrer les données
-      await tx.sensorData.create({
-        data: {
-          sensorId: transformedData.sensorId,
-          timestamp: transformedData.timestamp,
-          pm1_0: transformedData.pm1_0,
-          pm2_5: transformedData.pm2_5,
-          pm10: transformedData.pm10,
-          o3_raw: transformedData.o3_raw,
-          o3_corrige: transformedData.o3_corrige,
-          no2_voltage_mv: transformedData.no2_voltage_mv,
-          no2_ppb: transformedData.no2_ppb,
-          voc_voltage_mv: transformedData.voc_voltage_mv,
-          co_voltage_mv: transformedData.co_voltage_mv,
-          co_ppb: transformedData.co_ppb,
-          rawData: body, // Conserver les données brutes pour debug
-        },
-      })
-
-      // Mettre à jour lastSeen et recalculer le statut
-      const now = new Date()
-      await tx.sensor.update({
-        where: { id: sensorId },
-        data: { lastSeen: now },
-      })
-
-      const newStatus = await calculateSensorStatus(sensorId)
-      await tx.sensor.update({
-        where: { id: sensorId },
-        data: { status: newStatus },
-      })
+    // Enregistrer les données
+    const dataRef = collection(db, "sensors", sensorId, "data")
+    await addDoc(dataRef, {
+      timestamp: transformedData.timestamp,
+      pm1_0: transformedData.pm1_0,
+      pm2_5: transformedData.pm2_5,
+      pm10: transformedData.pm10,
+      o3_raw: transformedData.o3_raw,
+      o3_corrige: transformedData.o3_corrige,
+      no2_voltage_v: transformedData.no2_voltage_v,
+      no2_ppb: transformedData.no2_ppb,
+      voc_voltage_v: transformedData.voc_voltage_v,
+      co_voltage_v: transformedData.co_voltage_v,
+      co_ppb: transformedData.co_ppb,
+      rawData: body,
     })
 
-    console.log(`✅ Données traitées et sauvegardées pour le capteur ${sensor.name} (${sensorId})`)
-    
+    // Mettre à jour le capteur
+    await updateDoc(sensorRef, {
+      lastSeen: transformedData.timestamp,
+      status: await calculateSensorStatus(sensorId),
+      isActive: true,
+    })
+
+    console.log(`✅ Données traitées et sauvegardées pour le capteur ${sensorData.name} (${sensorId})`)
     return NextResponse.json({ 
-      success: true, 
+      success: true,
       message: "Data received and processed successfully",
       timestamp: new Date().toISOString()
     })
@@ -159,10 +145,10 @@ function transformSensorData(rawData: any, sensorId: string) {
       pm10: Number(rawData.PM10),
       o3_raw: Number(rawData.O3),
       o3_corrige: Number(rawData.O3c),
-      no2_voltage_mv: Number(rawData.NO2v),
+      no2_voltage_v: Number(rawData.NO2v),
       no2_ppb: Number(rawData.NO2),
-      voc_voltage_mv: Number(rawData.VOCv),
-      co_voltage_mv: Number(rawData.COv),
+      voc_voltage_v: Number(rawData.VOCv),
+      co_voltage_v: Number(rawData.COv),
       co_ppb: Number(rawData.CO),
     }
   } catch (error) {

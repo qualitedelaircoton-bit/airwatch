@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
-import { getFirestore, collection, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore"
+import { getFirestore, collection, getDocs, doc, updateDoc, type Timestamp } from "firebase/firestore"
+import type { UserProfile } from '@/types';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
@@ -32,15 +33,7 @@ export { auth, db }
 
 export default app 
 
-// Type definition for user profiles
-export interface UserProfile {
-  uid: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'consultant';
-  isApproved: boolean;
-  createdAt: Timestamp;
-}
+
 
 /**
  * Fetches all user profiles from the 'users' collection in Firestore.

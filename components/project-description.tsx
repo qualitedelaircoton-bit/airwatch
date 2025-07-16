@@ -11,7 +11,7 @@ interface ProjectDescriptionProps {
 }
 
 function ProjectDescriptionContent({ isModal = false, onClose, pendingUserCount = 0 }: ProjectDescriptionProps & { pendingUserCount?: number }) {
-  const { userProfile, logout } = useAuth();
+  const { userProfile, signOut } = useAuth();
   const isAdmin = userProfile?.role === 'admin';
     return (
     <div className="space-y-6">
@@ -39,7 +39,7 @@ function ProjectDescriptionContent({ isModal = false, onClose, pendingUserCount 
               </Link>
             )}
           </div>
-          <Button onClick={logout} variant="outline" className="w-full mt-6">
+          <Button onClick={signOut} variant="outline" className="w-full mt-6">
             Déconnexion
           </Button>
         </div>

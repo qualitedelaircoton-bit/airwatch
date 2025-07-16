@@ -1,11 +1,15 @@
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { startMQTTListener, isMQTTConnected, getMQTTStats } from "@/lib/mqtt-listener"
+import { NextResponse } from "next/server";
+import { adminDb } from "@/lib/firebase-admin";
+import { startMQTTListener, isMQTTConnected, getMQTTStats } from "@/lib/mqtt-listener";
 
 export async function GET() {
   try {
-    // Test de la base de données
-    await prisma.$queryRaw`SELECT 1`
+    // Test de la base de données (Firestore Admin)
+    if (!adminDb) {
+      console.error("Firestore Admin SDK is not initialized.");
+      return NextResponse.json({ error: "Database not initialized" }, { status: 503 });
+    }
+    await adminDb.collection("sensors").limit(1).get();
     
     // Vérifier l'environnement - MQTT listener ne fonctionne qu'en local
     const isVercel = process.env.VERCEL === '1'

@@ -16,6 +16,22 @@ Ce document trace l'historique complet de la migration du projet AirWatch Bénin
 
 ## Étapes de Migration Réalisées
 
+### 2024-07-30: Refonte du Traitement des Données Capteurs
+
+**Contexte** : Le traitement initial des données MQTT (webhook et listener) contenait des conversions d'unités incorrectes (Volts -> millivolts) et des champs qui n'étaient plus pertinents par rapport au payload réel des capteurs.
+
+**Changements Effectués** :
+
+1.  **Harmonisation du Payload** : Le traitement des données a été entièrement revu pour correspondre **strictement** à la structure fournie par les capteurs. Toutes les conversions d'unités superflues (ex: `* 1000` sur les tensions) ont été supprimées.
+2.  **Mise à Jour des Interfaces** : Les interfaces TypeScript (`SensorData`, `MQTTSensorData`, etc.) ont été mises à jour dans tout le projet pour refléter les nouveaux noms de champs et les bonnes unités (Volts, ppb, µg/m³).
+3.  **Correction du Frontend** : L'interface utilisateur (tableaux de bord, graphiques) a été corrigée pour afficher les données brutes avec les bonnes unités, sans conversion côté client.
+4.  **Nettoyage du Code** : L'ancien webhook (`pages/api/webhook.ts`) a été définitivement supprimé au profit du listener MQTT (`lib/mqtt-listener.ts`) et de la Cloud Function Firebase, qui ont été adaptés.
+5.  **Documentation** : Le `README.md` a été mis à jour avec une section détaillant le format exact du payload MQTT.
+
+**Impact** : La cohérence des données est maintenant assurée de la réception à l'affichage. Le code est plus simple, plus juste, et aligné avec la source de vérité (les capteurs).
+
+---
+
 ### 1. Analyse et Planification
 - ✅ Analyse de la structure du projet existant
 - ✅ Identification des dépendances à mettre à jour

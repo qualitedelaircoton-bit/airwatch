@@ -30,29 +30,31 @@ interface Sensor {
 }
 
 interface SensorData {
-  id: string
-  timestamp: string
-  pm1_0: number
-  pm2_5: number
-  pm10: number
-  o3_raw: number
-  o3_corrige: number
-  no2_voltage_mv: number
-  no2_ppb: number
-  voc_voltage_mv: number
-  co_voltage_mv: number
-  co_ppb: number
+  id: string; // Ajout de l'ID pour la key de la table
+  timestamp: number; // Millisecondes
+  pm1_0: number;
+  pm2_5: number;
+  pm10: number;
+  o3_raw: number;
+  o3_corrige: number;
+  no2_voltage_v: number;
+  no2_ppb: number;
+  voc_voltage_v: number;
+  co_voltage_v: number;
+  co_ppb: number;
 }
 
 const METRICS = [
-  { key: "pm1_0", label: "PM1.0 (µg/m³)", color: "#8884d8", unit: "µg/m³" },
-  { key: "pm2_5", label: "PM2.5 (µg/m³)", color: "#82ca9d", unit: "µg/m³" },
+  { key: "pm1_0", label: "PM1 (µg/m³)", color: "#8884d8", unit: "µg/m³" },
+  { key: "pm2_5", label: "PM25 (µg/m³)", color: "#82ca9d", unit: "µg/m³" },
   { key: "pm10", label: "PM10 (µg/m³)", color: "#ffc658", unit: "µg/m³" },
-  { key: "o3_raw", label: "O3 Brut (ppb)", color: "#ff7300", unit: "ppb" },
-  { key: "o3_corrige", label: "O3 Corrigé (ppb)", color: "#00ff00", unit: "ppb" },
-  { key: "no2_ppb", label: "NO2 (ppb)", color: "#ff0000", unit: "ppb" },
-  { key: "co_ppb", label: "CO (ppb)", color: "#8b5cf6", unit: "ppb" },
-  { key: "voc_voltage_mv", label: "VOC (mV)", color: "#f59e0b", unit: "mV" },
+  { key: "o3_raw", label: "O3 (ppb)", color: "#ff7300", unit: "ppb" },
+  { key: "o3_corrige", label: "O3c (ppb)", color: "#eab308", unit: "ppb" },
+  { key: "no2_ppb", label: "NO2 (ppb)", color: "#8b5cf6", unit: "ppb" },
+  { key: "co_ppb", label: "CO (ppm)", color: "#ef4444", unit: "ppm" },
+  { key: "no2_voltage_v", label: "NO2v (Vs)", color: "#a855f7", unit: "Vs" },
+  { key: "voc_voltage_v", label: "VOCv (Vs)", color: "#f59e0b", unit: "Vs" },
+  { key: "co_voltage_v", label: "COv (Vs)", color: "#f43f5e", unit: "Vs" },
 ]
 
 export default function SensorDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -102,13 +104,13 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
       const filtered = sensorData.filter((data) => {
         const dataDate = new Date(data.timestamp)
         return dataDate >= dateRange.from! && dataDate <= dateRange.to!
-      })
+      });
       // Sort by timestamp descending (most recent first)
-      const sorted = filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      const sorted = filtered.sort((a, b) => b.timestamp - a.timestamp);
       setFilteredData(sorted)
     } else {
       // Sort by timestamp descending (most recent first)
-      const sorted = [...sensorData].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      const sorted = [...sensorData].sort((a, b) => b.timestamp - a.timestamp);
       setFilteredData(sorted)
     }
     // Reset displayed rows when data changes
@@ -136,8 +138,13 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
       })
 
       const response = await fetch(`/api/sensors/${id}/data?${searchParams}`)
-      const data = await response.json()
-      setSensorData(data)
+      const rawData = await response.json()
+      const processedData = rawData.map((d: any) => ({
+        ...d,
+        id: `${d.id}-${d.timestamp.seconds}`,
+        timestamp: d.timestamp.seconds * 1000,
+      }))
+      setSensorData(processedData)
     } catch (error) {
       console.error("Error fetching sensor data:", error)
     } finally {

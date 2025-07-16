@@ -6,7 +6,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Mail, CheckCircle, RefreshCw, AlertCircle } from "lucide-react"
+import { Loader2, Mail, CheckCircle, RefreshCw, AlertCircle } from "lucide-react";
+import AuthLayout from '@/components/auth/auth-layout';
 import { useAuth } from "@/contexts/auth-context"
 
 export default function VerifyEmailPage() {
@@ -18,7 +19,7 @@ export default function VerifyEmailPage() {
   const [canResend, setCanResend] = useState(true)
   const [countdown, setCountdown] = useState(0)
   
-  const { user, userProfile, resendEmailVerification, logout } = useAuth()
+  const { user, userProfile, sendVerificationEmail, signOut } = useAuth()
   const router = useRouter()
 
   // Vérifier le statut de l'utilisateur
@@ -76,7 +77,7 @@ export default function VerifyEmailPage() {
     setMessage("")
 
     try {
-      await resendEmailVerification()
+      await sendVerificationEmail()
       setMessage("Email de vérification renvoyé avec succès ! Vérifiez votre boîte email.")
       setResendCount(prev => prev + 1)
       setCanResend(false)
@@ -102,7 +103,7 @@ export default function VerifyEmailPage() {
   const handleLogout = async () => {
     setLoading(true)
     try {
-      await logout()
+      await signOut()
       router.push("/auth/login")
     } catch (error) {
       console.error("Logout error:", error)
@@ -133,17 +134,21 @@ export default function VerifyEmailPage() {
     }
   }
 
+
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <AuthLayout
+      title="Vérifiez votre email"
+      description={`Un email de vérification a été envoyé à ${user.email}`}>
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Mail className="h-12 w-12 text-emerald-600" />
@@ -256,6 +261,6 @@ export default function VerifyEmailPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
-  )
+    </AuthLayout>
+  );
 } 

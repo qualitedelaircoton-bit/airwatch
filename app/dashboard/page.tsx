@@ -20,7 +20,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ThemeToggle } from "@/components/theme-toggle"
+import { ThemeToggle } from "@/components/theme-toggle";
+import NotificationBell from "@/components/admin/notification-bell";
 import { SensorCard } from "@/components/sensor-card"
 import { StatusIndicators } from "@/components/status-indicators"
 import { ProjectDescription } from "@/components/project-description"
@@ -30,7 +31,9 @@ import { WebhookNotification } from "@/components/webhook-notification"
 import { AdvancedFilters } from "@/components/advanced-filters"
 import { ActiveFilters } from "@/components/active-filters"
 import { SortOptions, type SortOption } from "@/components/sort-options"
-import { useAuth, type UserProfile } from "@/contexts/auth-context"
+import ProtectedRoute from "@/components/auth/protected-route";
+import { useAuth } from "@/contexts/auth-context";
+import type { UserProfile } from "@/types";
 import { getAllUsers } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
@@ -46,7 +49,15 @@ interface Sensor {
   status: "GREEN" | "ORANGE" | "RED"
 }
 
-export default function Dashboard() {
+export default function DashboardPage() {
+  return (
+    <ProtectedRoute allowedRoles={['authenticated', 'admin']}>
+      <Dashboard />
+    </ProtectedRoute>
+  );
+}
+
+function Dashboard() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { user, userProfile, loading: authLoading } = useAuth()
@@ -135,7 +146,7 @@ export default function Dashboard() {
         }
 
         // Mettre à jour l'état local pour retirer le capteur supprimé
-        setSensors(sensors.filter(sensor => sensor.id !== sensorToDelete.id));
+        setSensors(sensors.filter((sensor: Sensor) => sensor.id !== sensorToDelete.id));
         // Optionnel: afficher une notification de succès
         // toast({ title: "Succès", description: "Le capteur a été supprimé." });
 
@@ -181,7 +192,8 @@ export default function Dashboard() {
         }
       })
       const data = await response.json()
-      setSensors(data)
+      const sensorsArray: Sensor[] = Array.isArray(data) ? data : []
+      setSensors(sensorsArray)
     } catch (error) {
       console.error("Error fetching sensors:", error)
     } finally {
@@ -387,7 +399,8 @@ export default function Dashboard() {
                 />
               </div>
 
-              <div className="flex flex-row gap-3 flex-wrap">
+              <div className="flex flex-row gap-3 flex-wrap items-center">
+                {isAdmin && <NotificationBell />}
                 <ThemeToggle />
                 {isAdmin && (
                   <>

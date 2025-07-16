@@ -1,25 +1,29 @@
 "use client"
 
+"use client"
+
 import { useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import AuthLayout from '@/components/auth/auth-layout';
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Activity, CheckCircle } from "lucide-react"
+import { Loader2, UserPlus } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 
-export default function RequestAccessPage() {
+export default function SignUpPage() {
+  const [displayName, setDisplayName] = useState("")
   const [email, setEmail] = useState("")
-  const [reason, setReason] = useState("")
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [password, setPassword] = useState("")
+  const [accessReason, setAccessReason] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   
-  const { requestAccess } = useAuth()
+  const { signUp } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: FormEvent) => {
@@ -27,76 +31,71 @@ export default function RequestAccessPage() {
     setLoading(true)
     setError("")
 
-    if (!email.trim() || !reason.trim()) {
-      setError("L'email et la raison de la demande sont requis.")
+    if (!displayName.trim() || !email.trim() || !password.trim() || !accessReason.trim()) {
+      setError("Tous les champs sont requis.")
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.")
       setLoading(false)
       return
     }
 
     try {
-      await requestAccess(email, reason)
-      setIsSubmitted(true)
+      await signUp(email, password, displayName, accessReason)
+      router.push('/pending-approval');
     } catch (err: any) {
-      console.error("Request access error:", err)
-      setError(err.message || "Une erreur est survenue lors de l'envoi de la demande.")
+      console.error("Sign up error:", err)
+      if (err.code === 'auth/email-already-in-use') {
+        setError("Cette adresse email est déjà utilisée.")
+      } else {
+        setError(err.message || "Une erreur est survenue lors de la création du compte.")
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center">
-          <CardHeader>
-            <div className="flex justify-center mb-4">
-              <CheckCircle className="h-12 w-12 text-emerald-600" />
-            </div>
-            <CardTitle className="text-2xl font-bold text-emerald-600">
-              Demande envoyée !
-            </CardTitle>
-            <CardDescription>
-              Votre demande a été soumise avec succès.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-              Vous recevrez un email une fois que votre demande aura été examinée par un administrateur.
-            </p>
-            <Button
-              onClick={() => router.push("/auth/login")}
-              className="w-full"
-            >
-              Retour à la connexion
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <AuthLayout
+      title="Créer un compte"
+      description="Remplissez le formulaire pour demander l'accès à la plateforme."
+    >
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Activity className="h-12 w-12 text-emerald-600" />
+            <UserPlus className="h-12 w-12 text-emerald-600" />
           </div>
           <CardTitle className="text-2xl font-bold">
-            Demande d'accès
+            Créer un compte
           </CardTitle>
           <CardDescription>
-            Remplissez le formulaire pour soumettre votre demande.
+            Votre compte sera soumis à l'approbation d'un administrateur.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             
+            <div className="space-y-2">
+              <Label htmlFor="displayName">Nom complet</Label>
+              <Input
+                id="displayName"
+                type="text"
+                placeholder="John Doe"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                required
+                disabled={loading}
+              />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Adresse Email</Label>
               <Input
@@ -111,15 +110,28 @@ export default function RequestAccessPage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="reason">Raison de la demande</Label>
-              <Textarea
-                id="reason"
-                placeholder="Expliquez brièvement pourquoi vous avez besoin d'un accès (ex: je suis consultant pour la mairie de Cotonou)."
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
+              <Label htmlFor="password">Mot de passe</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="accessReason">Raison de la demande d'accès</Label>
+              <Textarea
+                id="accessReason"
+                placeholder="Décrivez brièvement pourquoi vous avez besoin d'un accès..."
+                value={accessReason}
+                onChange={(e) => setAccessReason(e.target.value)}
+                required
+                disabled={loading}
+                className="min-h-[100px]"
               />
             </div>
             
@@ -131,25 +143,22 @@ export default function RequestAccessPage() {
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Envoi en cours...
+                  Création du compte...
                 </>
               ) : (
-                "Envoyer la demande"
+                "Créer mon compte"
               )}
             </Button>
           </form>
           
-          <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            Déjà un compte ?{" "}
-            <Link
-              href="/auth/login"
-              className="text-emerald-600 hover:text-emerald-700 hover:underline font-medium"
-            >
+          <div className="mt-4 text-center text-sm">
+            Vous avez déjà un compte?{" "}
+            <Link href="/auth/login" className="underline">
               Se connecter
             </Link>
           </div>
         </CardContent>
       </Card>
-    </div>
-  )
+    </AuthLayout>
+  );
 }

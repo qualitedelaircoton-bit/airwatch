@@ -6,7 +6,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Clock, CheckCircle, RefreshCw, UserCheck, Mail } from "lucide-react"
+import { Loader2, Clock, CheckCircle, RefreshCw, UserCheck, Mail } from "lucide-react";
+import AuthLayout from '@/components/auth/auth-layout';
 import { useAuth } from "@/contexts/auth-context"
 
 export default function PendingApprovalPage() {
@@ -14,7 +15,7 @@ export default function PendingApprovalPage() {
   const [checkingStatus, setCheckingStatus] = useState(false)
   const [lastCheck, setLastCheck] = useState<Date | null>(null)
   
-  const { user, userProfile, logout } = useAuth()
+  const { user, userProfile, signOut } = useAuth()
   const router = useRouter()
 
   // Vérifier le statut de l'utilisateur
@@ -76,7 +77,7 @@ export default function PendingApprovalPage() {
   const handleLogout = async () => {
     setLoading(true)
     try {
-      await logout()
+      await signOut()
       router.push("/auth/login")
     } catch (error) {
       console.error("Logout error:", error)
@@ -90,12 +91,15 @@ export default function PendingApprovalPage() {
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <AuthLayout
+      title="En attente d'approbation"
+      description="Votre compte est en cours de validation par un administrateur."
+    >
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Clock className="h-12 w-12 text-amber-600" />
@@ -138,7 +142,7 @@ export default function PendingApprovalPage() {
               <li>• Nom : {userProfile.displayName || "Non renseigné"}</li>
               <li>• Email : {userProfile.email}</li>
               <li>• Rôle demandé : {userProfile.role === "admin" ? "Administrateur" : "Consultant"}</li>
-              <li>• Créé le : {userProfile.createdAt.toLocaleDateString("fr-FR")}</li>
+                            <li>• Créé le : {userProfile.createdAt.toDate().toLocaleDateString("fr-FR")}</li>
             </ul>
           </div>
           
@@ -181,7 +185,7 @@ export default function PendingApprovalPage() {
               Besoin d'aide ou des questions ? Contactez un administrateur.
             </p>
             <Button
-              onClick={handleLogout}
+              onClick={signOut}
               variant="ghost"
               className="w-full"
               disabled={loading}
@@ -200,6 +204,6 @@ export default function PendingApprovalPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
-  )
+    </AuthLayout>
+  );
 } 

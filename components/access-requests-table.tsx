@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+
+// Fetch pending access requests via API
+
+// import Firestore client removed
+// import db removed
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -37,11 +40,21 @@ const approveRequest = async (requestId: string, email: string) => {
 };
 
 const rejectRequest = async (requestId: string) => {
-  const requestRef = doc(db, 'accessRequests', requestId);
-  // We just update the status to 'rejected'. The user will not be created.
-  // The document will no longer appear in the pending list.
-  await updateDoc(requestRef, { status: 'rejected' });
-  toast.info('Access request has been rejected.');
+  try {
+    const res = await fetch(`/api/access-requests/${requestId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'rejected' }),
+    });
+    if (!res.ok) {
+      const { error } = await res.json();
+      throw new Error(error || 'Failed to reject access request');
+    }
+    toast.info('Access request has been rejected.');
+  } catch (error: any) {
+    console.error('Error rejecting access request:', error);
+    toast.error(error.message || 'Failed to reject access request.');
+  }
 };
 
 export function AccessRequestsTable() {
@@ -49,23 +62,30 @@ export function AccessRequestsTable() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(collection(db, 'accessRequests'), where('status', '==', 'pending'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const accessRequests: AccessRequest[] = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        accessRequests.push({
-          id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate(),
-        } as AccessRequest);
-      });
-      setRequests(accessRequests);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    const fetchRequests = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/access-requests?status=pending');
+        if (!res.ok) throw new Error('Failed to load access requests');
+        const data = await res.json();
+        setRequests(data.map((r: any) => ({
+          id: r.id,
+          email: r.email,
+          reason: r.reason,
+          status: r.status,
+          createdAt: new Date(r.createdAt),
+        })));
+      } catch (err) {
+        console.error('Error loading access requests:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRequests();
+    const interval = setInterval(fetchRequests, 5000);
+    return () => clearInterval(interval);
   }, []);
+    
 
   if (loading) {
     return <div>Loading access requests...</div>;

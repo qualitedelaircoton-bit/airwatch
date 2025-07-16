@@ -13,7 +13,7 @@ class RealtimeService extends EventEmitter {
     // Mettre à jour les statuts toutes les minutes
     this.updateInterval = setInterval(async () => {
       try {
-        const { updateAllSensorStatuses } = await import("./status-calculator")
+        const { updateAllSensorStatuses } = await import("./firestore-status-calculator")
         await updateAllSensorStatuses()
         this.emit("statusUpdate")
       } catch (error) {
@@ -39,7 +39,7 @@ class RealtimeService extends EventEmitter {
       console.log(`🚀 Mise à jour immédiate déclenchée pour le capteur ${sensorId}`)
       
       // Mettre à jour le statut du capteur spécifique
-      const { calculateSensorStatus } = await import("./status-calculator")
+      const { calculateSensorStatus } = await import("./firestore-status-calculator")
       await calculateSensorStatus(sensorId)
       
       this.lastWebhookUpdate = new Date()
