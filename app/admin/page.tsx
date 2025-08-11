@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
-import { Loader2, ShieldCheck } from 'lucide-react'
+import { Loader2, ShieldCheck, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 import UserManagementTable from '@/components/admin/user-management-table';
 
@@ -43,12 +45,20 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="space-y-8">
           <div>
-            <div className="flex items-center gap-4 mb-8">
-              <ShieldCheck className="h-10 w-10 text-emerald-500" />
-              <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Gestion des Utilisateurs</h2>
-                  <p className="text-muted-foreground">Approuver, modifier ou supprimer des comptes existants.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+              <div className="flex items-center gap-4">
+                <ShieldCheck className="h-10 w-10 text-emerald-500" />
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Gestion des Utilisateurs</h2>
+                    <p className="text-muted-foreground">Approuver, modifier ou supprimer des comptes existants.</p>
+                </div>
               </div>
+              <Link href="/dashboard" passHref>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <ArrowLeft className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Retour au tableau de bord</span>
+                </Button>
+              </Link>
             </div>
             <UserManagementTable />
           </div>

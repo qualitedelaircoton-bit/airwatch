@@ -207,7 +207,7 @@ export const mqttWebhook = onRequest({ cors: true, secrets: [mqttWebhookSecret] 
  * Callable function to delete a user.
  * Deletes the user from Firebase Auth and their profile from Firestore.
  */
-export const deleteUser = onCall({ cors: true }, async (request) => {
+export const deleteUser = onCall({ cors: true, enforceAppCheck: false }, async (request) => {
   const { data, auth } = request;
 
   // 1. Check for authentication and admin role
@@ -266,7 +266,7 @@ export const deleteUser = onCall({ cors: true }, async (request) => {
  * Callable function to reset a user's email verification status.
  * Only callable by an admin.
  */
-export const resetVerificationStatus = onCall({ cors: true }, async (request) => {
+export const resetVerificationStatus = onCall({ cors: true, enforceAppCheck: false }, async (request) => {
   const { data, auth } = request;
 
   // 1. Check for authentication and admin role
@@ -317,6 +317,73 @@ export const resetVerificationStatus = onCall({ cors: true }, async (request) =>
       "Une erreur interne est survenue lors de la réinitialisation.",
       error
     );
+  }
+});
+
+/**
+ * Approves a user and triggers the verification email.
+ * - Sets isApproved to true in Firestore.
+ * - Creates a document in the 'mail' collection to be sent by the Trigger Email extension.
+ */
+export const approveUserAndSendVerificationEmail = onCall({ cors: true, enforceAppCheck: false }, async (request) => {
+  const { data, auth } = request;
+
+  // 1. Check for authentication and admin role
+  if (!auth) {
+    throw new HttpsError("unauthenticated", "Authentication required.");
+  }
+
+  const callerSnap = await admin.firestore().collection("users").doc(auth.uid).get();
+  if (callerSnap.data()?.role !== "admin") {
+    throw new HttpsError("permission-denied", "Admin role required.");
+  }
+
+  // 2. Validate UID input
+  const { uid } = data;
+  if (!uid || typeof uid !== 'string') {
+    throw new HttpsError('invalid-argument', 'User UID is missing or invalid.');
+  }
+
+  try {
+    const userRecord = await admin.auth().getUser(uid);
+    const userEmail = userRecord.email;
+
+    if (!userEmail) {
+      throw new HttpsError("not-found", "User email not found.");
+    }
+
+    // 3. Update user profile in Firestore
+    const userDocRef = admin.firestore().collection("users").doc(uid);
+    await userDocRef.update({ isApproved: true, updatedAt: admin.firestore.Timestamp.now() });
+
+    // 4. Generate verification link that points to our custom action handler
+    const actionCodeSettings = {
+      url: "https://air-quality-platform-jet.vercel.app/auth/action",
+      handleCodeInApp: false, // We are handling it in a web page
+    };
+    const link = await admin.auth().generateEmailVerificationLink(userEmail, actionCodeSettings);
+
+    // 5. Create email document for the Trigger Email extension
+    await admin.firestore().collection("mail").add({
+      to: userEmail,
+      template: {
+        name: "verification", // Template name for the email extension
+        data: {
+          displayName: userRecord.displayName || "Utilisateur",
+          verificationLink: link, // Pass the full generated link to the template
+        },
+      },
+    });
+
+    logger.info(`Admin ${auth.uid} approved user ${uid}. Verification email queued.`);
+    return { success: true, message: "User approved and verification email sent." };
+
+  } catch (error) {
+    logger.error(`Error approving user ${uid} by admin ${auth.uid}:`, error);
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+    throw new HttpsError("internal", "An internal error occurred.", error);
   }
 });
 

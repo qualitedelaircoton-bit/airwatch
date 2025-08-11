@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Plus, Download, Search, Activity, Grid3X3, MapPin } from "lucide-react"
+import { Plus, Download, Search, Activity, Grid3X3, MapPin, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 import { MapView } from "@/components/map-view"
 import { DataDownloadModal } from "@/components/data-download-modal"
@@ -401,6 +401,13 @@ function Dashboard() {
 
               <div className="flex flex-row gap-3 flex-wrap items-center">
                 {isAdmin && <NotificationBell />}
+                {isAdmin && (
+                  <Link href="/admin" passHref>
+                    <Button variant="outline" size="icon" title="Page Admin">
+                      <ShieldCheck className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
                 <ThemeToggle />
                 {isAdmin && (
                   <>
@@ -413,11 +420,12 @@ function Dashboard() {
                     </Button>
                     <Button
                       variant="outline"
+                      size="icon"
                       onClick={() => setIsDownloadModalOpen(true)}
-                      className="border-2 hover:bg-accent/50 transition-all duration-300"
+                      title="Télécharger les données"
                     >
-                      <Download className="w-4 h-4 mr-2 hidden sm:block" />
-                      Télécharger
+                      <Download className="h-4 w-4" />
+                      <span className="sr-only">Télécharger les données</span>
                     </Button>
                   </>
                 )}

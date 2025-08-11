@@ -120,7 +120,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUp = async (email: string, password: string, displayName: string, accessReason: string): Promise<void> => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(result.user);
+      // Email verification will be sent upon admin approval.
       // Pass the new accessReason field to be stored in Firestore
       await createOrUpdateUserProfile(result.user, { displayName, accessReason });
     } catch (error) {
@@ -132,6 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async (): Promise<void> => {
     try {
       await firebaseSignOut(auth);
+      window.location.href = '/'; // Redirect to home page after sign out
     } catch (error) {
       console.error("Logout error:", error);
       throw error;

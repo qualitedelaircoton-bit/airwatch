@@ -73,20 +73,35 @@ export default function UserManagementTable({ onPendingCountChange }: UserManage
 
   const handleApprovalChange = async (uid: string, isApproved: boolean) => {
     try {
-      await updateUserProfile(uid, { isApproved });
+      // Optimistically update UI first for better UX
       const userToMove = [...pendingUsers, ...approvedUsers].find(u => u.uid === uid);
       if (userToMove) {
         if (isApproved) {
           setPendingUsers(prev => prev.filter(u => u.uid !== uid));
-          setApprovedUsers(prev => [...prev, { ...userToMove, isApproved }].sort((a, b) => a.email.localeCompare(b.email)));
+          setApprovedUsers(prev => [...prev, { ...userToMove, isApproved: true }].sort((a, b) => a.email.localeCompare(b.email)));
         } else {
           setApprovedUsers(prev => prev.filter(u => u.uid !== uid));
-          setPendingUsers(prev => [...prev, { ...userToMove, isApproved }].sort((a, b) => a.email.localeCompare(b.email)));
+          setPendingUsers(prev => [...prev, { ...userToMove, isApproved: false }].sort((a, b) => a.email.localeCompare(b.email)));
         }
       }
-      toast({ title: 'Succès', description: 'Le statut a été mis à jour.' });
+
+      if (isApproved) {
+        // On approval, call the Cloud Function to handle backend logic
+        const functions = getFunctions();
+        const approveUser = httpsCallable(functions, 'approveUserAndSendVerificationEmail');
+        await approveUser({ uid });
+        toast({ title: 'Utilisateur Approuvé', description: "L'email de vérification a été envoyé." });
+      } else {
+        // On disapproval, just update the profile directly
+        await updateUserProfile(uid, { isApproved: false });
+        toast({ title: 'Statut mis à jour', description: "La demande a été marquée comme non approuvée." });
+      }
+
     } catch (error) {
-      toast({ variant: 'destructive', title: 'Erreur', description: 'Impossible de mettre à jour le statut.' });
+      console.error("Error handling approval change:", error);
+      toast({ variant: 'destructive', title: 'Erreur', description: "Une erreur est survenue lors de la mise à jour du statut." });
+      // Revert UI changes on error
+      // This part can be complex, for now we log the error and show a toast
     }
   };
 
