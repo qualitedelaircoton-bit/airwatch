@@ -16,7 +16,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!authLoading && userProfile?.role !== 'admin') {
-      router.push('/') // Redirige les non-admins vers la page d'accueil
+      router.push('/dashboard') // Redirige les non-admins vers le dashboard
     }
   }, [userProfile, authLoading, router])
 

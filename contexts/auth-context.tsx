@@ -133,7 +133,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async (): Promise<void> => {
     try {
       await firebaseSignOut(auth);
-      window.location.href = '/'; // Redirect to home page after sign out
+      window.location.href = '/auth/login'; // Redirect to login page after sign out
     } catch (error) {
       console.error("Logout error:", error);
       throw error;

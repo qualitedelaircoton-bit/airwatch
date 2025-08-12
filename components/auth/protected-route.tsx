@@ -25,12 +25,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
     }
 
     if (authStatus === 'pending_approval') {
-      router.push('/pending-approval');
+      router.push('/auth/pending-approval');
       return;
     }
 
     if (authStatus === 'pending_verification') {
-      router.push('/verify-email');
+      router.push('/auth/verify-email');
       return;
     }
 

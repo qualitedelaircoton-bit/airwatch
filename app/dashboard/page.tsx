@@ -162,7 +162,7 @@ function Dashboard() {
   useEffect(() => {
     if (!authLoading) {
       if (!user) {
-        router.push('/landing')
+        router.push('/')
         return
       }
       

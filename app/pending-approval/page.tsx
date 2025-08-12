@@ -10,7 +10,7 @@ export default function PendingApprovalPage() {
 
   useEffect(() => {
     if (authStatus === 'authenticated' || authStatus === 'admin') {
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [authStatus, router]);
 

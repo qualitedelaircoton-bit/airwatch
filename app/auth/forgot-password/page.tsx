@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
   // Rediriger si déjà connecté
   useEffect(() => {
     if (user) {
-      router.push("/")
+      router.push("/dashboard")
     }
   }, [user, router])
 

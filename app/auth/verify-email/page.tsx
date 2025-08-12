@@ -31,7 +31,7 @@ export default function VerifyEmailPage() {
 
     if (user.emailVerified) {
       if (userProfile && userProfile.isApproved) {
-        router.push("/")
+        router.push("/dashboard")
       } else {
         router.push("/auth/pending-approval")
       }
@@ -58,7 +58,11 @@ export default function VerifyEmailPage() {
         if (user.emailVerified) {
           setMessage("Email vérifié avec succès ! Redirection...")
           setTimeout(() => {
-            router.push("/auth/pending-approval")
+            if (userProfile && userProfile.isApproved) {
+              router.push("/dashboard")
+            } else {
+              router.push("/auth/pending-approval")
+            }
           }, 2000)
         }
       } catch (error) {

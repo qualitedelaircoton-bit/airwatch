@@ -31,7 +31,7 @@ export default function PendingApprovalPage() {
     }
 
     if (userProfile && userProfile.isApproved) {
-      router.push("/")
+      router.push("/dashboard")
       return
     }
   }, [user, userProfile, router])
@@ -64,7 +64,7 @@ export default function PendingApprovalPage() {
       // Attendre un peu pour laisser le temps au profil de se mettre à jour
       setTimeout(() => {
         if (userProfile && userProfile.isApproved) {
-          router.push("/")
+          router.push("/dashboard")
         }
       }, 1000)
     } catch (error) {
