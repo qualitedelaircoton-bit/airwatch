@@ -1,81 +1,99 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mqttWebhook = exports.scheduledSensorStatusUpdate = exports.approveAccessRequest = void 0;
+exports.approveAccessRequest = exports.approveUserAndSendVerificationEmail = exports.resetVerificationStatus = exports.deleteUser = exports.mqttWebhook = exports.createNotificationOnNewUser = exports.scheduledSensorStatusUpdate = void 0;
 const https_1 = require("firebase-functions/v2/https");
+const firestore_1 = require("firebase-functions/v2/firestore");
 const scheduler_1 = require("firebase-functions/v2/scheduler");
 const logger = require("firebase-functions/logger");
 const firestore_status_calculator_1 = require("./lib/firestore-status-calculator");
+const shared_data_handler_1 = require("./lib/shared-data-handler");
 const admin = require("firebase-admin");
 const params_1 = require("firebase-functions/params");
 admin.initializeApp();
 const mqttWebhookSecret = (0, params_1.defineSecret)('MQTT_WEBHOOK_SECRET');
 /**
- * Callable function to approve an access request.
- * Creates a new user in Firebase Auth and a user profile in Firestore.
+ * Scheduled function to update sensor statuses and create alerts for faulty sensors.
  */
-exports.approveAccessRequest = (0, https_1.onCall)(async (request) => {
-    const { data, auth } = request;
-    // 1. Check for authentication and admin role
-    if (!auth) {
-        throw new https_1.HttpsError("unauthenticated", "The function must be called while authenticated.");
-    }
-    const adminUid = auth.uid;
-    const adminUserDoc = await admin.firestore().collection("users").doc(adminUid).get();
-    const adminProfile = adminUserDoc.data();
-    if (adminProfile?.role !== "admin") {
-        throw new https_1.HttpsError("permission-denied", "The function must be called by an admin user.");
-    }
-    // 2. Get data from the client
-    const { email, requestId } = data;
-    if (!email || !requestId) {
-        throw new https_1.HttpsError("invalid-argument", "The function must be called with an 'email' and 'requestId' argument.");
-    }
+exports.scheduledSensorStatusUpdate = (0, scheduler_1.onSchedule)({
+    schedule: "every 15 minutes",
+    timeZone: "Europe/Paris",
+}, async (event) => {
+    logger.info("⏰ Running scheduled sensor status update and alert check...");
+    const adminDb = admin.firestore();
     try {
-        // 3. Create the user in Firebase Authentication
-        const userRecord = await admin.auth().createUser({ email });
-        // 4. Create the user profile in Firestore
-        const userProfile = {
-            email: userRecord.email,
-            displayName: userRecord.displayName || null,
-            photoURL: userRecord.photoURL || null,
-            role: "consultant",
-            isApproved: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            emailVerified: false,
-        };
-        await admin.firestore().collection("users").doc(userRecord.uid).set(userProfile);
-        // 5. Update the access request status to 'approved'
-        await admin.firestore().collection("accessRequests").doc(requestId).update({
-            status: "approved",
-            approvedBy: adminUid,
-            approvedAt: new Date(),
-        });
-        // 6. (Optional) Send a welcome email or password reset link
-        // For security, it's better to send a password reset link than a password.
-        const passwordResetLink = await admin.auth().generatePasswordResetLink(email);
-        // Here you would use a service like SendGrid, Mailgun, etc. to send the email.
-        // For now, we'll just log it.
-        console.log(`Password reset link for ${email}: ${passwordResetLink}`);
-        return { success: true, message: `User ${email} created successfully.` };
+        // 1. Update statuses for all sensors
+        await (0, firestore_status_calculator_1.updateAllSensorStatuses)();
+        logger.info("✅ Sensor statuses updated.");
+        // 2. Check for faulty sensors and create notifications
+        const sensorsSnapshot = await adminDb.collection("sensors").get();
+        const now = admin.firestore.Timestamp.now();
+        const twentyFourHoursAgo = admin.firestore.Timestamp.fromMillis(now.toMillis() - 24 * 60 * 60 * 1000);
+        for (const doc of sensorsSnapshot.docs) {
+            const sensor = doc.data();
+            if (sensor.status === "ORANGE" || sensor.status === "RED") {
+                // Check for recent existing notifications for this sensor to avoid spam
+                const recentNotifs = await adminDb.collection("admin_notifications")
+                    .where("type", "==", "sensor_alert")
+                    .where("metadata.sensorId", "==", doc.id)
+                    .where("createdAt", ">", twentyFourHoursAgo)
+                    .limit(1)
+                    .get();
+                if (recentNotifs.empty) {
+                    const notificationRef = adminDb.collection("admin_notifications").doc();
+                    const message = sensor.status === "RED" ?
+                        `Alerte : Le capteur '${sensor.name}' est hors ligne.` :
+                        `Attention : Le capteur '${sensor.name}' a des retards de communication.`;
+                    const newNotification = {
+                        id: notificationRef.id,
+                        type: 'sensor_alert',
+                        message,
+                        read: false,
+                        createdAt: now,
+                        link: `/admin/sensors/${doc.id}`,
+                        metadata: {
+                            sensorId: doc.id,
+                            sensorName: sensor.name,
+                            status: sensor.status
+                        }
+                    };
+                    await notificationRef.set(newNotification);
+                    logger.warn(`🚨 Created alert for sensor ${sensor.name} (ID: ${doc.id}) with status ${sensor.status}.`);
+                }
+            }
+        }
+        logger.info("✅ Faulty sensor check completed.");
     }
     catch (error) {
-        console.error("Error approving access request:", error);
-        throw new https_1.HttpsError("internal", "An internal error occurred while creating the user.", error);
+        logger.error("❌ Error running scheduled sensor status update and alert check:", error);
     }
 });
-/**
- * Scheduled function to update the status of all sensors periodically.
- * Replaces the setInterval logic from the old realtimeService.
- */
-exports.scheduledSensorStatusUpdate = (0, scheduler_1.onSchedule)("every 5 minutes", async (event) => {
-    logger.info("⏰ Running scheduled sensor status update...");
-    try {
-        await (0, firestore_status_calculator_1.updateAllSensorStatuses)();
-        logger.info("✅ Scheduled sensor status update completed successfully.");
+// Firestore trigger to create a notification on new user creation for approval
+exports.createNotificationOnNewUser = (0, firestore_1.onDocumentCreated)("users/{userId}", async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) {
+        logger.log("No data associated with the event");
+        return;
     }
-    catch (error) {
-        logger.error("❌ Error running scheduled sensor status update:", error);
+    const userData = snapshot.data();
+    const userId = event.params.userId;
+    // Only create a notification if the user is not approved
+    if (userData.isApproved === false) {
+        const email = userData.email;
+        const displayName = userData.displayName || 'N/A';
+        const notificationRef = admin.firestore().collection("admin_notifications").doc();
+        const newNotification = {
+            id: notificationRef.id,
+            type: 'new_user',
+            message: `Nouvel utilisateur : ${displayName} (${email}) demande l'accès.`,
+            read: false,
+            createdAt: admin.firestore.Timestamp.now(),
+            link: `/admin?userId=${userId}`
+        };
+        logger.info(`Creating notification for new user awaiting approval: ${email}`);
+        await notificationRef.set(newNotification);
+    }
+    else {
+        logger.info(`User ${userData.email} created as already approved, no notification needed.`);
     }
 });
 exports.mqttWebhook = (0, https_1.onRequest)({ cors: true, secrets: [mqttWebhookSecret] }, async (req, res) => {
@@ -84,6 +102,7 @@ exports.mqttWebhook = (0, https_1.onRequest)({ cors: true, secrets: [mqttWebhook
         return;
     }
     try {
+        logger.info(" Webhook MQTT reçu", { body: req.body });
         logger.info("📡 Webhook MQTT reçu", { body: req.body });
         const authHeader = req.headers.authorization;
         if (authHeader !== `Bearer ${mqttWebhookSecret.value()}`) {
@@ -107,41 +126,35 @@ exports.mqttWebhook = (0, https_1.onRequest)({ cors: true, secrets: [mqttWebhook
             return;
         }
         const sensor = sensorSnap.data();
-        let data;
+        let rawData;
         try {
-            data = JSON.parse(body.payload);
+            rawData = JSON.parse(body.payload);
         }
         catch (error) {
-            logger.warn("Invalid JSON payload", { payload: body.payload });
+            logger.warn("Invalid JSON payload", { payload: body.payload, error });
             res.status(400).json({ error: "Invalid JSON payload" });
             return;
         }
-        // Utiliser le timestamp du payload (data.ts) s'il est valide, sinon l'heure actuelle.
-        const timestampInSeconds = typeof data.ts === 'number' && !isNaN(data.ts) ? data.ts : Math.floor(Date.now() / 1000);
-        const sensorData = {
-            timestamp: admin.firestore.Timestamp.fromMillis(timestampInSeconds * 1000),
-            pm1_0: data.PM1 ? parseFloat(data.PM1) : 0,
-            pm2_5: data.PM25 ? parseFloat(data.PM25) : 0,
-            pm10: data.PM10 ? parseFloat(data.PM10) : 0,
-            o3_raw: data.O3 ? parseFloat(data.O3) : 0,
-            o3_corrige: data.O3c ? parseFloat(data.O3c) : 0,
-            no2_voltage_v: data.NO2v ? parseFloat(data.NO2v) : 0, // Unité: Volts (V)
-            no2_ppb: data.NO2 ? parseFloat(data.NO2) : 0,
-            voc_voltage_v: data.VOCv ? parseFloat(data.VOCv) : 0, // Unité: Volts (V)
-            co_voltage_v: data.COv ? parseFloat(data.COv) : 0, // Unité: Volts (V)
-            co_ppb: data.CO ? parseFloat(data.CO) : 0,
-            temperature: data.temp ? parseFloat(data.temp) : null,
-            humidity: data.hum ? parseFloat(data.hum) : null,
-            pressure: data.pres ? parseFloat(data.pres) : null,
-            rawData: data,
+        const transformedData = (0, shared_data_handler_1.transformDeviceData)(rawData, sensorId);
+        if (!transformedData || !(0, shared_data_handler_1.validateSensorData)(transformedData)) {
+            logger.warn("Invalid or incomplete sensor data", { sensorId, payload: body.payload });
+            res.status(400).json({ error: "Invalid or incomplete sensor data" });
+            return;
+        }
+        // Convert the ISO string timestamp from shared function to Firestore Timestamp
+        const firestoreTimestamp = admin.firestore.Timestamp.fromDate(new Date(transformedData.timestamp));
+        const dataToSave = {
+            ...transformedData,
+            timestamp: firestoreTimestamp,
+            rawData: body.payload, // Store the original raw payload string
         };
-        const dataCollectionRef = admin.firestore().collection(`sensors/${sensorId}/sensorData`);
-        const savedRef = await dataCollectionRef.add(sensorData);
+        const dataCollectionRef = admin.firestore().collection(`sensors/${sensorId}/data`);
+        const savedRef = await dataCollectionRef.add(dataToSave);
         const newStatus = await (0, firestore_status_calculator_1.calculateSensorStatus)(sensorId);
         await sensorRef.update({
             status: newStatus,
             lastSeen: admin.firestore.Timestamp.now(),
-            active: true,
+            isActive: true,
         });
         logger.info(`✅ Données reçues et traitées pour le capteur ${sensor.name}`, { sensorId });
         res.status(200).json({
@@ -157,6 +170,201 @@ exports.mqttWebhook = (0, https_1.onRequest)({ cors: true, secrets: [mqttWebhook
             error: "Internal server error",
             message: error instanceof Error ? error.message : "Unknown error",
         });
+    }
+});
+/**
+ * Callable function to delete a user.
+ * Deletes the user from Firebase Auth and their profile from Firestore.
+ */
+exports.deleteUser = (0, https_1.onCall)({ cors: true, enforceAppCheck: false }, async (request) => {
+    const { data, auth } = request;
+    // 1. Check for authentication and admin role
+    if (!auth) {
+        throw new https_1.HttpsError("unauthenticated", "Vous devez être connecté pour effectuer cette action.");
+    }
+    const callerUid = auth.uid;
+    const callerSnap = await admin.firestore().collection("users").doc(callerUid).get();
+    const callerProfile = callerSnap.data();
+    if (callerProfile?.role !== "admin") {
+        throw new https_1.HttpsError("permission-denied", "Vous n'avez pas les droits pour supprimer un utilisateur.");
+    }
+    // 2. Get UID to delete from the client
+    const { uid: uidToDelete } = data;
+    if (!uidToDelete || typeof uidToDelete !== 'string') {
+        throw new https_1.HttpsError('invalid-argument', 'Le UID de l\'utilisateur à supprimer est manquant ou invalide.');
+    }
+    try {
+        // 1. Delete from Firebase Authentication
+        await admin.auth().deleteUser(uidToDelete);
+        // 2. Delete from Firestore
+        await admin.firestore().collection("users").doc(uidToDelete).delete();
+        logger.info(`Admin ${callerUid} deleted user ${uidToDelete}`);
+        return { success: true, message: "L'utilisateur a été supprimé avec succès." };
+    }
+    catch (error) {
+        logger.error(`Error deleting user ${uidToDelete} by admin ${callerUid}:`, error);
+        if (error instanceof https_1.HttpsError) {
+            throw error;
+        }
+        throw new https_1.HttpsError("internal", "Une erreur interne est survenue lors de la suppression de l'utilisateur.", error);
+    }
+});
+/**
+ * Callable function to reset a user's email verification status.
+ * Only callable by an admin.
+ */
+exports.resetVerificationStatus = (0, https_1.onCall)({ cors: true, enforceAppCheck: false }, async (request) => {
+    const { data, auth } = request;
+    // 1. Check for authentication and admin role
+    if (!auth) {
+        throw new https_1.HttpsError("unauthenticated", "Vous devez être connecté pour effectuer cette action.");
+    }
+    const callerUid = auth.uid;
+    const callerSnap = await admin.firestore().collection("users").doc(callerUid).get();
+    const callerProfile = callerSnap.data();
+    if (callerProfile?.role !== "admin") {
+        throw new https_1.HttpsError("permission-denied", "Vous n'avez pas les droits pour effectuer cette action.");
+    }
+    // 2. Get UID to reset from the client
+    const { uid: uidToReset } = data;
+    if (!uidToReset || typeof uidToReset !== 'string') {
+        throw new https_1.HttpsError('invalid-argument', 'Le UID de l\'utilisateur est manquant ou invalide.');
+    }
+    try {
+        // 3. Update Firebase Authentication
+        await admin.auth().updateUser(uidToReset, { emailVerified: false });
+        // 4. Update Firestore
+        await admin.firestore().collection("users").doc(uidToReset).update({ emailVerified: false });
+        logger.info(`Admin ${callerUid} reset verification for user ${uidToReset}`);
+        return { success: true, message: "Le statut de vérification de l'utilisateur a été réinitialisé." };
+    }
+    catch (error) {
+        logger.error(`Error resetting verification for user ${uidToReset} by admin ${callerUid}:`, error);
+        if (error instanceof https_1.HttpsError) {
+            throw error;
+        }
+        throw new https_1.HttpsError("internal", "Une erreur interne est survenue lors de la réinitialisation.", error);
+    }
+});
+/**
+ * Approves a user and triggers the verification email.
+ * - Sets isApproved to true in Firestore.
+ * - Creates a document in the 'mail' collection to be sent by the Trigger Email extension.
+ */
+exports.approveUserAndSendVerificationEmail = (0, https_1.onCall)({ cors: true, enforceAppCheck: false }, async (request) => {
+    const { data, auth } = request;
+    // 1. Check for authentication and admin role
+    if (!auth) {
+        throw new https_1.HttpsError("unauthenticated", "Authentication required.");
+    }
+    const callerSnap = await admin.firestore().collection("users").doc(auth.uid).get();
+    if (callerSnap.data()?.role !== "admin") {
+        throw new https_1.HttpsError("permission-denied", "Admin role required.");
+    }
+    // 2. Validate UID input
+    const { uid } = data;
+    if (!uid || typeof uid !== 'string') {
+        throw new https_1.HttpsError('invalid-argument', 'User UID is missing or invalid.');
+    }
+    try {
+        const userRecord = await admin.auth().getUser(uid);
+        const userEmail = userRecord.email;
+        if (!userEmail) {
+            throw new https_1.HttpsError("not-found", "User email not found.");
+        }
+        // 3. Update user profile in Firestore
+        const userDocRef = admin.firestore().collection("users").doc(uid);
+        await userDocRef.update({ isApproved: true, updatedAt: admin.firestore.Timestamp.now() });
+        // 4. Generate verification link that points to our custom action handler
+        // Use a Firebase Auth authorized domain to avoid "Domain not allowlisted" errors
+        const actionCodeSettings = {
+            url: "https://airwatch-benin.web.app/auth/action",
+            handleCodeInApp: false,
+        };
+        const link = await admin.auth().generateEmailVerificationLink(userEmail, actionCodeSettings);
+        // 5. Create email document for the Trigger Email extension (Gmail/SMTP)
+        const displayName = userRecord.displayName || "Utilisateur";
+        const subject = "Vérification de votre adresse e-mail";
+        const text = `Bonjour ${displayName},\n\nVeuillez confirmer votre adresse e-mail en ouvrant ce lien :\n${link}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`;
+        const html = `
+      <p>Bonjour ${displayName},</p>
+      <p>Veuillez confirmer votre adresse e-mail en cliquant sur le lien ci-dessous :</p>
+      <p><a href="${link}" target="_blank" rel="noopener">Vérifier mon e-mail</a></p>
+      <p>Si le lien ne fonctionne pas, copiez-collez cette URL dans votre navigateur :</p>
+      <p style="word-break: break-all;">${link}</p>
+      <p style="color:#6b7280;font-size:12px;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+    `;
+        await admin.firestore().collection("mail").add({
+            to: userEmail,
+            message: {
+                subject,
+                text,
+                html,
+            },
+        });
+        logger.info(`Admin ${auth.uid} approved user ${uid}. Verification email queued.`);
+        return { success: true, message: "User approved and verification email sent." };
+    }
+    catch (error) {
+        logger.error(`Error approving user ${uid} by admin ${auth.uid}:`, error);
+        if (error instanceof https_1.HttpsError) {
+            throw error;
+        }
+        throw new https_1.HttpsError("internal", "An internal error occurred.", error);
+    }
+});
+/**
+ * Callable function to approve an access request and create a new user.
+ * - Checks caller is admin
+ * - Creates Firebase Auth user with the provided email
+ * - Creates Firestore profile with isApproved=true
+ * - Updates the accessRequests document status to 'approved'
+ * - Generates a password reset link for the new user (notified via logs or email service later)
+ */
+exports.approveAccessRequest = (0, https_1.onCall)({ cors: true, enforceAppCheck: false }, async (request) => {
+    const { data, auth } = request;
+    if (!auth) {
+        throw new https_1.HttpsError("unauthenticated", "The function must be called while authenticated.");
+    }
+    const adminUid = auth.uid;
+    const adminUserDoc = await admin.firestore().collection("users").doc(adminUid).get();
+    const adminProfile = adminUserDoc.data();
+    if (adminProfile?.role !== "admin") {
+        throw new https_1.HttpsError("permission-denied", "The function must be called by an admin user.");
+    }
+    const { email, requestId } = data;
+    if (!email || !requestId) {
+        throw new https_1.HttpsError("invalid-argument", "The function must be called with an 'email' and 'requestId' argument.");
+    }
+    try {
+        // 1. Create the user in Firebase Authentication
+        const userRecord = await admin.auth().createUser({ email });
+        // 2. Create the user profile in Firestore
+        const userProfile = {
+            email: userRecord.email,
+            displayName: userRecord.displayName || null,
+            photoURL: userRecord.photoURL || null,
+            role: "consultant",
+            isApproved: true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            emailVerified: false,
+        };
+        await admin.firestore().collection("users").doc(userRecord.uid).set(userProfile);
+        // 3. Update the access request status to 'approved'
+        await admin.firestore().collection("accessRequests").doc(requestId).update({
+            status: "approved",
+            approvedBy: adminUid,
+            approvedAt: new Date(),
+        });
+        // 4. Generate password reset link (actual email sending handled externally)
+        const passwordResetLink = await admin.auth().generatePasswordResetLink(email);
+        logger.info(`Password reset link for ${email}: ${passwordResetLink}`);
+        return { success: true, message: `User ${email} created successfully.` };
+    }
+    catch (error) {
+        logger.error("Error approving access request:", error);
+        throw new https_1.HttpsError("internal", "An internal error occurred while creating the user.", error);
     }
 });
 //# sourceMappingURL=index.js.map

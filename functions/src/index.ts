@@ -357,21 +357,31 @@ export const approveUserAndSendVerificationEmail = onCall({ cors: true, enforceA
     await userDocRef.update({ isApproved: true, updatedAt: admin.firestore.Timestamp.now() });
 
     // 4. Generate verification link that points to our custom action handler
+    // Use a Firebase Auth authorized domain to avoid "Domain not allowlisted" errors
     const actionCodeSettings = {
-      url: "https://air-quality-platform-jet.vercel.app/auth/action",
-      handleCodeInApp: false, // We are handling it in a web page
+      url: "https://airwatch-benin.web.app/auth/action",
+      handleCodeInApp: false,
     };
     const link = await admin.auth().generateEmailVerificationLink(userEmail, actionCodeSettings);
 
-    // 5. Create email document for the Trigger Email extension
+    // 5. Create email document for the Trigger Email extension (Gmail/SMTP)
+    const displayName = userRecord.displayName || "Utilisateur";
+    const subject = "Vérification de votre adresse e-mail";
+    const text = `Bonjour ${displayName},\n\nVeuillez confirmer votre adresse e-mail en ouvrant ce lien :\n${link}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`;
+    const html = `
+      <p>Bonjour ${displayName},</p>
+      <p>Veuillez confirmer votre adresse e-mail en cliquant sur le lien ci-dessous :</p>
+      <p><a href="${link}" target="_blank" rel="noopener">Vérifier mon e-mail</a></p>
+      <p>Si le lien ne fonctionne pas, copiez-collez cette URL dans votre navigateur :</p>
+      <p style="word-break: break-all;">${link}</p>
+      <p style="color:#6b7280;font-size:12px;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+    `;
     await admin.firestore().collection("mail").add({
       to: userEmail,
-      template: {
-        name: "verification", // Template name for the email extension
-        data: {
-          displayName: userRecord.displayName || "Utilisateur",
-          verificationLink: link, // Pass the full generated link to the template
-        },
+      message: {
+        subject,
+        text,
+        html,
       },
     });
 
@@ -384,6 +394,68 @@ export const approveUserAndSendVerificationEmail = onCall({ cors: true, enforceA
       throw error;
     }
     throw new HttpsError("internal", "An internal error occurred.", error);
+  }
+});
+
+/**
+ * Callable function to approve an access request and create a new user.
+ * - Checks caller is admin
+ * - Creates Firebase Auth user with the provided email
+ * - Creates Firestore profile with isApproved=true
+ * - Updates the accessRequests document status to 'approved'
+ * - Generates a password reset link for the new user (notified via logs or email service later)
+ */
+export const approveAccessRequest = onCall({ cors: true, enforceAppCheck: false }, async (request) => {
+  const { data, auth } = request;
+
+  if (!auth) {
+    throw new HttpsError("unauthenticated", "The function must be called while authenticated.");
+  }
+
+  const adminUid = auth.uid;
+  const adminUserDoc = await admin.firestore().collection("users").doc(adminUid).get();
+  const adminProfile = adminUserDoc.data();
+  if (adminProfile?.role !== "admin") {
+    throw new HttpsError("permission-denied", "The function must be called by an admin user.");
+  }
+
+  const { email, requestId } = data as { email?: string; requestId?: string };
+  if (!email || !requestId) {
+    throw new HttpsError("invalid-argument", "The function must be called with an 'email' and 'requestId' argument.");
+  }
+
+  try {
+    // 1. Create the user in Firebase Authentication
+    const userRecord = await admin.auth().createUser({ email });
+
+    // 2. Create the user profile in Firestore
+    const userProfile = {
+      email: userRecord.email,
+      displayName: userRecord.displayName || null,
+      photoURL: userRecord.photoURL || null,
+      role: "consultant",
+      isApproved: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      emailVerified: false,
+    } as const;
+    await admin.firestore().collection("users").doc(userRecord.uid).set(userProfile);
+
+    // 3. Update the access request status to 'approved'
+    await admin.firestore().collection("accessRequests").doc(requestId).update({
+      status: "approved",
+      approvedBy: adminUid,
+      approvedAt: new Date(),
+    });
+
+    // 4. Generate password reset link (actual email sending handled externally)
+    const passwordResetLink = await admin.auth().generatePasswordResetLink(email);
+    logger.info(`Password reset link for ${email}: ${passwordResetLink}`);
+
+    return { success: true, message: `User ${email} created successfully.` };
+  } catch (error) {
+    logger.error("Error approving access request:", error);
+    throw new HttpsError("internal", "An internal error occurred while creating the user.", error as Error);
   }
 });
 

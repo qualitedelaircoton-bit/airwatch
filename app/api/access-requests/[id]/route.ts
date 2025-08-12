@@ -9,7 +9,7 @@ import { Timestamp } from "firebase-admin/firestore";
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: any
 ) {
   if (!adminDb) {
     return NextResponse.json({ error: "Firebase Admin SDK not initialized." }, { status: 500 });
@@ -20,7 +20,9 @@ export async function PATCH(
     if (!status) {
       return NextResponse.json({ error: "Status is required." }, { status: 400 });
     }
-    const { id } = await params;
+    const maybeParams = context?.params;
+    const resolvedParams = typeof maybeParams?.then === 'function' ? await maybeParams : maybeParams;
+    const { id } = resolvedParams as { id: string };
     const docRef = adminDb.collection("accessRequests").doc(id);
     await docRef.update({ status, updatedAt: Timestamp.now() });
     return NextResponse.json({ id });
