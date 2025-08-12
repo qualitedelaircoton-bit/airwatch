@@ -13,7 +13,7 @@ export default function AuthLayout({ children, title, description }: AuthLayoutP
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <Link href="/landing" className="flex items-center gap-2 text-2xl font-bold text-gray-800 dark:text-gray-200">
+          <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-gray-800 dark:text-gray-200">
             <Activity className="h-8 w-8 text-emerald-600" />
             <span>AirWatch</span>
           </Link>

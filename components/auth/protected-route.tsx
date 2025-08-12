@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
     }
 
     if (authStatus === 'unauthenticated') {
-      router.push('/login');
+      router.push('/auth/login');
       return;
     }
 

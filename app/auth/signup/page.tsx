@@ -1,4 +1,3 @@
-"use client"
 
 "use client"
 
@@ -14,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, UserPlus } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
+import { auth } from "@/lib/firebase"
 
 export default function SignUpPage() {
   const [displayName, setDisplayName] = useState("")
@@ -45,7 +45,24 @@ export default function SignUpPage() {
 
     try {
       await signUp(email, password, displayName, accessReason)
-      router.push('/pending-approval');
+      // Create the access request server-side with authenticated token
+      const idToken = await auth?.currentUser?.getIdToken();
+      if (idToken) {
+        try {
+          await fetch('/api/access-requests', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${idToken}`,
+            },
+            body: JSON.stringify({ reason: accessReason }),
+          });
+        } catch (e) {
+          // Non-blocking: the admin will see the profile anyway
+          console.error('Failed to create access request', e);
+        }
+      }
+      router.push('/auth/verify-email');
     } catch (err: any) {
       console.error("Sign up error:", err)
       if (err.code === 'auth/email-already-in-use') {

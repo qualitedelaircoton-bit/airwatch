@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, type ReactNode }
 import type { User } from "firebase/auth";
 import type { UserProfile } from '@/types';
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, sendPasswordResetEmail, sendEmailVerification } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc, Timestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, Timestamp, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 
 
@@ -120,8 +120,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUp = async (email: string, password: string, displayName: string, accessReason: string): Promise<void> => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      // Email verification will be sent upon admin approval.
-      // Pass the new accessReason field to be stored in Firestore
+      // Send email verification immediately
+      await sendEmailVerification(result.user);
+      // Create initial profile with access reason
       await createOrUpdateUserProfile(result.user, { displayName, accessReason });
     } catch (error) {
       console.error("Signup error:", error);
@@ -161,33 +162,67 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 
   useEffect(() => {
+    let profileUnsub: (() => void) | null = null;
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
-      if (firebaseUser) {
-        const profile = await fetchUserProfile(firebaseUser.uid);
-        setUser(firebaseUser);
-        setUserProfile(profile);
 
-        if (!profile) {
-          setAuthStatus('unauthenticated'); // Or some error state
-        } else if (!profile.isApproved) {
-          setAuthStatus('pending_approval');
-        } else if (!firebaseUser.emailVerified) {
-          setAuthStatus('pending_verification');
-        } else if (profile.role === 'admin') {
-          setAuthStatus('admin');
-        } else {
-          setAuthStatus('authenticated');
-        }
+      // Cleanup previous profile listener if any
+      if (profileUnsub) {
+        profileUnsub();
+        profileUnsub = null;
+      }
+
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        const userRef = doc(db, "users", firebaseUser.uid);
+        profileUnsub = onSnapshot(userRef, (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            const profile: UserProfile = {
+              uid: firebaseUser.uid,
+              email: data.email,
+              displayName: data.displayName || null,
+              photoURL: data.photoURL || null,
+              role: data.role || "consultant",
+              isApproved: data.isApproved || false,
+              createdAt: data.createdAt,
+              updatedAt: data.updatedAt,
+              emailVerified: data.emailVerified || false,
+              accessReason: data.accessReason || "",
+            };
+            setUserProfile(profile);
+
+            if (!firebaseUser.emailVerified) {
+              setAuthStatus('pending_verification');
+            } else if (!profile.isApproved) {
+              setAuthStatus('pending_approval');
+            } else if (profile.role === 'admin') {
+              setAuthStatus('admin');
+            } else {
+              setAuthStatus('authenticated');
+            }
+          } else {
+            setUserProfile(null);
+            setAuthStatus('unauthenticated');
+          }
+          setLoading(false);
+        }, (error) => {
+          console.error("Error listening to user profile:", error);
+          setLoading(false);
+        });
       } else {
         setUser(null);
         setUserProfile(null);
         setAuthStatus('unauthenticated');
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (profileUnsub) profileUnsub();
+      unsubscribe();
+    };
   }, []);
 
   const value: AuthContextType = {

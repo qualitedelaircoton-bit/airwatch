@@ -25,6 +25,26 @@ export async function PATCH(
     const { id } = resolvedParams as { id: string };
     const docRef = adminDb.collection("accessRequests").doc(id);
     await docRef.update({ status, updatedAt: Timestamp.now() });
+
+    if (status === 'rejected') {
+      const snap = await docRef.get();
+      const data = snap.data() as any;
+      const userEmail = data?.email as string | undefined;
+      if (userEmail) {
+        const subject = "Votre demande d'accès a été refusée";
+        const text = `Bonjour,\n\nVotre demande d'accès à la plateforme a été refusée par un administrateur.\nSi vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.`;
+        const html = `
+          <p>Bonjour,</p>
+          <p>Votre demande d'accès à la plateforme a été refusée par un administrateur.</p>
+          <p>Si vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.</p>
+        `;
+        await adminDb.collection('mail').add({
+          to: userEmail,
+          message: { subject, text, html },
+        });
+      }
+    }
+
     return NextResponse.json({ id });
   } catch (error: any) {
     console.error("Error updating access request status:", error);

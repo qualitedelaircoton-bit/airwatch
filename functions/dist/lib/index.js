@@ -197,7 +197,36 @@ exports.deleteUser = (0, https_1.onCall)({ cors: true, enforceAppCheck: false },
         // 1. Delete from Firebase Authentication
         await admin.auth().deleteUser(uidToDelete);
         // 2. Delete from Firestore
-        await admin.firestore().collection("users").doc(uidToDelete).delete();
+        const userRef = admin.firestore().collection("users").doc(uidToDelete);
+        const userSnap = await userRef.get();
+        const userData = (userSnap.data() || {});
+        const userEmail = userData.email;
+        const wasApproved = Boolean(userData.isApproved);
+        await userRef.delete();
+        // 3. Send rejection/closure email if email known
+        if (userEmail) {
+            const subject = wasApproved
+                ? "Votre compte a été supprimé"
+                : "Votre demande d'accès a été refusée";
+            const text = wasApproved
+                ? `Bonjour,\n\nVotre compte a été supprimé suite au non-respect des règles d'utilisation.\nPour toute question, vous pouvez répondre à cet e‑mail.`
+                : `Bonjour,\n\nVotre demande d'accès à la plateforme a été refusée par un administrateur.\nSi vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.`;
+            const html = wasApproved
+                ? `
+        <p>Bonjour,</p>
+        <p>Votre compte a été supprimé suite au non-respect des règles d'utilisation.</p>
+        <p>Pour toute question, vous pouvez répondre à cet e‑mail.</p>
+      `
+                : `
+        <p>Bonjour,</p>
+        <p>Votre demande d'accès à la plateforme a été refusée par un administrateur.</p>
+        <p>Si vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.</p>
+      `;
+            await admin.firestore().collection("mail").add({
+                to: userEmail,
+                message: { subject, text, html },
+            });
+        }
         logger.info(`Admin ${callerUid} deleted user ${uidToDelete}`);
         return { success: true, message: "L'utilisateur a été supprimé avec succès." };
     }
@@ -281,26 +310,22 @@ exports.approveUserAndSendVerificationEmail = (0, https_1.onCall)({ cors: true, 
             url: "https://airwatch-benin.web.app/auth/action",
             handleCodeInApp: false,
         };
-        const link = await admin.auth().generateEmailVerificationLink(userEmail, actionCodeSettings);
+        // Generate verification link (kept for potential future use, not sent now)
+        await admin.auth().generateEmailVerificationLink(userEmail, actionCodeSettings);
         // 5. Create email document for the Trigger Email extension (Gmail/SMTP)
+        // 5. Notify approval without forcing password/reset (user already has credentials)
         const displayName = userRecord.displayName || "Utilisateur";
-        const subject = "Vérification de votre adresse e-mail";
-        const text = `Bonjour ${displayName},\n\nVeuillez confirmer votre adresse e-mail en ouvrant ce lien :\n${link}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`;
+        const subject = "Votre accès a été approuvé";
+        const text = `Bonjour ${displayName},\n\nVotre demande d'accès à la plateforme a été approuvée.\nVous pouvez maintenant vous connecter normalement avec vos identifiants: ${userEmail}.`;
         const html = `
       <p>Bonjour ${displayName},</p>
-      <p>Veuillez confirmer votre adresse e-mail en cliquant sur le lien ci-dessous :</p>
-      <p><a href="${link}" target="_blank" rel="noopener">Vérifier mon e-mail</a></p>
-      <p>Si le lien ne fonctionne pas, copiez-collez cette URL dans votre navigateur :</p>
-      <p style="word-break: break-all;">${link}</p>
-      <p style="color:#6b7280;font-size:12px;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+      <p>Votre demande d'accès à la plateforme a été approuvée.</p>
+      <p>Vous pouvez maintenant vous connecter normalement avec vos identifiants: <strong>${userEmail}</strong>.</p>
+      <p>Si vous avez oublié votre mot de passe, utilisez la fonctionnalité “Mot de passe oublié”.</p>
     `;
         await admin.firestore().collection("mail").add({
             to: userEmail,
-            message: {
-                subject,
-                text,
-                html,
-            },
+            message: { subject, text, html },
         });
         logger.info(`Admin ${auth.uid} approved user ${uid}. Verification email queued.`);
         return { success: true, message: "User approved and verification email sent." };
@@ -357,10 +382,26 @@ exports.approveAccessRequest = (0, https_1.onCall)({ cors: true, enforceAppCheck
             approvedBy: adminUid,
             approvedAt: new Date(),
         });
-        // 4. Generate password reset link (actual email sending handled externally)
+        // 4. Generate password reset link (and notify user by email)
         const passwordResetLink = await admin.auth().generatePasswordResetLink(email);
         logger.info(`Password reset link for ${email}: ${passwordResetLink}`);
-        return { success: true, message: `User ${email} created successfully.` };
+        // 5. Send approval notification email via Trigger Email extension
+        const subject = "Votre demande d'accès a été approuvée";
+        const text = `Bonjour,\n\nVotre accès à la plateforme a été approuvé.\nPour définir votre mot de passe, ouvrez ce lien :\n${passwordResetLink}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`;
+        const html = `
+      <p>Bonjour,</p>
+      <p>Votre accès à la plateforme a été approuvé.</p>
+      <p>Pour définir votre mot de passe, cliquez sur le lien ci-dessous :</p>
+      <p><a href="${passwordResetLink}" target="_blank" rel="noopener">Définir mon mot de passe</a></p>
+      <p>Si le lien ne fonctionne pas, copiez-collez cette URL dans votre navigateur :</p>
+      <p style="word-break: break-all;">${passwordResetLink}</p>
+      <p style="color:#6b7280;font-size:12px;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+    `;
+        await admin.firestore().collection("mail").add({
+            to: email,
+            message: { subject, text, html },
+        });
+        return { success: true, message: `User ${email} created successfully and notified.` };
     }
     catch (error) {
         logger.error("Error approving access request:", error);

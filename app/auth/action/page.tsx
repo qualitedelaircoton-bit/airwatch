@@ -14,6 +14,7 @@ function AuthActionHandler() {
 
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Vérification en cours...');
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const mode = searchParams.get('mode');
@@ -30,9 +31,9 @@ function AuthActionHandler() {
         switch (mode) {
           case 'verifyEmail':
             await applyActionCode(auth, actionCode);
+            setVerifiedEmail(auth.currentUser?.email ?? null);
             setStatus('success');
-            setMessage('Votre email a été vérifié avec succès ! Vous allez être redirigé.');
-            setTimeout(() => router.push('/dashboard'), 3000);
+            setMessage("Votre adresse e-mail a bien été vérifiée.");
             break;
           // Add other cases like 'resetPassword' or 'recoverEmail' here in the future
           default:
@@ -71,8 +72,23 @@ function AuthActionHandler() {
           </div>
           <CardTitle className="text-2xl">Vérification de l'Email</CardTitle>
         </CardHeader>
-        <CardContent className="text-center">
-          <p className="text-muted-foreground mb-6">{message}</p>
+      <CardContent className="text-center">
+          <p className="text-muted-foreground mb-4">{message}</p>
+          {status === 'success' && (
+            <div className="space-y-4">
+              {verifiedEmail && (
+                <p className="text-sm text-muted-foreground">
+                  Adresse vérifiée: <span className="font-medium text-foreground">{verifiedEmail}</span>
+                </p>
+              )}
+              <p className="text-sm text-muted-foreground">
+                Votre demande d'accès est en cours d'examen par un administrateur. Vous recevrez un e‑mail dès qu'elle sera approuvée.
+              </p>
+              <Button onClick={() => router.push('/')} className="w-full">
+                Revenir à la page d'accueil
+              </Button>
+            </div>
+          )}
           {status === 'error' && (
             <Button onClick={() => router.push('/auth/login')} className="w-full">
               Retour à la page de connexion
