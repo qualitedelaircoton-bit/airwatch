@@ -13,6 +13,9 @@ function convertToCSV(data: any[]) {
   return csvContent
 }
 
+
+export const dynamic = "force-static"
+
 export async function GET(request: NextRequest) {
   try {
     if (!adminDb) {

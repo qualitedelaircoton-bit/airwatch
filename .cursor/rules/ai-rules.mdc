@@ -38,7 +38,7 @@ alwaysApply: true
 - **pnpm** (gestionnaire de packages)
 
 ### Déploiement
-- **Vercel** (hébergement)
+- **Firebase Hosting** (hébergement)
 - **Neon DB** (PostgreSQL cloud)
 - **EMQX Cloud** (MQTT IoT)
 
@@ -120,7 +120,7 @@ pnpm prisma:push   # Base de données
 - ❌ Deviner sans rechercher
 - ❌ Utiliser `any` ou désactiver types
 - ❌ Références "2024" (sauf historique)
-- ❌ Docker (projet Vercel only)
+- ❌ Docker (projet Firebase Hosting only)
 
 ### Obligations
 - ✅ Recherche web systématique
@@ -133,7 +133,7 @@ pnpm prisma:push   # Base de données
 
 ### Quelque ressource
 1. **MIGRATION_LOG.md** - Journal technique détaillé
-2. **README.md** - Documentation projet (Vercel + Neon + EMQX)
+2. **README.md** - Documentation projet (Firebase Hosting + Neon + EMQX)
 3. **ai-rules.md** - Ce fichier
 
 ### Éléments Critiques README
@@ -141,7 +141,7 @@ pnpm prisma:push   # Base de données
 - Configuration Neon DB
 - EMQX Cloud setup
 - API endpoints
-- Déploiement Vercel
+- Déploiement Firebase Hosting
 - **Pas de Docker**
 
 ## 🔄 Validation Finale
@@ -164,7 +164,7 @@ pnpm prisma:push   # Base de données
 **Source de vérité** : Web search avec "2025"
 **Philosophie** : Rechercher → Comprendre → Appliquer partout → Tester
 **Gestionnaire** : pnpm obligatoire
-**Déploiement** : Vercel + Neon + EMQX Cloud
+**Déploiement** : Firebase + EMQX Cloud
 
 
 En cas de doute : **RECHERCHER** 🔍 

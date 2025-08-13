@@ -7,6 +7,9 @@ import { Timestamp, CollectionReference, Query } from "firebase-admin/firestore"
  * GET /api/access-requests?status=pending
  * Liste les demandes d'accès filtrées par statut.
  */
+
+export const dynamic = "force-static"
+
 export async function GET(request: NextRequest) {
   if (!adminDb) {
     return NextResponse.json({ error: "Firebase Admin SDK not initialized." }, { status: 500 });

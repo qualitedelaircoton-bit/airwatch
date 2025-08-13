@@ -19,7 +19,7 @@ Styling : Tailwind CSS v4. Le développement devra adopter l'approche CSS-first.
 
 Bibliothèque de Composants UI : shadcn/ui. Tous les éléments d'interface (boutons, formulaires, cartes, modales, etc.) devront être construits en utilisant les composants de cette bibliothèque, dont le style sera personnalisé via les variables CSS et les directives Tailwind mentionnées ci-dessus.
 
-Déploiement : Prévu pour Vercel (Next.js) et MongoDB Atlas.
+Déploiement : Prévu pour Firebase Hosting (Next.js) et MongoDB Atlas.
 
 Note sur les Versions : Toutes les dépendances et bibliothèques (Next.js, React, Prisma, Tailwind CSS, shadcn/ui, etc.) doivent être utilisées dans leur dernière version stable disponible au moment du démarrage du développement.
 

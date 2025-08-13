@@ -74,12 +74,6 @@ Accessibility: ✅ WCAG 2.1
 - **TypeScript** (Strict mode)
 - **Tailwind CSS 4.1.8** (CSS-first)
 
-### Backend & Data
-- **PostgreSQL** (Neon DB)
-- **Prisma ORM**
-- **MQTT** (EMQX Cloud)
-- **Vercel** (Deployment)
-
 ## 📞 Support
 
 ### 🐛 Bugs & Issues
@@ -137,9 +131,7 @@ Accessibility: ✅ WCAG 2.1
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 
 ### Outils de Développement
-- [Vercel Dashboard](https://vercel.com/dashboard)
-- [Neon Console](https://console.neon.tech/)
-- [EMQX Cloud Console](https://cloud.emqx.com/)
+- [Firebase Console](https://console.firebase.google.com/)
 
 ---
 

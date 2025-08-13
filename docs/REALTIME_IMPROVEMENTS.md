@@ -175,7 +175,7 @@ pnpm tsx scripts/test-production-webhook-realtime.ts
 MQTT_WEBHOOK_SECRET=your-secret-here
 
 # URL de production pour les tests
-PRODUCTION_URL=https://air-quality-platform.vercel.app
+PRODUCTION_URL=https://air-quality-platform.firebaseapp.com
 ```
 
 ### Paramètres de Polling
@@ -227,8 +227,8 @@ pnpm tsx scripts/test-realtime-updates.ts
 ### 2. Production
 
 ```bash
-# Déployer sur Vercel
-vercel --prod
+# Déployer sur Firebase Hosting
+firebase deploy --only hosting
 
 # Tester en production
 pnpm tsx scripts/test-production-webhook-realtime.ts

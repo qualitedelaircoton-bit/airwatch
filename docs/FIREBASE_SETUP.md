@@ -245,7 +245,7 @@ pnpm dev
 Pour la production :
 
 1. Ajoutez votre domaine de production dans les domaines autorisés
-2. Configurez les variables d'environnement sur votre plateforme (Vercel, Netlify)
+2. Configurez les variables d'environnement sur votre plateforme (Firebase Hosting)
 3. Passez Firestore en mode production
 4. Créez des règles de sécurité plus strictes
 

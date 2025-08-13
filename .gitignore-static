@@ -1,0 +1,3 @@
+
+# Exclure les routes API pour l'export statique
+app/api/

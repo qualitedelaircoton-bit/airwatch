@@ -3,6 +3,9 @@ import { db } from "@/lib/firebase"
 import { collection, getDocs, addDoc, updateDoc, doc, getDoc, query, where, orderBy } from "firebase/firestore"
 import { calculateSensorStatus } from "@/lib/firestore-status-calculator"
 
+
+export const dynamic = "force-static"
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

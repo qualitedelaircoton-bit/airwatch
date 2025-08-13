@@ -4,6 +4,9 @@ import { getAuth } from "firebase-admin/auth";
 import { cookies } from 'next/headers';
 
 // GET a single sensor by ID
+
+export const dynamic = "force-static"
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

@@ -348,11 +348,28 @@ MQTT_BROKER_URL="mqtts://..."
 NEXTAUTH_URL="https://airwatch.benin.gov.bj"
 ```
 
-### Déploiement sur Vercel (Recommandé)
+### Déploiement sur Firebase Hosting
 
-1. **Connecter le repository** à votre compte Vercel
-2. **Configurer les variables d'environnement** dans le dashboard Vercel
-3. **Déploiement automatique** à chaque push sur la branche main
+1. Installez l'outil CLI Firebase :
+   ```bash
+   pnpm add -g firebase-tools
+   ```
+2. Connectez-vous à Firebase :
+   ```bash
+   firebase login
+   ```
+3. Initialisez Firebase Hosting (si ce n'est pas déjà fait) :
+   ```bash
+   firebase init hosting
+   ```
+4. Configurez le dossier de build Next.js comme dossier public (`.next` ou `out` selon votre config).
+5. Déployez :
+   ```bash
+   pnpm build
+   firebase deploy --only hosting
+   ```
+
+Pour plus de détails, voir `docs/FIREBASE_SETUP.md`.
 
 ### Autres Plateformes Supportées
 - **Netlify** avec adaptateur Next.js

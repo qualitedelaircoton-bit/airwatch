@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { adminDb, adminAuth } from '@/lib/firebase-admin';
 
+
+export const dynamic = "force-static"
+
 export async function POST(request: Request) {
   if (!adminDb || !adminAuth) {
     return new NextResponse(

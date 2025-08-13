@@ -3,6 +3,9 @@ import { adminDb } from "@/lib/firebase-admin"
 import { Timestamp } from "firebase-admin/firestore"
 import { updateAllSensorStatuses } from "@/lib/firestore-status-calculator"
 
+
+export const dynamic = "force-static"
+
 export async function GET() {
   try {
     if (!adminDb) {

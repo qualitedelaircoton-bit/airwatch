@@ -7,6 +7,9 @@ import { Timestamp } from "firebase-admin/firestore";
  * PATCH /api/access-requests/:id
  * Met à jour le statut d'une demande d'accès.
  */
+
+export const dynamic = "force-static"
+
 export async function PATCH(
   request: NextRequest,
   context: any

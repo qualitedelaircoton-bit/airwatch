@@ -1,90 +1,29 @@
-# 🔗 Configuration MQTT Webhook pour Production Vercel
+# Configuration MQTT Webhook pour Production
 
 ## Problème Résolu
 
-Vercel est une plateforme **serverless** qui ne peut pas maintenir des connexions persistantes comme les services MQTT. Cette configuration utilise des **webhooks HTTP** pour recevoir les données MQTT en production.
+Firebase Hosting ne supporte pas les connexions persistantes MQTT côté frontend. Utilisez des webhooks HTTP ou Cloud Functions pour recevoir les données MQTT en production.
 
 ## 📋 Architecture
 
 ```
-Capteur → EMQX Cloud → Webhook HTTP → Vercel Function → Base de données
+Capteur → EMQX Cloud → Webhook HTTP → Cloud Function Firebase → Base de données
 ```
 
 - **Développement local** : MQTT listener persistant (comme avant)
-- **Production Vercel** : Webhook HTTP via `/api/mqtt/webhook`
+- **Production Firebase** : Webhook HTTP via une Cloud Function
 
 ## 🚀 Étapes de Configuration
 
-### 1. Variables d'Environnement
+1. Configurez une Cloud Function HTTP sur Firebase pour recevoir les webhooks EMQX.
+2. Ajoutez la variable d'environnement `MQTT_WEBHOOK_SECRET` dans les paramètres Firebase Functions.
+3. Configurez EMQX pour pointer vers l'URL de la Cloud Function Firebase.
 
-Ajoutez à votre `.env.local` et sur Vercel :
+Voir `docs/FIREBASE_SETUP.md` pour la configuration détaillée.
 
-```env
-# Sécurité webhook (générez un secret aléatoire fort)
-MQTT_WEBHOOK_SECRET="votre-secret-webhook-super-securise-ici"
-```
+## 🔄 Migration
 
-**Sur Vercel Dashboard** :
-1. Projet → Settings → Environment Variables
-2. Ajouter `MQTT_WEBHOOK_SECRET` avec une valeur sécurisée
-
-### 2. Déployer sur Vercel
-
-```bash
-# Build et déploiement
-pnpm build
-vercel --prod
-```
-
-Votre webhook sera disponible à :
-```
-https://votre-app.vercel.app/api/mqtt/webhook
-```
-
-### 3. Configuration EMQX Cloud
-
-#### A. Accéder aux Webhooks EMQX
-
-1. Connectez-vous à votre console EMQX Cloud
-2. Sélectionnez votre déploiement
-3. Allez dans **Integration** > **Webhooks**
-4. Cliquez **Create Webhook**
-
-#### B. Configuration du Webhook
-
-**Webhook Settings :**
-- **Name** : `vercel-production-webhook`
-- **URL** : `https://votre-app.vercel.app/api/mqtt/webhook`
-- **Method** : `POST`
-- **Headers** :
-  ```
-  Content-Type: application/json
-  Authorization: Bearer votre-secret-webhook-super-securise-ici
-  ```
-
-**Trigger Settings :**
-- **Event** : `Message Published`
-- **Topic Filter** : `sensors/+/data`
-- **QoS** : `1`
-
-**Payload Template :**
-```json
-{
-  "clientid": "${clientid}",
-  "username": "${username}",
-  "topic": "${topic}",
-  "payload": "${payload}",
-  "qos": ${qos},
-  "retain": ${retain},
-  "timestamp": ${timestamp}
-}
-```
-
-#### C. Test et Activation
-
-1. **Save** la configuration
-2. **Enable** le webhook
-3. Testez avec le script : `pnpm tsx scripts/test-webhook.ts`
+Si vous migrez depuis une autre plateforme, adaptez vos endpoints webhook et la logique d'environnement (`process.env.FIREBASE_CONFIG`).
 
 ## 🧪 Tests
 
@@ -98,25 +37,25 @@ pnpm tsx scripts/test-webhook.ts
 ### Test Production
 
 ```bash
-# Avec votre URL Vercel
-VERCEL_URL=votre-app.vercel.app pnpm tsx scripts/test-webhook.ts
+# Avec votre URL Firebase Hosting
+FIREBASE_URL=votre-app.firebaseapp.com pnpm tsx scripts/test-webhook.ts
 ```
 
 ### Vérifier les APIs
 
 ```bash
 # Vérifier la santé du système
-curl https://votre-app.vercel.app/api/health
+curl https://votre-app.firebaseapp.com/api/health
 
 # Vérifier le mode MQTT
-curl https://votre-app.vercel.app/api/mqtt/status
+curl https://votre-app.firebaseapp.com/api/mqtt/status
 ```
 
 ## 📊 Monitoring et Debug
 
-### Logs Vercel
+### Logs Firebase Functions
 
-1. **Vercel Dashboard** → Votre projet → **Functions**
+1. **Votre projet** → **Functions**
 2. Cliquez sur `/api/mqtt/webhook` pour voir les logs
 3. Surveillez les erreurs et les succès
 
@@ -129,14 +68,13 @@ Si les données n'arrivent pas :
    - Delivery Status : `Success` 
    - Failed Deliveries : `0`
 
-2. **Vérifiez Vercel** :
-   - Logs de la fonction webhook
+2. **Vérifiez Firebase** :
+   - Logs de la Cloud Function
    - Variables d'environnement configurées
-   - URL webhook correcte
 
 3. **Testez manuellement** :
    ```bash
-   curl -X POST https://votre-app.vercel.app/api/mqtt/webhook \
+   curl -X POST https://votre-app.firebaseapp.com/api/mqtt/webhook \
      -H "Content-Type: application/json" \
      -H "Authorization: Bearer votre-secret" \
      -d '{
@@ -176,8 +114,8 @@ Le webhook valide automatiquement :
 
 Le système détecte automatiquement l'environnement :
 
-- **Local** (`VERCEL != '1'`) : MQTT listener persistant
-- **Vercel** (`VERCEL = '1'`) : Webhook HTTP
+- **Local** (`FIREBASE_CONFIG` absent) : MQTT listener persistant
+- **Firebase Hosting** (`FIREBASE_CONFIG` présent) : Webhook HTTP
 
 ### APIs Adaptatives
 
@@ -188,7 +126,7 @@ Les APIs s'adaptent automatiquement :
 ## ✅ Checklist de Validation
 
 ### Pré-déploiement
-- [ ] `MQTT_WEBHOOK_SECRET` configuré sur Vercel
+- [ ] `MQTT_WEBHOOK_SECRET` configuré sur Firebase
 - [ ] Build local réussi (`pnpm build`)
 - [ ] Tests webhook local passent
 
@@ -208,14 +146,14 @@ Les APIs s'adaptent automatiquement :
    - Webhook URL correcte
    - Headers avec `Authorization` correct
 
-2. **Vérifiez Vercel** :
+2. **Vérifiez Firebase** :
    - Function logs montrent-ils les appels ?
    - Variables d'environnement présentes ?
 
 ### Erreur 401 Unauthorized
 
 - Secret webhook incorrect dans headers EMQX
-- Variable `MQTT_WEBHOOK_SECRET` manquante sur Vercel
+- Variable `MQTT_WEBHOOK_SECRET` manquante sur Firebase
 
 ### Erreur 404 Unknown sensor
 
@@ -231,7 +169,7 @@ Les APIs s'adaptent automatiquement :
 ## 📞 Support
 
 En cas de problème :
-1. Consultez les logs Vercel
+1. Consultez les logs Firebase
 2. Vérifiez la configuration EMQX
 3. Testez avec le script de test
 4. Validez les variables d'environnement 

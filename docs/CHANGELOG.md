@@ -97,11 +97,11 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 ### Backend & Data
 ```json
 {
-  "database": "PostgreSQL (Neon DB)",
+  "database": "Firebase (Firestore)",
   "orm": "Prisma",
   "iot": "MQTT (EMQX Cloud)",
   "api": "Next.js API Routes",
-  "deployment": "Vercel"
+  "deployment": "Firebase Hosting"
 }
 ```
 
