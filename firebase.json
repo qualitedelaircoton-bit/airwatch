@@ -4,8 +4,5 @@
   },
   "functions": {
     "source": "functions"
-  },
-  "hosting": {
-    "source": "."
   }
 }

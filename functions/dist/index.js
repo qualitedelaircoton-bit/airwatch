@@ -104,8 +104,12 @@ exports.mqttWebhook = (0, https_1.onRequest)({ cors: true, secrets: [mqttWebhook
     try {
         logger.info(" Webhook MQTT reçu", { body: req.body });
         logger.info("📡 Webhook MQTT reçu", { body: req.body });
-        const authHeader = req.headers.authorization;
-        if (authHeader !== `Bearer ${mqttWebhookSecret.value()}`) {
+        // Auth stricte: uniquement Authorization: Bearer <secret>
+        const secret = (mqttWebhookSecret.value() || "").toString().replace(/\r?\n$/, "").trim();
+        const authHeaderRaw = (req.headers.authorization ?? "").toString().trim();
+        // Extraire le token en ignorant la casse et les espaces/CRLF
+        const token = authHeaderRaw.replace(/^Bearer\s+/i, "").replace(/\r?\n$/, "").trim();
+        if (token !== secret) {
             logger.warn("Unauthorized webhook access attempt");
             res.status(401).json({ error: "Unauthorized" });
             return;
