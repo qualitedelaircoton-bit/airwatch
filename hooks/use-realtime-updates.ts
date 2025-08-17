@@ -1,4 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+// DEPRECATED: Ce hook est remplacé par use-firestore-realtime.ts
+// Gardé pour la compatibilité, redirige vers Firestore real-time
+
+import { useFirestoreRealtime } from './use-firestore-realtime'
+import { useCallback } from 'react'
 
 interface RealtimeUpdate {
   sensorId: string
@@ -8,75 +12,56 @@ interface RealtimeUpdate {
 
 interface UseRealtimeUpdatesOptions {
   onWebhookUpdate?: (update: RealtimeUpdate) => void
-  enablePolling?: boolean
-  pollingInterval?: number
+  enablePolling?: boolean // Ignoré - Firestore real-time ne fait pas de polling
+  pollingInterval?: number // Ignoré - Firestore real-time est instantané
 }
 
+/**
+ * @deprecated Utilisez useFirestoreRealtime ou useSensorsRealtime à la place
+ * Hook de compatibilité qui redirige vers Firestore real-time
+ */
 export function useRealtimeUpdates(options: UseRealtimeUpdatesOptions = {}) {
+  const { onWebhookUpdate } = options
+
+  // Redirection vers le nouveau hook Firestore
   const {
-    onWebhookUpdate,
-    enablePolling = false,
-    pollingInterval = 0
-  } = options
-
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
-  const [isConnected, setIsConnected] = useState(false)
-  const [lastWebhookUpdate, setLastWebhookUpdate] = useState<RealtimeUpdate | null>(null)
-
-  // Fonction pour forcer une mise à jour
-  const forceUpdate = useCallback(() => {
-    setLastUpdate(new Date())
-  }, [])
-
-  // Fonction pour simuler une mise à jour webhook (pour les tests)
-  const simulateWebhookUpdate = useCallback((sensorId: string, data: any) => {
-    const update: RealtimeUpdate = {
-      sensorId,
-      data,
-      timestamp: new Date()
-    }
-    setLastWebhookUpdate(update)
-    setLastUpdate(new Date())
-    onWebhookUpdate?.(update)
-  }, [onWebhookUpdate])
-
-  // Vérification des mises à jour webhook seulement si activé
-  useEffect(() => {
-    if (!enablePolling) return
-
-    const checkForWebhookUpdates = async () => {
-      try {
-        const response = await fetch('/api/sensors/last-updates', {
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        })
-        
-        if (response.ok) {
-          const data = await response.json()
-          if (data.lastWebhookUpdate && data.lastWebhookUpdate > lastUpdate.getTime()) {
-            setLastUpdate(new Date())
-            // Déclencher une mise à jour webhook simulée
-            const update: RealtimeUpdate = {
-              sensorId: 'webhook-update',
-              data: { timestamp: new Date(data.lastWebhookUpdate) },
-              timestamp: new Date(data.lastWebhookUpdate)
-            }
-            setLastWebhookUpdate(update)
-            onWebhookUpdate?.(update)
-          }
+    lastUpdate,
+    lastDataReceived,
+    isConnected,
+    forceUpdate
+  } = useFirestoreRealtime({
+    onDataUpdate: (dataUpdate) => {
+      // Adapter le format pour l'ancien hook
+      if (onWebhookUpdate) {
+        const update: RealtimeUpdate = {
+          sensorId: dataUpdate.sensorId,
+          data: dataUpdate.data,
+          timestamp: new Date(dataUpdate.timestamp.seconds * 1000)
         }
-      } catch (error) {
-        console.error('Erreur lors de la vérification des mises à jour:', error)
+        onWebhookUpdate(update)
       }
     }
+  })
 
-    // Vérifier les mises à jour webhook toutes les 5 secondes seulement si activé
-    const webhookInterval = setInterval(checkForWebhookUpdates, 5000)
+  // Fonction de simulation pour compatibilité (plus nécessaire avec Firestore real-time)
+  const simulateWebhookUpdate = useCallback((sensorId: string, data: any) => {
+    console.warn('simulateWebhookUpdate est deprecated - Firestore real-time est automatique')
+    if (onWebhookUpdate) {
+      const update: RealtimeUpdate = {
+        sensorId,
+        data,
+        timestamp: new Date()
+      }
+      onWebhookUpdate(update)
+    }
+  }, [onWebhookUpdate])
 
-    return () => clearInterval(webhookInterval)
-  }, [lastUpdate, onWebhookUpdate, enablePolling])
+  // Adapter le format pour compatibilité
+  const lastWebhookUpdate = lastDataReceived ? {
+    sensorId: lastDataReceived.sensorId,
+    data: lastDataReceived.data,
+    timestamp: new Date(lastDataReceived.timestamp.seconds * 1000)
+  } : null
 
   return {
     lastUpdate,

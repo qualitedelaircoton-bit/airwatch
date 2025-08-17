@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,7 +26,7 @@ import { SensorCard } from "@/components/sensor-card"
 import { StatusIndicators } from "@/components/status-indicators"
 import { ProjectDescription } from "@/components/project-description"
 import { PWAInstall } from "@/components/pwa-install"
-import { useRealtimeUpdates } from "@/hooks/use-realtime-updates"
+import { useSensorsRealtime } from "@/hooks/use-firestore-realtime"
 import { WebhookNotification } from "@/components/webhook-notification"
 import { AdvancedFilters } from "@/components/advanced-filters"
 import { ActiveFilters } from "@/components/active-filters"
@@ -121,7 +121,7 @@ function Dashboard() {
       });
 
       setSelectedSensorIds(new Set()); // Clear selection
-      fetchSensors(); // Refresh sensor list
+      // Note: Avec Firestore real-time, la liste se met à jour automatiquement
 
     } catch (error) {
       console.error("Failed to batch delete sensors:", error);
@@ -183,37 +183,23 @@ function Dashboard() {
   const urlCenter = searchParams.get('center')
   const urlZoom = searchParams.get('zoom')
 
-  const fetchSensors = async (showLoading = false) => {
-    if (showLoading) setLoading(true)
-    try {
-      const response = await fetch("/api/sensors", {
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
-      })
-      const data = await response.json()
-      const sensorsArray: Sensor[] = Array.isArray(data) ? data : []
-      setSensors(sensorsArray)
-    } catch (error) {
-      console.error("Error fetching sensors:", error)
-    } finally {
+  // Hook Firestore temps réel - remplace tout le système de polling
+  const { sensors: realtimeSensors, loading: realtimeLoading } = useSensorsRealtime()
+
+  // Mettre à jour l'état local quand les données Firestore changent
+  useEffect(() => {
+    if (realtimeSensors.length > 0) {
+      console.log(`🔥 ${realtimeSensors.length} capteurs mis à jour via Firestore real-time`)
+      setSensors(realtimeSensors)
+      setLoading(false)
+    } else if (!realtimeLoading) {
       setLoading(false)
     }
-  }
+  }, [realtimeSensors, realtimeLoading])
 
-  // Hook temps réel - seulement pour les webhooks, pas de polling
-  const { lastUpdate, lastWebhookUpdate, forceUpdate } = useRealtimeUpdates({
-    onWebhookUpdate: (update) => {
-      console.log("🚀 Mise à jour webhook reçue:", update)
-      // Mise à jour immédiate quand on reçoit un webhook
-      fetchSensors()
-    },
-    enablePolling: false, // Pas de polling automatique
-    pollingInterval: 0
-  })
-
-  useEffect(() => {
-    fetchSensors(true)
+  // Fonction de mise à jour manuelle pour compatibilité (plus vraiment nécessaire)
+  const forceUpdate = useCallback(() => {
+    console.log("🔄 Mise à jour manuelle demandée (Firestore real-time est automatique)")
   }, [])
 
   useEffect(() => {
@@ -559,14 +545,14 @@ function Dashboard() {
           <AddSensorModal 
             isOpen={isAddSensorModalOpen} 
             onClose={() => setIsAddSensorModalOpen(false)} 
-            onSensorAdded={fetchSensors}
+            onSensorAdded={forceUpdate}
           />
           <EditSensorModal
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
             sensorToEdit={sensorToEdit}
             onSensorUpdated={() => {
-              fetchSensors() // Re-fetch sensors to show updated data
+              forceUpdate() // Firestore real-time se met à jour automatiquement
             }}
           />
         </>
@@ -619,8 +605,8 @@ function Dashboard() {
       {/* Composant d'installation PWA */}
       <PWAInstall />
 
-      {/* Notification des mises à jour webhook */}
-      <WebhookNotification lastWebhookUpdate={lastWebhookUpdate} />
+      {/* Notification des mises à jour webhook - Plus nécessaire avec Firestore real-time */}
+      {/* <WebhookNotification lastWebhookUpdate={lastWebhookUpdate} /> */}
     </div>
   )
 }

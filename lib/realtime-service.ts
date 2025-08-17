@@ -10,7 +10,8 @@ class RealtimeService extends EventEmitter {
 
     this.isRunning = true
 
-    // Mettre à jour les statuts toutes les minutes
+    // Note: Avec Firestore real-time, on n'a plus besoin de polling fréquent
+    // On garde juste une mise à jour périodique des statuts toutes les 5 minutes pour sécurité
     this.updateInterval = setInterval(async () => {
       try {
         const { updateAllSensorStatuses } = await import("./firestore-status-calculator")
@@ -19,9 +20,9 @@ class RealtimeService extends EventEmitter {
       } catch (error) {
         console.error("Erreur lors de la mise à jour des statuts:", error)
       }
-    }, 60000) // 1 minute
+    }, 300000) // 5 minutes au lieu de 1 minute
 
-    console.log("🔄 Service de mise à jour temps réel démarré")
+    console.log("🔄 Service de mise à jour périodique démarré (5 min)")
   }
 
   stop() {
