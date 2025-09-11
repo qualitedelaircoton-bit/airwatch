@@ -1,0 +1,992 @@
+[debug] [2025-08-19T15:15:02.143Z] ----------------------------------------------------------------------
+[debug] [2025-08-19T15:15:02.154Z] Command:       C:\Program Files\nodejs\node.exe D:\Projet\coton\air-quality-platform\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --non-interactive
+[debug] [2025-08-19T15:15:02.155Z] CLI Version:   14.10.1
+[debug] [2025-08-19T15:15:02.155Z] Platform:      win32
+[debug] [2025-08-19T15:15:02.155Z] Node Version:  v22.12.0
+[debug] [2025-08-19T15:15:02.155Z] Time:          Tue Aug 19 2025 16:15:02 GMT+0100 (West Africa Standard Time)
+[debug] [2025-08-19T15:15:02.156Z] ----------------------------------------------------------------------
+[debug]
+[debug] [2025-08-19T15:15:02.466Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-19T15:15:02.467Z] > authorizing via signed-in user (qualitedelaircoton@gmail.com)
+[debug] [2025-08-19T15:15:02.468Z] [iam] checking project airwatch-benin for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-08-19T15:15:02.471Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:02.471Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:02.472Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions [none]
+[debug] [2025-08-19T15:15:02.473Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions x-goog-quota-user=projects/airwatch-benin
+[debug] [2025-08-19T15:15:02.473Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-08-19T15:15:04.060Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions 200
+[debug] [2025-08-19T15:15:04.060Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-08-19T15:15:04.061Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:04.062Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:04.063Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/airwatch-benin [none]
+[debug] [2025-08-19T15:15:05.074Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/airwatch-benin 200
+[debug] [2025-08-19T15:15:05.074Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/airwatch-benin {"projectId":"airwatch-benin","projectNumber":"49855349095","displayName":"airwatch-benin","name":"projects/airwatch-benin","resources":{"hostingSite":"airwatch-benin"},"state":"ACTIVE","etag":"1_279ee589-f98a-479e-8e32-c1027f4f70e9"}
+[debug] [2025-08-19T15:15:14.626Z] defaultcredentials: writing to file C:\Users\DELL\AppData\Roaming\firebase\qualitedelaircoton_gmail_com_application_default_credentials.json
+[debug] [2025-08-19T15:15:14.696Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:14.698Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:14.699Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites pageToken=&pageSize=10
+[debug] [2025-08-19T15:15:23.909Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites 200
+[debug] [2025-08-19T15:15:23.909Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites {"sites":[{"name":"projects/airwatch-benin/sites/airwatch-benin","defaultUrl":"https://airwatch-benin.web.app","appId":"1:49855349095:web:a62a70eb967c321d4c6fc2","type":"DEFAULT_SITE"}]}
+[debug] [2025-08-19T15:15:23.910Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:23.910Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:23.911Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:49855349095:web:a62a70eb967c321d4c6fc2/config [none]
+[debug] [2025-08-19T15:15:25.310Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:49855349095:web:a62a70eb967c321d4c6fc2/config 200
+[debug] [2025-08-19T15:15:25.311Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:49855349095:web:a62a70eb967c321d4c6fc2/config {"projectId":"airwatch-benin","appId":"1:49855349095:web:a62a70eb967c321d4c6fc2","storageBucket":"airwatch-benin.firebasestorage.app","apiKey":"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg","authDomain":"airwatch-benin.firebaseapp.com","messagingSenderId":"49855349095","measurementId":"G-V9166PE5HZ"}
+[info]
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2025-08-19T15:15:36.521Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:36.521Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:15:36.522Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites/airwatch-benin [none]
+[debug] [2025-08-19T15:15:37.441Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites/airwatch-benin 200
+[debug] [2025-08-19T15:15:37.441Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites/airwatch-benin {"name":"projects/airwatch-benin/sites/airwatch-benin","defaultUrl":"https://airwatch-benin.web.app","appId":"1:49855349095:web:a62a70eb967c321d4c6fc2","type":"DEFAULT_SITE"}
+[info]    ▲ Next.js 15.3.3
+   - Environments: .env
+
+[info]
+
+[info]    Creating an optimized production build ...
+
+[info]    Using tsconfig file: ./tsconfig.build.json
+
+[info]    Using tsconfig file: ./tsconfig.build.json
+
+[info]    Using tsconfig file: ./tsconfig.build.json
+
+[info]  ✓ Compiled successfully in 14.0s
+
+[info]    Linting and checking validity of types ...
+
+[info]    Collecting page data ...
+
+[info] (node:26144) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:10520) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:3040) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:16936) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:9088) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:11792) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:13196) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:21440) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:26048) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info] (node:7456) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info]    Generating static pages (0/22) ...
+
+[info]    Generating static pages (5/22)
+
+[info] (node:10516) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[info]    Generating static pages (10/22)
+
+[info]    Generating static pages (16/22)
+
+[info]  ✓ Generating static pages (22/22)
+
+[info]    Finalizing page optimization ...
+
+[info]    Collecting build traces ...
+
+[info]
+
+[info] Route (app)                                 Size  First Load JS
+┌ ƒ /                                    5.52 kB         110 kB
+├ ○ /_not-found                            990 B         102 kB
+├ ○ /admin                               12.5 kB         298 kB
+├ ƒ /api/access-requests                   179 B         102 kB
+├ ○ /api/access-requests/[id]              179 B         102 kB
+├ ƒ /api/health                            179 B         102 kB
+├ ƒ /api/mqtt/health                       179 B         102 kB
+├ ƒ /api/mqtt/metrics                      179 B         102 kB
+├ ƒ /api/sensors                           179 B         102 kB
+├ ƒ /api/sensors/[id]                      179 B         102 kB
+├ ƒ /api/sensors/[id]/data                 179 B         102 kB
+├ ƒ /api/sensors/batch-delete              179 B         102 kB
+├ ƒ /api/sensors/data                      179 B         102 kB
+├ ƒ /api/test                              179 B         102 kB
+├ ○ /auth/action                         2.78 kB         257 kB
+├ ○ /auth/forgot-password                 5.3 kB         263 kB
+├ ○ /auth/login                          5.31 kB         263 kB
+├ ○ /auth/pending-approval               2.01 kB         263 kB
+├ ○ /auth/signup                         5.26 kB         263 kB
+├ ○ /auth/verify-email                   2.05 kB         263 kB
+├ ○ /dashboard                           29.7 kB         331 kB
+├ ○ /manifest.webmanifest                  179 B         102 kB
+├ ○ /pending-approval                    2.24 kB         247 kB
+├ ƒ /sensors/[id]                         102 kB         276 kB
+└ ○ /verify-email                        4.02 kB         258 kB
++ First Load JS shared by all             101 kB
+  ├ chunks/1684-f32c1ea15cc0e0dc.js      46.1 kB
+  ├ chunks/4bd1b696-e9a967bac8ad7c0c.js  53.2 kB
+  └ other shared chunks (total)          2.12 kB
+
+
+
+[info] ○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+[info] Building a Cloud Function to run this application. This is needed due to:
+[info]  • use of fallback /api/access-requests/[id]
+[info]  • non-static component /api/mqtt/health/route
+[info]  • non-static component /api/health/route
+[info]  • non-static component /api/mqtt/metrics/route
+[info]  • non-static component /api/test/route
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /api/sensors/[id]/route
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /api/sensors/route
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /api/access-requests/route
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /api/sensors/batch-delete/route
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /api/sensors/[id]/data/route
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /api/sensors/data/route
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /sensors/[id]/page
+[debug] [2025-08-19T15:17:20.784Z]  • non-static component /page
+[info]  • and 8 other reasons, use --debug to see more
+[info]
+[debug] [2025-08-19T15:17:31.934Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:31.934Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:31.935Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites/airwatch-benin [none]
+[debug] [2025-08-19T15:17:32.885Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites/airwatch-benin 200
+[debug] [2025-08-19T15:17:32.885Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/airwatch-benin/sites/airwatch-benin {"name":"projects/airwatch-benin/sites/airwatch-benin","defaultUrl":"https://airwatch-benin.web.app","appId":"1:49855349095:web:a62a70eb967c321d4c6fc2","type":"DEFAULT_SITE"}
+[warn] !  This integration expects Node version 16, 18, or 20. You're running version 22, problems may be encountered.
+[debug] [2025-08-19T15:17:38.235Z] [web frameworks] effective firebase.json:  {
+  "hosting": [
+    {
+      "source": ".",
+      "frameworksBackend": {},
+      "site": "airwatch-benin",
+      "rewrites": [
+        {
+          "source": "**",
+          "function": {
+            "functionId": "ssrairwatchbenin",
+            "region": "us-central1",
+            "pinTag": true
+          }
+        }
+      ],
+      "redirects": [],
+      "headers": [
+        {
+          "source": "/(.*)",
+          "headers": [
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "Referrer-Policy",
+              "value": "origin-when-cross-origin"
+            }
+          ]
+        },
+        {
+          "source": "/manifest.json",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/manifest+json"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        },
+        {
+          "source": "/sw.js",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/javascript; charset=utf-8"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            },
+            {
+              "key": "Service-Worker-Allowed",
+              "value": "/"
+            }
+          ]
+        },
+        {
+          "source": "/offline.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        },
+        {
+          "source": "/icons/(.*)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        },
+        {
+          "source": "/manifest.webmanifest",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "application/manifest+json"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/manifest.webmanifest/layout,_N_T_/manifest.webmanifest/route,_N_T_/manifest.webmanifest"
+            }
+          ]
+        },
+        {
+          "source": "/_not-found",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_not-found/layout,_N_T_/_not-found/page,_N_T_/_not-found"
+            }
+          ]
+        },
+        {
+          "source": "/admin",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/page,_N_T_/admin"
+            }
+          ]
+        },
+        {
+          "source": "/auth/action",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/auth/layout,_N_T_/auth/action/layout,_N_T_/auth/action/page,_N_T_/auth/action"
+            }
+          ]
+        },
+        {
+          "source": "/auth/login",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/auth/layout,_N_T_/auth/login/layout,_N_T_/auth/login/page,_N_T_/auth/login"
+            }
+          ]
+        },
+        {
+          "source": "/auth/pending-approval",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/auth/layout,_N_T_/auth/pending-approval/layout,_N_T_/auth/pending-approval/page,_N_T_/auth/pending-approval"
+            }
+          ]
+        },
+        {
+          "source": "/dashboard",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/dashboard/layout,_N_T_/dashboard/page,_N_T_/dashboard"
+            }
+          ]
+        },
+        {
+          "source": "/pending-approval",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/pending-approval/layout,_N_T_/pending-approval/page,_N_T_/pending-approval"
+            }
+          ]
+        },
+        {
+          "source": "/verify-email",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/verify-email/layout,_N_T_/verify-email/page,_N_T_/verify-email"
+            }
+          ]
+        },
+        {
+          "source": "/auth/verify-email",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/auth/layout,_N_T_/auth/verify-email/layout,_N_T_/auth/verify-email/page,_N_T_/auth/verify-email"
+            }
+          ]
+        },
+        {
+          "source": "/auth/signup",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/auth/layout,_N_T_/auth/signup/layout,_N_T_/auth/signup/page,_N_T_/auth/signup"
+            }
+          ]
+        },
+        {
+          "source": "/auth/forgot-password",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/auth/layout,_N_T_/auth/forgot-password/layout,_N_T_/auth/forgot-password/page,_N_T_/auth/forgot-password"
+            }
+          ]
+        },
+        {
+          "source": "**/*.[jt]s",
+          "headers": [
+            {
+              "key": "Set-Cookie",
+              "value": "__FIREBASE_DEFAULTS__=eyJjb25maWciOnsicHJvamVjdElkIjoiYWlyd2F0Y2gtYmVuaW4iLCJhcHBJZCI6IjE6NDk4NTUzNDkwOTU6d2ViOmE2MmE3MGViOTY3YzMyMWQ0YzZmYzIiLCJzdG9yYWdlQnVja2V0IjoiYWlyd2F0Y2gtYmVuaW4uZmlyZWJhc2VzdG9yYWdlLmFwcCIsImFwaUtleSI6IkFJemFTeUNjMF9KTkdQaHQ3V19PcXYxNEtXVW1nZkY2TnRMR3NRZyIsImF1dGhEb21haW4iOiJhaXJ3YXRjaC1iZW5pbi5maXJlYmFzZWFwcC5jb20iLCJtZXNzYWdpbmdTZW5kZXJJZCI6IjQ5ODU1MzQ5MDk1IiwibWVhc3VyZW1lbnRJZCI6IkctVjkxNjZQRTVIWiJ9LCJfYXV0aFRva2VuU3luY1VSTCI6Ii9fX3Nlc3Npb24ifQ; SameSite=Strict; Expires=2027-07-15T01:57:38.233Z; Path=/;"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "public": ".firebase\\airwatch-benin\\hosting",
+      "webFramework": "next_ssr"
+    }
+  ],
+  "functions": [
+    {
+      "source": "functions"
+    },
+    {
+      "source": ".firebase\\airwatch-benin\\functions",
+      "codebase": "firebase-frameworks-airwatch-benin"
+    }
+  ]
+}
+[debug] [2025-08-19T15:17:38.237Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-19T15:17:38.241Z] > authorizing via signed-in user (qualitedelaircoton@gmail.com)
+[debug] [2025-08-19T15:17:38.242Z] [iam] checking project airwatch-benin for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-08-19T15:17:38.244Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:38.244Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:38.246Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions [none]
+[debug] [2025-08-19T15:17:38.248Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions x-goog-quota-user=projects/airwatch-benin
+[debug] [2025-08-19T15:17:38.248Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-08-19T15:17:39.375Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions 200
+[debug] [2025-08-19T15:17:39.376Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-08-19T15:17:39.380Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:39.381Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:39.382Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/airwatch-benin/locations/-/functions [none]
+[debug] [2025-08-19T15:17:40.782Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/airwatch-benin/locations/-/functions 200
+[debug] [2025-08-19T15:17:40.783Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/airwatch-benin/locations/-/functions {}
+[debug] [2025-08-19T15:17:40.785Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:40.785Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:40.785Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2025-08-19T15:17:41.916Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/-/functions 200
+[debug] [2025-08-19T15:17:41.916Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/-/functions {"functions":[{"name":"projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/8d88c371-9b41-4ee0-a2bd-2dec766feb25","runtime":"nodejs20","entryPoint":"ssrairwatchbenin","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"ssrairwatchbenin/function-source.zip","generation":"1755615484082616"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"ssrairwatchbenin/function-source.zip","generation":"1755615484082616"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/ssrairwatchbenin","timeoutSeconds":60,"environmentVariables":{"DATABASE_URL":"postgresql://neondb_owner:npg_MoBgYES8D5qI@ep-super-lab-a8s9u3ab-pooler.eastus2.azure.neon.tech/neondb?sslmode=require","MQTT_BROKER_URL":"34.38.83.146","MQTT_PORT":"1883","MQTT_USERNAME":"data-platform","MQTT_PASSWORD":"5t4rwZZwfLTjvZG","MQTT_WEBHOOK_SECRET":"K7mP9vX2qR8nF4jL6hB3wE5tY9mN1kS7dA2vC8xZ0pQ4fG6hJ9lM3nB7vX1kE5rT","NEXT_PUBLIC_FIREBASE_API_KEY":"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg","NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN":"airwatch-benin.firebaseapp.com","NEXT_PUBLIC_FIREBASE_PROJECT_ID":"airwatch-benin","NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET":"airwatch-benin.firebasestorage.app","NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID":"49855349095","NEXT_PUBLIC_FIREBASE_APP_ID":"1:49855349095:web:a62a70eb967c321d4c6fc2","NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID":"G-V9166PE5HZ","VERCEL_URL":"airwatch-benin.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"airwatch-benin\",\"appId\":\"1:49855349095:web:a62a70eb967c321d4c6fc2\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\",\"apiKey\":\"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg\",\"authDomain\":\"airwatch-benin.firebaseapp.com\",\"messagingSenderId\":\"49855349095\",\"measurementId\":\"G-V9166PE5HZ\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/ssrairwatchbenin","FUNCTION_TARGET":"ssrairwatchbenin","LOG_EXECUTION_ID":"true"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://ssrairwatchbenin-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ssrairwatchbenin-00003-rew","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-19T15:01:34.211927659Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-airwatch-benin","firebase-functions-hash":"aae5b65d2a4d59096eaec0a74c5fc53bded5cc97"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/ssrairwatchbenin","createTime":"2025-08-18T04:33:27.959581868Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/deleteUser","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/e4c08e85-fe29-40d3-b224-24ac06263116","runtime":"nodejs20","entryPoint":"deleteUser","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"deleteUser/function-source.zip","generation":"1755472678796494"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"deleteUser/function-source.zip","generation":"1755472678796494"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/deleteuser","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/deleteUser","FUNCTION_TARGET":"deleteUser","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://deleteuser-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"deleteuser-00012-vif","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-17T23:18:05.478931339Z","labels":{"deployment-callable":"true","firebase-functions-hash":"78a60238c14940ba99e5c55c628459856056c1ec","deployment-tool":"cli-firebase"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/deleteUser","createTime":"2025-08-12T04:28:06.762681474Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/approveAccessRequest","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/e4c08e85-fe29-40d3-b224-24ac06263116","runtime":"nodejs20","entryPoint":"approveAccessRequest","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"approveAccessRequest/function-source.zip","generation":"1755472678620818"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"approveAccessRequest/function-source.zip","generation":"1755472678620818"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/approveaccessrequest","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/approveAccessRequest","FUNCTION_TARGET":"approveAccessRequest","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://approveaccessrequest-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"approveaccessrequest-00020-wem","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-17T23:18:05.261380047Z","labels":{"firebase-functions-hash":"78a60238c14940ba99e5c55c628459856056c1ec","deployment-tool":"cli-firebase","deployment-callable":"true"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/approveAccessRequest","createTime":"2025-07-15T16:03:42.428529205Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/mqttWebhook","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/fbb795b9-756a-4684-b386-a5d4892a8f13","runtime":"nodejs20","entryPoint":"mqttWebhook","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"mqttWebhook/function-source.zip","generation":"1755467432281229"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"mqttWebhook/function-source.zip","generation":"1755467432281229"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/mqttwebhook","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/mqttWebhook","FUNCTION_TARGET":"mqttWebhook","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://mqttwebhook-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"secretEnvironmentVariables":[{"key":"MQTT_WEBHOOK_SECRET","projectId":"airwatch-benin","secret":"MQTT_WEBHOOK_SECRET","version":"5"}],"revision":"mqttwebhook-00022-kuv","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-17T21:51:28.115023446Z","labels":{"firebase-functions-hash":"4a03d363a6e9b2871643c9a3be63da03fd4a0bde","deployment-tool":"cli-firebase"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/mqttWebhook","createTime":"2025-07-16T15:02:31.618541748Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/createNotificationOnNewUser","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/e4c08e85-fe29-40d3-b224-24ac06263116","runtime":"nodejs20","entryPoint":"createNotificationOnNewUser","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"createNotificationOnNewUser/function-source.zip","generation":"1755472678489091"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"createNotificationOnNewUser/function-source.zip","generation":"1755472678489091"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/createnotificationonnewuser","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/createNotificationOnNewUser","FUNCTION_SIGNATURE_TYPE":"cloudevent","FUNCTION_TARGET":"createNotificationOnNewUser","LOG_EXECUTION_ID":"true"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://createnotificationonnewuser-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"createnotificationonnewuser-00012-vun","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"eventTrigger":{"trigger":"projects/airwatch-benin/locations/nam5/triggers/createnotificationonnewuser-798617","triggerRegion":"nam5","eventType":"google.cloud.firestore.document.v1.created","eventFilters":[{"attribute":"database","value":"(default)"},{"attribute":"namespace","value":"(default)"},{"attribute":"document","value":"users/{userId}","operator":"match-path-pattern"}],"pubsubTopic":"projects/airwatch-benin/topics/eventarc-nam5-createnotificationonnewuser-798617-126","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","retryPolicy":"RETRY_POLICY_DO_NOT_RETRY"},"state":"ACTIVE","updateTime":"2025-08-17T23:18:05.906260982Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"78a60238c14940ba99e5c55c628459856056c1ec"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/createNotificationOnNewUser","createTime":"2025-08-12T04:26:52.355276459Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/resetVerificationStatus","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/e4c08e85-fe29-40d3-b224-24ac06263116","runtime":"nodejs20","entryPoint":"resetVerificationStatus","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"resetVerificationStatus/function-source.zip","generation":"1755472678695375"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"resetVerificationStatus/function-source.zip","generation":"1755472678695375"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/resetverificationstatus","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/resetVerificationStatus","FUNCTION_TARGET":"resetVerificationStatus","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://resetverificationstatus-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"resetverificationstatus-00012-doq","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-17T23:18:05.214407694Z","labels":{"deployment-tool":"cli-firebase","deployment-callable":"true","firebase-functions-hash":"78a60238c14940ba99e5c55c628459856056c1ec"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/resetVerificationStatus","createTime":"2025-08-12T04:28:07.348470753Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/getAccessRequests","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/d54a59f9-0fa4-491b-9c75-5a14cda39cfb","runtime":"nodejs20","entryPoint":"getAccessRequests","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"getAccessRequests/function-source.zip","generation":"1755053981708750"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"getAccessRequests/function-source.zip","generation":"1755053981708750"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"state":"FAILED","updateTime":"2025-08-13T02:59:53.729937476Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"856fc793854a15f1a524e267cc944890aa6de74c"},"stateMessages":[{"severity":"ERROR","type":"CloudRunServiceNotFound","message":"Cloud Run service projects/airwatch-benin/locations/us-central1/services/getaccessrequests for the function was not found. The function will not work correctly. Please redeploy."}],"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/getAccessRequests","createTime":"2025-08-13T02:59:41.913037134Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/ext-firestore-send-email-processqueue","description":"Processes document changes in the specified Cloud Firestore collection, delivers emails, and updates the document with delivery status information.","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/098b9b61-c038-4ce3-973a-c94e1160b386","runtime":"nodejs22","entryPoint":"processQueue","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"ext-firestore-send-email-processqueue/function-source.zip","generation":"1752769779234555"}},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"ext-firestore-send-email-processqueue/function-source.zip","generation":"1752769779234555"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com"},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/ext-firestore-send-email-processqueue","timeoutSeconds":120,"environmentVariables":{"AUTH_TYPE":"UsernamePassword","DATABASE":"(default)","DATABASE_INSTANCE":"","DATABASE_REGION":"nam5","DATABASE_URL":"","DEFAULT_FROM":"contact@airquality.africa","DEFAULT_REPLY_TO":"contact@airquality.africa","EXT_INSTANCE_ID":"firestore-send-email","FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"databaseURL\":\"\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","FUNCTION_SIGNATURE_TYPE":"cloudevent","GCLOUD_PROJECT":"airwatch-benin","LOCATION":"us-central1","MAIL_COLLECTION":"mail","OAUTH_PORT":"465","OAUTH_SECURE":"false","PROJECT_ID":"airwatch-benin","SMTP_CONNECTION_URI":"smtps://contact@airquality.africa:4NCzuKyS31b59nTK@mail.infomaniak.com:465","STORAGE_BUCKET":"airwatch-benin.firebasestorage.app","TTL_EXPIRE_TYPE":"never","TTL_EXPIRE_VALUE":"1","LOG_EXECUTION_ID":"true"},"maxInstanceCount":6,"ingressSettings":"ALLOW_INTERNAL_ONLY","uri":"https://ext-firestore-send-email-processqueue-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"ext-firestore-send-email@airwatch-benin.iam.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"ext-firestore-send-email-processqueue-00002-kub","maxInstanceRequestConcurrency":1,"availableCpu":"0.1666"},"eventTrigger":{"trigger":"projects/airwatch-benin/locations/nam5/triggers/ext-firestore-send-email-processqueue-918290","triggerRegion":"nam5","eventType":"google.cloud.firestore.document.v1.written","eventFilters":[{"attribute":"database","value":"(default)"},{"attribute":"document","value":"mail/{documentId}","operator":"match-path-pattern"}],"pubsubTopic":"projects/airwatch-benin/topics/eventarc-nam5-ext-firestore-send-email-processqueue-918290-545","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","retryPolicy":"RETRY_POLICY_DO_NOT_RETRY"},"state":"ACTIVE","updateTime":"2025-07-17T16:31:26.191905302Z","labels":{"goog-dm":"firebase-ext-firestore-send-email","goog-firebase-ext":"firestore-send-email","deployment-tool":"firebase-extensions","goog-firebase-ext-iid":"firestore-send-email"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/ext-firestore-send-email-processqueue","createTime":"2025-07-17T16:26:25.193531254Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/approveUserAndSendVerificationEmail","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/e4c08e85-fe29-40d3-b224-24ac06263116","runtime":"nodejs20","entryPoint":"approveUserAndSendVerificationEmail","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"approveUserAndSendVerificationEmail/function-source.zip","generation":"1755472678741256"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"approveUserAndSendVerificationEmail/function-source.zip","generation":"1755472678741256"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/approveuserandsendverificationemail","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/approveUserAndSendVerificationEmail","FUNCTION_TARGET":"approveUserAndSendVerificationEmail","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://approveuserandsendverificationemail-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"approveuserandsendverificationemail-00012-wud","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-17T23:18:05.478324519Z","labels":{"deployment-tool":"cli-firebase","deployment-callable":"true","firebase-functions-hash":"78a60238c14940ba99e5c55c628459856056c1ec"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/approveUserAndSendVerificationEmail","createTime":"2025-08-12T04:28:07.350018266Z","satisfiesPzi":true},{"name":"projects/airwatch-benin/locations/us-central1/functions/scheduledSensorStatusUpdate","buildConfig":{"build":"projects/49855349095/locations/us-central1/builds/e4c08e85-fe29-40d3-b224-24ac06263116","runtime":"nodejs20","entryPoint":"scheduledSensorStatusUpdate","source":{"storageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"scheduledSensorStatusUpdate/function-source.zip","generation":"1755472614254822"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-49855349095-us-central1","object":"scheduledSensorStatusUpdate/function-source.zip","generation":"1755472614254822"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/airwatch-benin/serviceAccounts/49855349095-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/airwatch-benin/locations/us-central1/services/scheduledsensorstatusupdate","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/scheduledSensorStatusUpdate","FUNCTION_TARGET":"scheduledSensorStatusUpdate","LOG_EXECUTION_ID":"true","FUNCTION_SIGNATURE_TYPE":"http"},"maxInstanceCount":3,"ingressSettings":"ALLOW_ALL","uri":"https://scheduledsensorstatusupdate-vjqx5mw3tq-uc.a.run.app","serviceAccountEmail":"49855349095-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"scheduledsensorstatusupdate-00018-qeh","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-08-17T23:18:02.307243943Z","labels":{"deployment-tool":"cli-firebase","deployment-scheduled":"true","firebase-functions-hash":"78a60238c14940ba99e5c55c628459856056c1ec"},"environment":"GEN_2","url":"https://us-central1-airwatch-benin.cloudfunctions.net/scheduledSensorStatusUpdate","createTime":"2025-07-16T15:01:24.505335074Z","satisfiesPzi":true}]}
+[info] i  hosting: The following function(s) are pinned to site airwatch-benin and will be deployed as well: ssrairwatchbenin
+[info]
+[info] === Deploying to 'airwatch-benin'...
+[info]
+[info] i  deploying functions, hosting
+[debug] [2025-08-19T15:17:41.944Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:41.944Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:41.946Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin [none]
+[debug] [2025-08-19T15:17:42.302Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin 200
+[debug] [2025-08-19T15:17:42.303Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin {"projectNumber":"49855349095","projectId":"airwatch-benin","lifecycleState":"ACTIVE","name":"airwatch-benin","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-07-13T16:46:51.577634Z"}
+[info] i  functions: preparing codebase firebase-frameworks-airwatch-benin for deployment
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled...
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled...
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled...
+[debug] [2025-08-19T15:17:42.317Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:42.318Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:42.318Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/airwatch-benin/adminSdkConfig [none]
+[debug] [2025-08-19T15:17:43.324Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/airwatch-benin/adminSdkConfig 200
+[debug] [2025-08-19T15:17:43.324Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/airwatch-benin/adminSdkConfig {"projectId":"airwatch-benin","storageBucket":"airwatch-benin.firebasestorage.app"}
+[debug] [2025-08-19T15:17:43.330Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:43.330Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:43.331Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs [none]
+[debug] [2025-08-19T15:17:44.900Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs 200
+[debug] [2025-08-19T15:17:44.900Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs {"configs":[{"name":"projects/airwatch-benin/configs/mqtt"}]}
+[debug] [2025-08-19T15:17:44.900Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:44.901Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:44.901Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs/mqtt/variables [none]
+[debug] [2025-08-19T15:17:45.248Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs/mqtt/variables 200
+[debug] [2025-08-19T15:17:45.249Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs/mqtt/variables {"variables":[{"name":"projects/airwatch-benin/configs/mqtt/variables/webhook_secret","updateTime":"2025-07-16T15:22:33.118552941Z"}]}
+[debug] [2025-08-19T15:17:45.250Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:45.250Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:45.250Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs/mqtt/variables/webhook_secret [none]
+[debug] [2025-08-19T15:17:45.596Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs/mqtt/variables/webhook_secret 200
+[debug] [2025-08-19T15:17:45.597Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/airwatch-benin/configs/mqtt/variables/webhook_secret {"name":"projects/airwatch-benin/configs/mqtt/variables/webhook_secret","updateTime":"2025-07-16T15:22:33.118552941Z","text":"CascadeGeneratedSecret-PlzChangeMe-12345"}
+[debug] [2025-08-19T15:17:45.611Z] Validating nodejs source
+[debug] [2025-08-19T15:17:47.616Z] > [functions] package.json contents: {
+  "name": "air-watch-benin",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@radix-ui/react-accordion": "1.2.11",
+    "@radix-ui/react-alert-dialog": "1.1.14",
+    "@radix-ui/react-aspect-ratio": "1.1.7",
+    "@radix-ui/react-avatar": "1.1.10",
+    "@radix-ui/react-checkbox": "1.3.2",
+    "@radix-ui/react-collapsible": "1.1.11",
+    "@radix-ui/react-context-menu": "2.2.15",
+    "@radix-ui/react-dialog": "1.1.14",
+    "@radix-ui/react-dropdown-menu": "2.1.15",
+    "@radix-ui/react-hover-card": "1.1.14",
+    "@radix-ui/react-label": "2.1.7",
+    "@radix-ui/react-menubar": "1.1.15",
+    "@radix-ui/react-navigation-menu": "1.2.13",
+    "@radix-ui/react-popover": "1.1.14",
+    "@radix-ui/react-progress": "1.1.7",
+    "@radix-ui/react-radio-group": "1.3.7",
+    "@radix-ui/react-scroll-area": "1.2.9",
+    "@radix-ui/react-select": "2.2.5",
+    "@radix-ui/react-separator": "1.1.7",
+    "@radix-ui/react-slider": "1.3.5",
+    "@radix-ui/react-slot": "1.2.3",
+    "@radix-ui/react-switch": "1.2.5",
+    "@radix-ui/react-tabs": "1.1.12",
+    "@radix-ui/react-toast": "1.2.14",
+    "@radix-ui/react-toggle": "1.1.9",
+    "@radix-ui/react-toggle-group": "1.1.10",
+    "@radix-ui/react-tooltip": "1.2.7",
+    "@tailwindcss/postcss": "^4.1.8",
+    "autoprefixer": "^10.4.21",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "1.1.1",
+    "date-fns": "latest",
+    "embla-carousel-react": "8.6.0",
+    "events": "latest",
+    "firebase": "^11.10.0",
+    "firebase-admin": "^13.4.0",
+    "input-otp": "1.4.2",
+    "lucide-react": "^0.513.0",
+    "mqtt": "latest",
+    "next": "15.3.3",
+    "next-themes": "latest",
+    "react": "^19.1.0",
+    "react-day-picker": "9.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.57.0",
+    "react-resizable-panels": "^3.0.2",
+    "recharts": "latest",
+    "sonner": "^2.0.5",
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "vaul": "^1.1.2",
+    "zod": "^3.25.56",
+    "firebase-frameworks": "^0.11.0",
+    "firebase-functions": "^6.0.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "ajv": "^8.17.1"
+    },
+    "onlyBuiltDependencies": [
+      "@firebase/util",
+      "@tailwindcss/oxide",
+      "protobufjs",
+      "re2"
+    ]
+  },
+  "main": "server.js",
+  "engines": {
+    "node": "20"
+  }
+}
+[debug] [2025-08-19T15:17:47.618Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase firebase-frameworks-airwatch-benin to determine what to deploy
+[debug] [2025-08-19T15:17:47.624Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-08-19T15:17:47.693Z] Found firebase-functions binary at 'D:\Projet\coton\air-quality-platform\.firebase\airwatch-benin\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8811
+
+[error] (node:25112) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[debug] [2025-08-19T15:17:49.213Z] Got response from /__/functions.yaml {"endpoints":{"ssrairwatchbenin":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"ssrairwatchbenin"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled...
+[debug] [2025-08-19T15:17:53.316Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-19T15:17:53.316Z] > authorizing via signed-in user (qualitedelaircoton@gmail.com)
+[debug] [2025-08-19T15:17:53.316Z] [iam] checking project airwatch-benin for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-08-19T15:17:53.317Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:53.317Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:53.318Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions [none]
+[debug] [2025-08-19T15:17:53.318Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions x-goog-quota-user=projects/airwatch-benin
+[debug] [2025-08-19T15:17:53.318Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-08-19T15:17:54.439Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions 200
+[debug] [2025-08-19T15:17:54.440Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-08-19T15:17:54.444Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:54.445Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:17:54.446Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/airwatch-benin/instances pageSize=100&pageToken=
+[debug] [2025-08-19T15:17:55.697Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/airwatch-benin/instances 200
+[debug] [2025-08-19T15:17:55.698Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/airwatch-benin/instances {"instances":[{"name":"projects/airwatch-benin/instances/firestore-send-email","createTime":"2025-07-17T16:15:39.173722Z","updateTime":"2025-07-17T16:31:39.210388Z","state":"ACTIVE","config":{"name":"projects/airwatch-benin/instances/firestore-send-email/configurations/b2b83bbd-99f4-423b-91e2-1da3328b02e8","createTime":"2025-07-17T16:15:39.173722Z","source":{"name":"projects/firebaseextensions/sources/4cf6e429-9ccf-4d81-81e6-c7d0fb3b0256","packageUri":"https://storage.googleapis.com/firebase-extensions-packages-prod/firebase-firestore-send-email-0.2.4-0a4c1a27-b565-4f49-a4ab-3306f47e35ee.zip","hash":"65d174caa6d3cfe1b00fb3cfee9682a1dd94ac05512521e2110f78c1947cfd81","extensionRoot":"/","spec":{"specVersion":"v1beta","name":"firestore-send-email","version":"0.2.4","description":"Composes and sends an email based on the contents of a document written to a specified Cloud Firestore collection.","roles":[{"role":"datastore.user","reason":"Allows this extension to access Cloud Firestore to read and process added email documents."}],"resources":[{"name":"processQueue","type":"firebaseextensions.v1beta.v2function","propertiesYaml":"buildConfig:\n  runtime: nodejs22\neventTrigger:\n  eventFilters:\n  - attribute: database\n    value: ${DATABASE}\n  - attribute: document\n    operator: match-path-pattern\n    value: ${MAIL_COLLECTION}/{documentId}\n  eventType: google.cloud.firestore.document.v1.written\n  triggerRegion: ${DATABASE_REGION}\nserviceConfig:\n  timeoutSeconds: 120\nsourceDirectory: functions\n","description":"Processes document changes in the specified Cloud Firestore collection, delivers emails, and updates the document with delivery status information.","deletionPolicy":"DELETE"}],"billingRequired":true,"author":{"authorName":"Firebase","url":"https://firebase.google.com"},"contributors":[{"authorName":"Michael Bleigh","url":"https://github.com/mbleigh"},{"authorName":"Invertase","email":"oss@invertase.io","url":"https://github.com/invertase"}],"license":"Apache-2.0","releaseNotesUrl":"https://github.com/firebase/extensions/blob/master/firestore-send-email/CHANGELOG.md","sourceUrl":"https://github.com/firebase/extensions/tree/master/firestore-send-email","params":[{"param":"DATABASE","label":"Firestore Instance ID","type":"STRING","description":"The Firestore database to use. Use \"(default)\" for the default database. You can view your available Firestore databases at [https://console.cloud.google.com/firestore/databases](https://console.cloud.google.com/firestore/databases).\n","required":true,"default":"(default)","example":"(default)"},{"param":"DATABASE_REGION","label":"Firestore Instance Location","type":"SELECT","description":"Where is the Firestore database located? You can check your current database location at [https://console.cloud.google.com/firestore/databases](https://console.cloud.google.com/firestore/databases).\n","required":true,"options":[{"value":"eur3","label":"Multi-region (Europe - Belgium and Netherlands)"},{"value":"nam5","label":"Multi-region (United States)"},{"value":"nam7","label":"Multi-region (Iowa, North Virginia, and Oklahoma)"},{"value":"us-central1","label":"Iowa (us-central1)"},{"value":"us-west1","label":"Oregon (us-west1)"},{"value":"us-west2","label":"Los Angeles (us-west2)"},{"value":"us-west3","label":"Salt Lake City (us-west3)"},{"value":"us-west4","label":"Las Vegas (us-west4)"},{"value":"us-east1","label":"South Carolina (us-east1)"},{"value":"us-east4","label":"Northern Virginia (us-east4)"},{"value":"us-east5","label":"Columbus (us-east5)"},{"value":"us-south1","label":"Dallas (us-south1)"},{"value":"northamerica-northeast1","label":"Montreal (northamerica-northeast1)"},{"value":"northamerica-northeast2","label":"Toronto (northamerica-northeast2)"},{"value":"northamerica-south1","label":"Queretaro (northamerica-south1)"},{"value":"southamerica-east1","label":"Sao Paulo (southamerica-east1)"},{"value":"southamerica-west1","label":"Santiago (southamerica-west1)"},{"value":"europe-west1","label":"Belgium (europe-west1)"},{"value":"europe-west2","label":"London (europe-west2)"},{"value":"europe-west3","label":"Frankfurt (europe-west3)"},{"value":"europe-west4","label":"Netherlands (europe-west4)"},{"value":"europe-west6","label":"Zurich (europe-west6)"},{"value":"europe-west8","label":"Milan (europe-west8)"},{"value":"europe-west9","label":"Paris (europe-west9)"},{"value":"europe-west10","label":"Berlin (europe-west10)"},{"value":"europe-west12","label":"Turin (europe-west12)"},{"value":"europe-southwest1","label":"Madrid (europe-southwest1)"},{"value":"europe-north1","label":"Finland (europe-north1)"},{"value":"europe-north2","label":"Stockholm (europe-north2)"},{"value":"europe-central2","label":"Warsaw (europe-central2)"},{"value":"me-central1","label":"Doha (me-central1)"},{"value":"me-central2","label":"Dammam (me-central2)"},{"value":"me-west1","label":"Tel Aviv (me-west1)"},{"value":"asia-south1","label":"Mumbai (asia-south1)"},{"value":"asia-south2","label":"Delhi (asia-south2)"},{"value":"asia-southeast1","label":"Singapore (asia-southeast1)"},{"value":"asia-southeast2","label":"Jakarta (asia-southeast2)"},{"value":"asia-east1","label":"Taiwan (asia-east1)"},{"value":"asia-east2","label":"Hong Kong (asia-east2)"},{"value":"asia-northeast1","label":"Tokyo (asia-northeast1)"},{"value":"asia-northeast2","label":"Osaka (asia-northeast2)"},{"value":"asia-northeast3","label":"Seoul (asia-northeast3)"},{"value":"australia-southeast1","label":"Sydney (australia-southeast1)"},{"value":"australia-southeast2","label":"Melbourne (australia-southeast2)"},{"value":"africa-south1","label":"Johannesburg (africa-south1)"}]},{"param":"AUTH_TYPE","label":"Authentication Type","type":"SELECT","description":"The authentication type to be used for the SMTP server (e.g., OAuth2, Username & Password.","required":true,"options":[{"value":"UsernamePassword","label":"Username & Password"},{"value":"OAuth2","label":"OAuth2"}],"default":"UsernamePassword"},{"param":"SMTP_CONNECTION_URI","label":"SMTP connection URI","type":"STRING","description":"A URI representing an SMTP server this extension can use to deliver email. Note that port 25 is blocked by Google Cloud Platform, so we recommend using port 587 for SMTP connections. If you're using the SMTPS protocol, we recommend using port 465. In order to keep passwords secure, it is recommended to omit the password from the connection string while using the `SMTP Password` field for entering secrets and passwords. Passwords and secrets should now be included in `SMTP password` field.\nSecure format:\n `smtps://username@gmail.com@smtp.gmail.com:465` (username only)\n `smtps://smtp.gmail.com:465` (No username and password)\nBackwards Compatible (less secure):\n `smtps://username@gmail.com:password@smtp.gmail.com:465`. (username and\npassword)","example":"smtps://username@smtp.hostname.com:465","validationRegex":"^(smtp[s]*://(.*?(:[^:@]*)?@)?[^:@]+:[0-9]+(\\?[^ ]*)?)|^$","validationErrorMessage":"Invalid SMTP connection URI. Must be in the form `smtp(s)://username:password@hostname:port` or `smtp(s)://username@hostname:port` or to be left blank."},{"param":"SMTP_PASSWORD","label":"SMTP password","type":"SECRET","description":"User password for the SMTP server"},{"param":"HOST","label":"OAuth2 SMTP Host","type":"STRING","description":"The OAuth2 hostname of the SMTP server (e.g., smtp.gmail.com)."},{"param":"OAUTH_PORT","label":"OAuth2 SMTP Port","type":"STRING","description":"The OAuth2 port number for the SMTP server (e.g., 465 for SMTPS, 587 for STARTTLS).","default":"465"},{"param":"OAUTH_SECURE","label":"Use secure OAuth2 connection?","type":"SELECT","description":"Set to true to enable a secure connection (TLS/SSL) when using OAuth2 authentication for the SMTP server.","options":[{"value":"true","label":"Yes"},{"value":"false","label":"No"}],"default":"true"},{"param":"CLIENT_ID","label":"OAuth2 Client ID","type":"SECRET","description":"The OAuth2 Client ID for authentication with the SMTP server."},{"param":"CLIENT_SECRET","label":"OAuth2 Client Secret","type":"SECRET","description":"The OAuth2 Client Secret for authentication with the SMTP server."},{"param":"REFRESH_TOKEN","label":"OAuth2 Refresh Token","type":"SECRET","description":"The OAuth2 Refresh Token for authentication with the SMTP server."},{"param":"USER","label":"OAuth2 SMTP User","type":"STRING","description":"The OAuth2 user email or username for SMTP authentication."},{"param":"MAIL_COLLECTION","label":"Email documents collection","type":"STRING","description":"What is the path to the collection that contains the documents used to build and send the emails?","required":true,"default":"mail","validationRegex":"^[^/]+(/[^/]+/[^/]+)*$","validationErrorMessage":"Must be a valid Cloud Firestore collection"},{"param":"DEFAULT_FROM","label":"Default FROM address","type":"STRING","description":"The email address to use as the sender's address (if it's not specified in the added email document). You can optionally include a name with the email address (`Friendly Firebaser <foobar@example.com>`). This parameter does not work with [Gmail SMTP](https://nodemailer.com/usage/using-gmail/).","required":true,"example":"foobar@example.com","validationRegex":"^(([^<>()\\[\\]\\.,;:\\s@\\\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$|^.*<(([^<>()\\[\\]\\.,;:\\s@\\\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})>$","validationErrorMessage":"Must be a valid email address or valid name plus email address"},{"param":"DEFAULT_REPLY_TO","label":"Default REPLY-TO address","type":"STRING","description":"The email address to use as the reply-to address (if it's not specified in the added email document)."},{"param":"USERS_COLLECTION","label":"Users collection","type":"STRING","description":"A collection of documents keyed by user UID. If the `toUids`, `ccUids`, and/or `bccUids` recipient options are used in the added email document, this extension delivers email to the `email` field based on lookups in this collection."},{"param":"TEMPLATES_COLLECTION","label":"Templates collection","type":"STRING","description":"A collection of email templates keyed by name. This extension can render an email using a [Handlebar](https://handlebarsjs.com/) template, it's recommended to use triple curly braces `{{{  }}}` in your Handlebars templates when the substitution value is a URL or otherwise sensitive to HTML escaping."},{"param":"TTL_EXPIRE_TYPE","label":"Firestore TTL type","type":"SELECT","description":"Do you want the firestore records to be marked with an expireAt field for a TTL policy? If \"Never\" is selected then no expireAt field will be added. Otherwise you may specify the unit of time specified by the TTL_EXPIRE_VALUE parameter. Defaults to \"Never\".","required":true,"options":[{"value":"never","label":"Never"},{"value":"hour","label":"Hour"},{"value":"day","label":"Day"},{"value":"week","label":"Week"},{"value":"month","label":"Month"},{"value":"year","label":"Year"}],"default":"never"},{"param":"TTL_EXPIRE_VALUE","label":"Firestore TTL value","type":"STRING","description":"In the units specified by TTL_EXPIRE_TYPE, how long do you want records to be ineligible for deletion by a TTL policy? This parameter requires the Firestore TTL type parameter to be set to a value other than `Never`. For example, if `Firestore TTL type` is set to `Day` then setting this parameter to `1` will specify a TTL of 1 day.","required":true,"default":"1","validationRegex":"^[1-9][0-9]*$","validationErrorMessage":"The value must be an integer value greater than zero."},{"param":"TLS_OPTIONS","label":"TLS Options","type":"STRING","description":"A JSON value representing TLS options. For more information, see https://nodejs.org/api/tls.html#tls_class_tls_tlssocket"}],"preinstallContent":"Use this extension to render and send emails that contain the information from documents added to a specified Cloud Firestore collection.\n\nAdding a document triggers this extension to send an email built from the document's fields. The document's top-level fields specify the email sender and recipients, including `to`, `cc`, and `bcc` options (each supporting UIDs). The document's `message` field specifies the other email elements, like subject line and email body (either plaintext or HTML)\n\nHere's a basic example document write that would trigger this extension:\n\n```js\nadmin.firestore().collection('mail').add({\n  to: 'someone@example.com',\n  message: {\n    subject: 'Hello from Firebase!',\n    html: 'This is an <code>HTML</code> email body.',\n  },\n})\n```\n\nYou can also optionally configure this extension to render emails using [Handlebar](https://handlebarsjs.com/) templates. Each template is a document stored in a Cloud Firestore collection.\n\nWhen you configure this extension, you'll need to supply your **SMTP credentials for mail delivery**. Note that this extension is for use with bulk email service providers, like SendGrid, Mailgun, etc.\n\n#### Using custom headers\n\nYou can add custom headers to your emails by including a `headers` field in the document you add to the Firestore collection. The `headers` field should be an object where each key is the header name and the value is the header value.\n\n## Example JSON with Custom Headers:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"message\": {\n    \"subject\": \"Test Email with Custom Headers\",\n    \"text\": \"This is a test email to see if custom headers work.\",\n    \"html\": \"<strong>This is a test email to see if custom headers work.</strong>\"\n  },\n  \"headers\": {\n    \"X-Custom-Header\": \"CustomValue\",\n    \"X-Another-Header\": \"AnotherValue\",\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send an email with custom headers.\nYou can even include headers like 'List-Unsubscribe' to allow recipients to unsubscribe from your emails.\n\n#### Firestore-Send-Email: SendGrid Categories\n\nWhen using SendGrid (`SMTP_CONNECTION_URI` includes `sendgrid.net`), you can assign categories to your emails.\n\n## Example JSON with Categories:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"categories\": [\"Example_Category\"],\n  \"message\": {\n    \"subject\": \"Test Email with Categories\",\n    \"text\": \"This is a test email to see if categories work.\",\n    \"html\": \"<strong>This is a test email to see if categories work.</strong>\"\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send categorized emails.\n\nFor more details, see the [SendGrid Categories documentation](https://docs.sendgrid.com/ui/sending-email/categories).\n\n#### Firestore-Send-Email: SendGrid Dynamic Templates\n\nWhen using SendGrid, you can use SendGrid Dynamic Templates to create and send templated emails.\n\n## Example JSON representation of Firestore document for a Dynamic Template:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"sendGrid\": {\n    \"templateId\": \"d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",  // SendGrid Dynamic Template ID always starts with 'd-'\n    \"dynamicTemplateData\": {\n      \"name\": \"John Doe\",\n      \"company\": \"Example Corp\",\n      \"position\": \"Developer\"\n    }\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send an email using a SendGrid Dynamic Template. The `templateId` is required and should be your SendGrid Dynamic Template ID (always starts with 'd-'). The `dynamicTemplateData` object contains the variables that will be used in your template.\n\nFor more details, see the [SendGrid Dynamic Templates documentation](https://docs.sendgrid.com/ui/sending-email/how-to-send-an-email-with-dynamic-templates).\n\n#### Setting Up OAuth2 Authentication\n\nThis section will help you set up OAuth2 authentication for the extension, using GCP (Gmail) as an example.\n\nThe extension is agnostic with respect to OAuth2 provider. You just need to provide it with valid Client ID, Client Secret, and Refresh Token parameters.\n\n##### Step 1: Create OAuth Credentials in Google Cloud Platform\n\n1. Go to the [Google Cloud Console](https://console.cloud.google.com/)\n2. Select your project\n3. In the left sidebar, navigate to **APIs & Services > Credentials**\n4. Click Create Credentials and select **OAuth client ID**\n5. Set the application type to **Web application**\n6. Give your OAuth client a name (e.g., \"Firestore Send Email Extension\")\n7. Under **Authorized redirect URIs**, add the URI where you'll receive the OAuth callback, for example, `http://localhost:8080/oauth/callback`.\n\n   **Note**: The redirect URI in your OAuth client settings MUST match exactly the callback URL in your code.\n\n8. Click **Create**.\n\n##### Step 2: Configure OAuth Consent Screen\n\n1. In Google Cloud Console, go to **APIs & Services > OAuth consent screen**\n2. Choose the appropriate user type:\n   - **External**: For applications used by any Google user\n   - **Internal**: For applications used only by users in your organization\n\n> **Important Note**: If your OAuth consent screen is in \"Testing\" status, refresh tokens will expire after 7 days unless the User Type is set to \"Internal.\"\n\n##### Step 3: Generate a Refresh Token\n\nYou can use a standalone helper script (`oauth2-refresh-token-helper.js`) that generates a refresh token without requiring any npm installations. \n\n**Prerequisites:**\n- You must have Node.js installed on your machine\n\n**Download the script:**\n1. Download the script using curl, wget, or directly from your browser:\n   ```bash\n   # Using curl\n   curl -o oauth2-refresh-token-helper.js https://raw.githubusercontent.com/firebase/extensions/refs/heads/master/firestore-send-email/scripts/oauth2-refresh-token-helper.js\n   \n   # Using wget\n   wget https://raw.githubusercontent.com/firebase/extensions/refs/heads/master/firestore-send-email/scripts/oauth2-refresh-token-helper.js\n   ```\n\n   You can also [view the script on GitHub](https://github.com/firebase/extensions/blob/master/firestore-send-email/scripts/oauth2-refresh-token-helper.js) and download it manually.\n\n> **Note**: If you are creating your own application to obtain a refresh token, in a Node.js environment where you can use npm packages, consider using the official google-auth-library instead:\n> \n> 1. Install the library: `npm install google-auth-library`\n> 2. Then use it like this:\n>    ```javascript\n>    import { OAuth2Client } from \"google-auth-library\";\n>    \n>    // Initialize OAuth client\n>    const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);\n>    \n>    // Generate authorization URL\n>    const authorizeUrl = oAuth2Client.generateAuthUrl({\n>      access_type: \"offline\",\n>      prompt: \"consent\",\n>      scope: [\"https://mail.google.com/\"],  // Full Gmail access\n>    });\n>    \n>    // After receiving the code from the callback:\n>    const { tokens } = await oAuth2Client.getToken(code);\n>    const refreshToken = tokens.refresh_token;\n>    ```\n\n2. Run the script with Node.js:\n\n   ```bash\n   node oauth2-refresh-token-helper.js\n   ```\n\n3. The script supports the following command-line options:\n   ```\n   --port, -p     Port to run the server on (default: 8080 or PORT env var)\n   --id, -i       Google OAuth Client ID\n   --secret, -s   Google OAuth Client Secret\n   --output, -o   Output file to save the refresh token (default: refresh_token.txt)\n   --help, -h     Show help information\n   ```\n\n4. You can either provide your credentials as command-line arguments or set them as environment variables:\n   ```bash\n   # Using environment variables\n   export CLIENT_ID=your_client_id\n   export CLIENT_SECRET=your_client_secret\n   node oauth2-refresh-token-helper.js\n\n   # Using command-line arguments\n   node oauth2-refresh-token-helper.js --id=your_client_id --secret=your_client_secret\n   ```\n\n5. The script will:\n   - Start a local web server\n   - Open your browser to the OAuth consent page\n   - Receive the authorization code\n   - Exchange the code for tokens\n   - Save the refresh token to a file (default: `refresh_token.txt`)\n   - Display the refresh token in your browser\n\n6. **Important**: The redirect URI in the script (`http://localhost:8080/oauth/callback` by default) **MUST** match exactly what you configured in the Google Cloud Console OAuth client settings.\n\n7. The script automatically requests the appropriate scope for Gmail access (`https://mail.google.com/`) and sets the authorization parameters to always receive a refresh token (`access_type: \"offline\"` and `prompt: \"consent\"`).\n\n##### Step 4: Configure the Firestore Send Email Extension\n\nWhen installing the extension, select \"OAuth2\" as the **Authentication Type** and provide the following parameters:\n\n- **OAuth2 SMTP Host**: `smtp.gmail.com` (for Gmail)\n- **OAuth2 SMTP Port**: `465` (for SMTPS) or `587` (for STARTTLS)\n- **Use Secure OAuth2 Connection**: `true` (for port 465) or `false` (for port 587)\n- **OAuth2 Client ID**: Your Client ID from GCP\n- **OAuth2 Client Secret**: Your Client Secret from GCP\n- **OAuth2 Refresh Token**: The refresh token generated in Step 3\n- **SMTP User**: Your full Gmail email address\n\nLeave `Use secure OAuth2 connection?` as the default value `true`.\n\n##### Troubleshooting\n\n###### Refresh Token Expiration\n\n- **Testing Status**: If your OAuth consent screen is in \"Testing\" status, refresh tokens expire after 7 days unless User Type is set to \"Internal\"\n- **Solution**: Either publish your app or ensure User Type is set to \"Internal\" in the OAuth consent screen settings\n\n###### No Refresh Token Received\n\n- **Problem**: If you don't receive a refresh token during the OAuth flow\n- **Solution**: Make sure you've revoked previous access or forced consent by going to [Google Account Security](https://myaccount.google.com/security) > Third-party apps with account access\n\n###### Scope Issues\n\n- **Problem**: If you see authentication errors, you might not have the correct scopes\n- **Solution**: Ensure you've added `https://mail.google.com/` as a scope in the OAuth consent screen\n\n###### Additional Resources\n\n- [Google OAuth2 Documentation](https://developers.google.com/identity/protocols/oauth2)\n- [Nodemailer OAuth2 Guide](https://nodemailer.com/smtp/oauth2/)\n- [Firebase Extensions Documentation](https://firebase.google.com/docs/extensions)\n\n#### Automatic Deletion of Email Documents\n\nTo use Firestore's TTL feature for automatic deletion of expired email documents, the extension provides several configuration parameters.\n\nThe extension will set a TTL field in the email documents, but you will need to manually configure a TTL policy for the collection/collection group the extension targets, on the `delivery.expireAt` field.\n\nDetailed instructions for creating a TTL field can be found in the [Firestore TTL Policy documentation](https://firebase.google.com/docs/firestore/ttl).\n\n#### Billing\nTo install an extension, your project must be on the [Blaze (pay as you go) plan](https://firebase.google.com/pricing)\n\n- This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service's no-cost tier:\n  - Cloud Firestore\n  - Cloud Functions (Node.js 10+ runtime. [See FAQs](https://firebase.google.com/support/faq#extensions-pricing))\n\nUsage of this extension also requires you to have SMTP credentials for mail delivery. You are responsible for any associated costs with your usage of your SMTP provider.\n\n#### Further reading & resources\n\nYou can find more information about this extension in the following articles:\n\n- [Sending Emails Using Firestore And Firebase Extensions](https://invertase.link/Y6Nu)","postinstallContent":"### See it in action\n\nYou can test out this extension right away!\n\n1.  Go to your [Cloud Firestore dashboard](https://console.firebase.google.com/project/${param:PROJECT_ID}/firestore/data) in the Firebase console. Note that, if you have configured a non-default firestore database, you may have to view it via the [Google Cloud Console](https://console.cloud.google.com/firestore/databases/${param:DATABASE}).\n\n1.  If it doesn't already exist, create the collection you specified during installation: `${param:MAIL_COLLECTION}`.\n\n1.  Add a document with a `to` field and a `message` field with the following content:\n\n    ```js\n    to: ['someone@example.com'],\n    message: {\n      subject: 'Hello from Firebase!',\n      text: 'This is the plaintext section of the email body.',\n      html: 'This is the <code>HTML</code> section of the email body.',\n    }\n    ```\n\n1.  In a few seconds, you'll see a `delivery` field appear in the document. The field will update as the extension processes the email.\n\n**Note:** You can also use the [Firebase Admin SDK][admin_sdk] to add a document:\n\n```js\nadmin\n  .firestore()\n  .collection(\"${param:MAIL_COLLECTION}\")\n  .add({\n    to: \"someone@example.com\",\n    message: {\n      subject: \"Hello from Firebase!\",\n      text: \"This is the plaintext section of the email body.\",\n      html: \"This is the <code>HTML</code> section of the email body.\",\n    },\n  })\n  .then(() => console.log(\"Queued email for delivery!\"));\n```\n\n### Using this extension\n\nSee the [official documentation](https://firebase.google.com/docs/extensions/official/firestore-send-email) for information on using this extension, including advanced use cases such as using Handlebars templates and managing email delivery status.\n\n#### Firestore-Send-Email: SendGrid Categories\n\nWhen using SendGrid (`SMTP_CONNECTION_URI` includes `sendgrid.net`), you can assign categories to your emails.\n\n##### Example JSON with Categories:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"categories\": [\"Example_Category\"],\n  \"message\": {\n    \"subject\": \"Test Email with Categories\",\n    \"text\": \"This is a test email to see if categories work.\",\n    \"html\": \"<strong>This is a test email to see if categories work.</strong>\"\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send categorized emails.\n\nFor more details, see the [SendGrid Categories documentation](https://docs.sendgrid.com/ui/sending-email/categories).\n\n#### Firestore-Send-Email: SendGrid Dynamic Templates\n\nWhen using SendGrid, you can use SendGrid Dynamic Templates to create and send templated emails.\n\n## Example JSON representation of Firestore document for a Dynamic Template:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"sendGrid\": {\n    \"templateId\": \"d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n    \"dynamicTemplateData\": {\n      \"name\": \"John Doe\",\n      \"company\": \"Example Corp\",\n      \"position\": \"Developer\"\n    }\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send an email using a SendGrid Dynamic Template. The `templateId` is required and should be your SendGrid Dynamic Template ID (always starts with 'd-'). The `dynamicTemplateData` object contains the variables that will be used in your template.\n\nFor more details, see the [SendGrid Dynamic Templates documentation](https://docs.sendgrid.com/ui/sending-email/how-to-send-an-email-with-dynamic-templates).\n\n#### Understanding SendGrid Email IDs\n\nWhen an email is sent successfully, the extension tracks two different IDs in the delivery information:\n\n- **Queue ID**: This is SendGrid's internal queue identifier (from the `x-message-id` header). It's useful for tracking the email within SendGrid's system.\n- **Message ID**: This is the RFC-2822 Message-ID header, which is a standard email identifier used across email systems.\n\nYou can find both IDs in the `delivery.info` field of your email document after successful delivery:\n\n```json\n{\n  \"delivery\": {\n    \"info\": {\n      \"messageId\": \"<unique-message-id@your-domain.com>\",\n      \"sendgridQueueId\": \"sendgrid-queue-id\",\n      \"accepted\": [\"recipient@example.com\"],\n      \"rejected\": [],\n      \"pending\": [],\n      \"response\": \"status=202\"\n    }\n  }\n}\n```\n\n### Automatic Deletion of Email Documents\n\nTo use Firestore's TTL feature for automatic deletion of expired email documents, the extension provides several configuration parameters.\n\nThe extension will set a TTL field in the email documents, but you will need to manually configure a TTL policy for the collection/collection group the extension targets, on the `delivery.expireAt` field.\n\nDetailed instructions for creating a TTL field can be found in the [Firestore TTL Policy documentation](https://firebase.google.com/docs/firestore/ttl).\n\n\n### Monitoring\n\nAs a best practice, you can [monitor the activity](https://firebase.google.com/docs/extensions/manage-installed-extensions#monitor) of your installed extension, including checks on its health, usage, and logs.\n\n[mail_collection]: https://console.firebase.google.com/project/_/firestore/data~2F${param:MAIL_COLLECTION}\n[admin_sdk]: https://firebase.google.com/docs/admin/setup\n[amp4email]: https://amp.dev/documentation/guides-and-tutorials/learn/email-spec/amp-email-format/\n[handlebars]: https://handlebarsjs.com/\n\n### Further reading & resources\n\nYou can find more information about this extension in the following articles:\n\n- [Sending Emails Using Firestore And Firebase Extensions](https://invertase.link/Y6Nu)","readmeContent":"# Trigger Email from Firestore\n\n**Author**: Firebase (**[https://firebase.google.com](https://firebase.google.com)**)\n\n**Description**: Composes and sends an email based on the contents of a document written to a specified Cloud Firestore collection.\n\n\n\n**Details**: Use this extension to render and send emails that contain the information from documents added to a specified Cloud Firestore collection.\n\nAdding a document triggers this extension to send an email built from the document's fields. The document's top-level fields specify the email sender and recipients, including `to`, `cc`, and `bcc` options (each supporting UIDs). The document's `message` field specifies the other email elements, like subject line and email body (either plaintext or HTML)\n\nHere's a basic example document write that would trigger this extension:\n\n```js\nadmin.firestore().collection('mail').add({\n  to: 'someone@example.com',\n  message: {\n    subject: 'Hello from Firebase!',\n    html: 'This is an <code>HTML</code> email body.',\n  },\n})\n```\n\nYou can also optionally configure this extension to render emails using [Handlebar](https://handlebarsjs.com/) templates. Each template is a document stored in a Cloud Firestore collection.\n\nWhen you configure this extension, you'll need to supply your **SMTP credentials for mail delivery**. Note that this extension is for use with bulk email service providers, like SendGrid, Mailgun, etc.\n\n#### Using custom headers\n\nYou can add custom headers to your emails by including a `headers` field in the document you add to the Firestore collection. The `headers` field should be an object where each key is the header name and the value is the header value.\n\n## Example JSON with Custom Headers:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"message\": {\n    \"subject\": \"Test Email with Custom Headers\",\n    \"text\": \"This is a test email to see if custom headers work.\",\n    \"html\": \"<strong>This is a test email to see if custom headers work.</strong>\"\n  },\n  \"headers\": {\n    \"X-Custom-Header\": \"CustomValue\",\n    \"X-Another-Header\": \"AnotherValue\",\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send an email with custom headers.\nYou can even include headers like 'List-Unsubscribe' to allow recipients to unsubscribe from your emails.\n\n#### Firestore-Send-Email: SendGrid Categories\n\nWhen using SendGrid (`SMTP_CONNECTION_URI` includes `sendgrid.net`), you can assign categories to your emails.\n\n## Example JSON with Categories:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"categories\": [\"Example_Category\"],\n  \"message\": {\n    \"subject\": \"Test Email with Categories\",\n    \"text\": \"This is a test email to see if categories work.\",\n    \"html\": \"<strong>This is a test email to see if categories work.</strong>\"\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send categorized emails.\n\nFor more details, see the [SendGrid Categories documentation](https://docs.sendgrid.com/ui/sending-email/categories).\n\n#### Firestore-Send-Email: SendGrid Dynamic Templates\n\nWhen using SendGrid, you can use SendGrid Dynamic Templates to create and send templated emails.\n\n## Example JSON representation of Firestore document for a Dynamic Template:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"sendGrid\": {\n    \"templateId\": \"d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",  // SendGrid Dynamic Template ID always starts with 'd-'\n    \"dynamicTemplateData\": {\n      \"name\": \"John Doe\",\n      \"company\": \"Example Corp\",\n      \"position\": \"Developer\"\n    }\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send an email using a SendGrid Dynamic Template. The `templateId` is required and should be your SendGrid Dynamic Template ID (always starts with 'd-'). The `dynamicTemplateData` object contains the variables that will be used in your template.\n\nFor more details, see the [SendGrid Dynamic Templates documentation](https://docs.sendgrid.com/ui/sending-email/how-to-send-an-email-with-dynamic-templates).\n\n#### Setting Up OAuth2 Authentication\n\nThis section will help you set up OAuth2 authentication for the extension, using GCP (Gmail) as an example.\n\nThe extension is agnostic with respect to OAuth2 provider. You just need to provide it with valid Client ID, Client Secret, and Refresh Token parameters.\n\n##### Step 1: Create OAuth Credentials in Google Cloud Platform\n\n1. Go to the [Google Cloud Console](https://console.cloud.google.com/)\n2. Select your project\n3. In the left sidebar, navigate to **APIs & Services > Credentials**\n4. Click Create Credentials and select **OAuth client ID**\n5. Set the application type to **Web application**\n6. Give your OAuth client a name (e.g., \"Firestore Send Email Extension\")\n7. Under **Authorized redirect URIs**, add the URI where you'll receive the OAuth callback, for example, `http://localhost:8080/oauth/callback`.\n\n   **Note**: The redirect URI in your OAuth client settings MUST match exactly the callback URL in your code.\n\n8. Click **Create**.\n\n##### Step 2: Configure OAuth Consent Screen\n\n1. In Google Cloud Console, go to **APIs & Services > OAuth consent screen**\n2. Choose the appropriate user type:\n   - **External**: For applications used by any Google user\n   - **Internal**: For applications used only by users in your organization\n\n> **Important Note**: If your OAuth consent screen is in \"Testing\" status, refresh tokens will expire after 7 days unless the User Type is set to \"Internal.\"\n\n##### Step 3: Generate a Refresh Token\n\nYou can use a standalone helper script (`oauth2-refresh-token-helper.js`) that generates a refresh token without requiring any npm installations. \n\n**Prerequisites:**\n- You must have Node.js installed on your machine\n\n**Download the script:**\n1. Download the script using curl, wget, or directly from your browser:\n   ```bash\n   # Using curl\n   curl -o oauth2-refresh-token-helper.js https://raw.githubusercontent.com/firebase/extensions/refs/heads/master/firestore-send-email/scripts/oauth2-refresh-token-helper.js\n   \n   # Using wget\n   wget https://raw.githubusercontent.com/firebase/extensions/refs/heads/master/firestore-send-email/scripts/oauth2-refresh-token-helper.js\n   ```\n\n   You can also [view the script on GitHub](https://github.com/firebase/extensions/blob/master/firestore-send-email/scripts/oauth2-refresh-token-helper.js) and download it manually.\n\n> **Note**: If you are creating your own application to obtain a refresh token, in a Node.js environment where you can use npm packages, consider using the official google-auth-library instead:\n> \n> 1. Install the library: `npm install google-auth-library`\n> 2. Then use it like this:\n>    ```javascript\n>    import { OAuth2Client } from \"google-auth-library\";\n>    \n>    // Initialize OAuth client\n>    const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);\n>    \n>    // Generate authorization URL\n>    const authorizeUrl = oAuth2Client.generateAuthUrl({\n>      access_type: \"offline\",\n>      prompt: \"consent\",\n>      scope: [\"https://mail.google.com/\"],  // Full Gmail access\n>    });\n>    \n>    // After receiving the code from the callback:\n>    const { tokens } = await oAuth2Client.getToken(code);\n>    const refreshToken = tokens.refresh_token;\n>    ```\n\n2. Run the script with Node.js:\n\n   ```bash\n   node oauth2-refresh-token-helper.js\n   ```\n\n3. The script supports the following command-line options:\n   ```\n   --port, -p     Port to run the server on (default: 8080 or PORT env var)\n   --id, -i       Google OAuth Client ID\n   --secret, -s   Google OAuth Client Secret\n   --output, -o   Output file to save the refresh token (default: refresh_token.txt)\n   --help, -h     Show help information\n   ```\n\n4. You can either provide your credentials as command-line arguments or set them as environment variables:\n   ```bash\n   # Using environment variables\n   export CLIENT_ID=your_client_id\n   export CLIENT_SECRET=your_client_secret\n   node oauth2-refresh-token-helper.js\n\n   # Using command-line arguments\n   node oauth2-refresh-token-helper.js --id=your_client_id --secret=your_client_secret\n   ```\n\n5. The script will:\n   - Start a local web server\n   - Open your browser to the OAuth consent page\n   - Receive the authorization code\n   - Exchange the code for tokens\n   - Save the refresh token to a file (default: `refresh_token.txt`)\n   - Display the refresh token in your browser\n\n6. **Important**: The redirect URI in the script (`http://localhost:8080/oauth/callback` by default) **MUST** match exactly what you configured in the Google Cloud Console OAuth client settings.\n\n7. The script automatically requests the appropriate scope for Gmail access (`https://mail.google.com/`) and sets the authorization parameters to always receive a refresh token (`access_type: \"offline\"` and `prompt: \"consent\"`).\n\n##### Step 4: Configure the Firestore Send Email Extension\n\nWhen installing the extension, select \"OAuth2\" as the **Authentication Type** and provide the following parameters:\n\n- **OAuth2 SMTP Host**: `smtp.gmail.com` (for Gmail)\n- **OAuth2 SMTP Port**: `465` (for SMTPS) or `587` (for STARTTLS)\n- **Use Secure OAuth2 Connection**: `true` (for port 465) or `false` (for port 587)\n- **OAuth2 Client ID**: Your Client ID from GCP\n- **OAuth2 Client Secret**: Your Client Secret from GCP\n- **OAuth2 Refresh Token**: The refresh token generated in Step 3\n- **SMTP User**: Your full Gmail email address\n\nLeave `Use secure OAuth2 connection?` as the default value `true`.\n\n##### Troubleshooting\n\n###### Refresh Token Expiration\n\n- **Testing Status**: If your OAuth consent screen is in \"Testing\" status, refresh tokens expire after 7 days unless User Type is set to \"Internal\"\n- **Solution**: Either publish your app or ensure User Type is set to \"Internal\" in the OAuth consent screen settings\n\n###### No Refresh Token Received\n\n- **Problem**: If you don't receive a refresh token during the OAuth flow\n- **Solution**: Make sure you've revoked previous access or forced consent by going to [Google Account Security](https://myaccount.google.com/security) > Third-party apps with account access\n\n###### Scope Issues\n\n- **Problem**: If you see authentication errors, you might not have the correct scopes\n- **Solution**: Ensure you've added `https://mail.google.com/` as a scope in the OAuth consent screen\n\n###### Additional Resources\n\n- [Google OAuth2 Documentation](https://developers.google.com/identity/protocols/oauth2)\n- [Nodemailer OAuth2 Guide](https://nodemailer.com/smtp/oauth2/)\n- [Firebase Extensions Documentation](https://firebase.google.com/docs/extensions)\n\n#### Automatic Deletion of Email Documents\n\nTo use Firestore's TTL feature for automatic deletion of expired email documents, the extension provides several configuration parameters.\n\nThe extension will set a TTL field in the email documents, but you will need to manually configure a TTL policy for the collection/collection group the extension targets, on the `delivery.expireAt` field.\n\nDetailed instructions for creating a TTL field can be found in the [Firestore TTL Policy documentation](https://firebase.google.com/docs/firestore/ttl).\n\n#### Billing\nTo install an extension, your project must be on the [Blaze (pay as you go) plan](https://firebase.google.com/pricing)\n\n- This extension uses other Firebase and Google Cloud Platform services, which have associated charges if you exceed the service's no-cost tier:\n  - Cloud Firestore\n  - Cloud Functions (Node.js 10+ runtime. [See FAQs](https://firebase.google.com/support/faq#extensions-pricing))\n\nUsage of this extension also requires you to have SMTP credentials for mail delivery. You are responsible for any associated costs with your usage of your SMTP provider.\n\n#### Further reading & resources\n\nYou can find more information about this extension in the following articles:\n\n- [Sending Emails Using Firestore And Firebase Extensions](https://invertase.link/Y6Nu)\n\n\n\n**Configuration Parameters:**\n\n* Firestore Instance ID: The Firestore database to use. Use \"(default)\" for the default database. You can view your available Firestore databases at [https://console.cloud.google.com/firestore/databases](https://console.cloud.google.com/firestore/databases).\n\n\n* Firestore Instance Location: Where is the Firestore database located? You can check your current database location at [https://console.cloud.google.com/firestore/databases](https://console.cloud.google.com/firestore/databases).\n\n\n* Authentication Type: The authentication type to be used for the SMTP server (e.g., OAuth2, Username & Password.\n\n* SMTP connection URI: A URI representing an SMTP server this extension can use to deliver email. Note that port 25 is blocked by Google Cloud Platform, so we recommend using port 587 for SMTP connections. If you're using the SMTPS protocol, we recommend using port 465. In order to keep passwords secure, it is recommended to omit the password from the connection string while using the `SMTP Password` field for entering secrets and passwords. Passwords and secrets should now be included in `SMTP password` field.\nSecure format:\n `smtps://username@gmail.com@smtp.gmail.com:465` (username only)\n `smtps://smtp.gmail.com:465` (No username and password)\nBackwards Compatible (less secure):\n `smtps://username@gmail.com:password@smtp.gmail.com:465`. (username and\npassword)\n\n* SMTP password: User password for the SMTP server\n\n* OAuth2 SMTP Host: The OAuth2 hostname of the SMTP server (e.g., smtp.gmail.com).\n\n* OAuth2 SMTP Port: The OAuth2 port number for the SMTP server (e.g., 465 for SMTPS, 587 for STARTTLS).\n\n* Use secure OAuth2 connection?: Set to true to enable a secure connection (TLS/SSL) when using OAuth2 authentication for the SMTP server.\n\n* OAuth2 Client ID: The OAuth2 Client ID for authentication with the SMTP server.\n\n* OAuth2 Client Secret: The OAuth2 Client Secret for authentication with the SMTP server.\n\n* OAuth2 Refresh Token: The OAuth2 Refresh Token for authentication with the SMTP server.\n\n* OAuth2 SMTP User: The OAuth2 user email or username for SMTP authentication.\n\n* Email documents collection: What is the path to the collection that contains the documents used to build and send the emails?\n\n* Default FROM address: The email address to use as the sender's address (if it's not specified in the added email document). You can optionally include a name with the email address (`Friendly Firebaser <foobar@example.com>`). This parameter does not work with [Gmail SMTP](https://nodemailer.com/usage/using-gmail/).\n\n* Default REPLY-TO address: The email address to use as the reply-to address (if it's not specified in the added email document).\n\n* Users collection: A collection of documents keyed by user UID. If the `toUids`, `ccUids`, and/or `bccUids` recipient options are used in the added email document, this extension delivers email to the `email` field based on lookups in this collection.\n\n* Templates collection: A collection of email templates keyed by name. This extension can render an email using a [Handlebar](https://handlebarsjs.com/) template, it's recommended to use triple curly braces `{{{  }}}` in your Handlebars templates when the substitution value is a URL or otherwise sensitive to HTML escaping.\n\n* Firestore TTL type: Do you want the firestore records to be marked with an expireAt field for a TTL policy? If \"Never\" is selected then no expireAt field will be added. Otherwise you may specify the unit of time specified by the TTL_EXPIRE_VALUE parameter. Defaults to \"Never\".\n\n* Firestore TTL value: In the units specified by TTL_EXPIRE_TYPE, how long do you want records to be ineligible for deletion by a TTL policy? This parameter requires the Firestore TTL type parameter to be set to a value other than `Never`. For example, if `Firestore TTL type` is set to `Day` then setting this parameter to `1` will specify a TTL of 1 day.\n\n* TLS Options: A JSON value representing TLS options. For more information, see https://nodejs.org/api/tls.html#tls_class_tls_tlssocket\n\n\n\n**Other Resources**:\n\n* processQueue (firebaseextensions.v1beta.v2function)\n\n\n\n**Access Required**:\n\n\n\nThis extension will operate with the following project IAM roles:\n\n* datastore.user (Reason: Allows this extension to access Cloud Firestore to read and process added email documents.)\n","displayName":"Trigger Email from Firestore","events":[{"type":"firebase.extensions.firestore-send-email.v1.onStart","description":"Occurs when the extension starts execution."},{"type":"firebase.extensions.firestore-send-email.v1.onProcessing","description":"Occurs when the extension attempts to process an email."},{"type":"firebase.extensions.firestore-send-email.v1.onRetry","description":"Occurs when the extension attempts to resend an email."},{"type":"firebase.extensions.firestore-send-email.v1.onPending","description":"Occurs when an email has a pending status."},{"type":"firebase.extensions.firestore-send-email.v1.onSuccess","description":"Occurs when the extension successfully sends an email."},{"type":"firebase.extensions.firestore-send-email.v1.onComplete","description":"Occurs when the extension completes execution."},{"type":"firebase.extensions.firestore-send-email.v1.onError","description":"Occurs when the extension fails to complete execution."}]},"fetchTime":"2025-07-10T13:25:15.924167Z","lastOperationName":"projects/firebaseextensions/operations/1c1a7464-c13a-48c3-b8a9-2043d1a2993c","state":"ACTIVE"},"params":{"OAUTH_PORT":"465","MAIL_COLLECTION":"mail","SMTP_CONNECTION_URI":"smtps://contact@airquality.africa:4NCzuKyS31b59nTK@mail.infomaniak.com:465","AUTH_TYPE":"UsernamePassword","TTL_EXPIRE_VALUE":"1","DATABASE_REGION":"nam5","OAUTH_SECURE":"false","DEFAULT_REPLY_TO":"contact@airquality.africa","DEFAULT_FROM":"contact@airquality.africa","TTL_EXPIRE_TYPE":"never","DATABASE":"(default)"},"populatedPostinstallContent":"### See it in action\n\nYou can test out this extension right away!\n\n1.  Go to your [Cloud Firestore dashboard](https://console.firebase.google.com/project/airwatch-benin/firestore/data) in the Firebase console. Note that, if you have configured a non-default firestore database, you may have to view it via the [Google Cloud Console](https://console.cloud.google.com/firestore/databases/(default)).\n\n1.  If it doesn't already exist, create the collection you specified during installation: `mail`.\n\n1.  Add a document with a `to` field and a `message` field with the following content:\n\n    ```js\n    to: ['someone@example.com'],\n    message: {\n      subject: 'Hello from Firebase!',\n      text: 'This is the plaintext section of the email body.',\n      html: 'This is the <code>HTML</code> section of the email body.',\n    }\n    ```\n\n1.  In a few seconds, you'll see a `delivery` field appear in the document. The field will update as the extension processes the email.\n\n**Note:** You can also use the [Firebase Admin SDK][admin_sdk] to add a document:\n\n```js\nadmin\n  .firestore()\n  .collection(\"mail\")\n  .add({\n    to: \"someone@example.com\",\n    message: {\n      subject: \"Hello from Firebase!\",\n      text: \"This is the plaintext section of the email body.\",\n      html: \"This is the <code>HTML</code> section of the email body.\",\n    },\n  })\n  .then(() => console.log(\"Queued email for delivery!\"));\n```\n\n### Using this extension\n\nSee the [official documentation](https://firebase.google.com/docs/extensions/official/firestore-send-email) for information on using this extension, including advanced use cases such as using Handlebars templates and managing email delivery status.\n\n#### Firestore-Send-Email: SendGrid Categories\n\nWhen using SendGrid (`SMTP_CONNECTION_URI` includes `sendgrid.net`), you can assign categories to your emails.\n\n##### Example JSON with Categories:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"categories\": [\"Example_Category\"],\n  \"message\": {\n    \"subject\": \"Test Email with Categories\",\n    \"text\": \"This is a test email to see if categories work.\",\n    \"html\": \"<strong>This is a test email to see if categories work.</strong>\"\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send categorized emails.\n\nFor more details, see the [SendGrid Categories documentation](https://docs.sendgrid.com/ui/sending-email/categories).\n\n#### Firestore-Send-Email: SendGrid Dynamic Templates\n\nWhen using SendGrid, you can use SendGrid Dynamic Templates to create and send templated emails.\n\n## Example JSON representation of Firestore document for a Dynamic Template:\n```json\n{\n  \"to\": [\"example@example.com\"],\n  \"sendGrid\": {\n    \"templateId\": \"d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n    \"dynamicTemplateData\": {\n      \"name\": \"John Doe\",\n      \"company\": \"Example Corp\",\n      \"position\": \"Developer\"\n    }\n  }\n}\n```\n\nAdd this document to the Firestore mail collection to send an email using a SendGrid Dynamic Template. The `templateId` is required and should be your SendGrid Dynamic Template ID (always starts with 'd-'). The `dynamicTemplateData` object contains the variables that will be used in your template.\n\nFor more details, see the [SendGrid Dynamic Templates documentation](https://docs.sendgrid.com/ui/sending-email/how-to-send-an-email-with-dynamic-templates).\n\n#### Understanding SendGrid Email IDs\n\nWhen an email is sent successfully, the extension tracks two different IDs in the delivery information:\n\n- **Queue ID**: This is SendGrid's internal queue identifier (from the `x-message-id` header). It's useful for tracking the email within SendGrid's system.\n- **Message ID**: This is the RFC-2822 Message-ID header, which is a standard email identifier used across email systems.\n\nYou can find both IDs in the `delivery.info` field of your email document after successful delivery:\n\n```json\n{\n  \"delivery\": {\n    \"info\": {\n      \"messageId\": \"<unique-message-id@your-domain.com>\",\n      \"sendgridQueueId\": \"sendgrid-queue-id\",\n      \"accepted\": [\"recipient@example.com\"],\n      \"rejected\": [],\n      \"pending\": [],\n      \"response\": \"status=202\"\n    }\n  }\n}\n```\n\n### Automatic Deletion of Email Documents\n\nTo use Firestore's TTL feature for automatic deletion of expired email documents, the extension provides several configuration parameters.\n\nThe extension will set a TTL field in the email documents, but you will need to manually configure a TTL policy for the collection/collection group the extension targets, on the `delivery.expireAt` field.\n\nDetailed instructions for creating a TTL field can be found in the [Firestore TTL Policy documentation](https://firebase.google.com/docs/firestore/ttl).\n\n\n### Monitoring\n\nAs a best practice, you can [monitor the activity](https://firebase.google.com/docs/extensions/manage-installed-extensions#monitor) of your installed extension, including checks on its health, usage, and logs.\n\n[mail_collection]: https://console.firebase.google.com/project/_/firestore/data~2Fmail\n[admin_sdk]: https://firebase.google.com/docs/admin/setup\n[amp4email]: https://amp.dev/documentation/guides-and-tutorials/learn/email-spec/amp-email-format/\n[handlebars]: https://handlebarsjs.com/\n\n### Further reading & resources\n\nYou can find more information about this extension in the following articles:\n\n- [Sending Emails Using Firestore And Firebase Extensions](https://invertase.link/Y6Nu)","extensionRef":"firebase/firestore-send-email","extensionVersion":"0.2.4","systemParams":{"firebaseextensions.v1beta.function/vpcConnectorEgressSettings":"VPC_CONNECTOR_EGRESS_SETTINGS_UNSPECIFIED","firebaseextensions.v1beta.function/minInstances":"0","firebaseextensions.v1beta.function/location":"us-central1","firebaseextensions.v1beta.v2function/memory":"256Mi"}},"lastOperationName":"projects/airwatch-benin/operations/d164a863-51f8-43f7-8bab-5991dbf45757","serviceAccountEmail":"ext-firestore-send-email@airwatch-benin.iam.gserviceaccount.com","lastOperationType":"CREATE","etag":"f05c80b3f145fa42691db75ec293f5028f84d9b382ee9fcd02347712ea779e7b"}]}
+[info] i  functions: Loaded environment variables from .env.
+[info] i  functions: preparing .firebase\airwatch-benin\functions directory for uploading...
+[info] i  functions: packaged D:\Projet\coton\air-quality-platform\.firebase\airwatch-benin\functions (75.24 MB) for uploading
+[info] i  functions: ensuring required API run.googleapis.com is enabled...
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled...
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled...
+[info] i  functions: ensuring required API storage.googleapis.com is enabled...
+[info] i  functions: generating the service identity for pubsub.googleapis.com...
+[debug] [2025-08-19T15:18:10.084Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:10.085Z] Checked if tokens are valid: true, expires at: 1755618532809
+[info] i  functions: generating the service identity for eventarc.googleapis.com...
+[debug] [2025-08-19T15:18:10.085Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:10.086Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:10.087Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/pubsub.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-08-19T15:18:10.087Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/pubsub.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/49855349095
+[debug] [2025-08-19T15:18:10.087Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/pubsub.googleapis.com:generateServiceIdentity {}
+[debug] [2025-08-19T15:18:10.097Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/eventarc.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-08-19T15:18:10.098Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/eventarc.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/49855349095
+[debug] [2025-08-19T15:18:10.098Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/eventarc.googleapis.com:generateServiceIdentity {}
+[debug] [2025-08-19T15:18:11.503Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/eventarc.googleapis.com:generateServiceIdentity 200
+[debug] [2025-08-19T15:18:11.503Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/eventarc.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-49855349095@gcp-sa-eventarc.iam.gserviceaccount.com","uniqueId":"101047064626357702292"}}
+[debug] [2025-08-19T15:18:11.516Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/pubsub.googleapis.com:generateServiceIdentity 200
+[debug] [2025-08-19T15:18:11.517Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/49855349095/services/pubsub.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-49855349095@gcp-sa-pubsub.iam.gserviceaccount.com","uniqueId":"103392228321259470918"}}
+[debug] [2025-08-19T15:18:11.529Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:11.529Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:11.530Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin [none]
+[debug] [2025-08-19T15:18:13.157Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin 200
+[debug] [2025-08-19T15:18:13.158Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/airwatch-benin {"projectNumber":"49855349095","projectId":"airwatch-benin","lifecycleState":"ACTIVE","name":"airwatch-benin","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-07-13T16:46:51.577634Z"}
+[debug] [2025-08-19T15:18:13.160Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:13.160Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:13.160Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/49855349095 [none]
+[debug] [2025-08-19T15:18:14.383Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/49855349095 200
+[debug] [2025-08-19T15:18:14.383Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/49855349095 {"kind":"compute#project","id":"2966908036130841387","creationTimestamp":"2025-07-17T08:59:00.188-07:00","name":"airwatch-benin","commonInstanceMetadata":{"kind":"compute#metadata","fingerprint":"YhPH30igFR4="},"quotas":[{"metric":"SNAPSHOTS","limit":1000,"usage":14},{"metric":"NETWORKS","limit":5,"usage":1},{"metric":"FIREWALLS","limit":100,"usage":7},{"metric":"IMAGES","limit":100,"usage":0},{"metric":"STATIC_ADDRESSES","limit":8,"usage":0},{"metric":"ROUTES","limit":200,"usage":0},{"metric":"FORWARDING_RULES","limit":15,"usage":0},{"metric":"TARGET_POOLS","limit":50,"usage":0},{"metric":"HEALTH_CHECKS","limit":75,"usage":0},{"metric":"IN_USE_ADDRESSES","limit":4,"usage":0},{"metric":"TARGET_INSTANCES","limit":50,"usage":0},{"metric":"TARGET_HTTP_PROXIES","limit":10,"usage":0},{"metric":"URL_MAPS","limit":10,"usage":0},{"metric":"BACKEND_SERVICES","limit":50,"usage":0},{"metric":"INSTANCE_TEMPLATES","limit":100,"usage":0},{"metric":"TARGET_VPN_GATEWAYS","limit":5,"usage":0},{"metric":"VPN_TUNNELS","limit":10,"usage":0},{"metric":"BACKEND_BUCKETS","limit":3,"usage":0},{"metric":"ROUTERS","limit":10,"usage":0},{"metric":"TARGET_SSL_PROXIES","limit":10,"usage":0},{"metric":"TARGET_HTTPS_PROXIES","limit":10,"usage":0},{"metric":"SSL_CERTIFICATES","limit":10,"usage":0},{"metric":"SUBNETWORKS","limit":100,"usage":0},{"metric":"TARGET_TCP_PROXIES","limit":10,"usage":0},{"metric":"CPUS_ALL_REGIONS","limit":12,"usage":1},{"metric":"SECURITY_POLICIES","limit":0,"usage":0},{"metric":"SECURITY_POLICY_RULES","limit":0,"usage":0},{"metric":"XPN_SERVICE_PROJECTS","limit":1000,"usage":0},{"metric":"PACKET_MIRRORINGS","limit":20,"usage":0},{"metric":"NETWORK_ENDPOINT_GROUPS","limit":100,"usage":0},{"metric":"INTERCONNECTS","limit":6,"usage":0},{"metric":"SSL_POLICIES","limit":10,"usage":0},{"metric":"GLOBAL_INTERNAL_ADDRESSES","limit":5000,"usage":0},{"metric":"VPN_GATEWAYS","limit":5,"usage":0},{"metric":"MACHINE_IMAGES","limit":100,"usage":0},{"metric":"SECURITY_POLICY_CEVAL_RULES","limit":0,"usage":0},{"metric":"GPUS_ALL_REGIONS","limit":0,"usage":0},{"metric":"EXTERNAL_VPN_GATEWAYS","limit":5,"usage":0},{"metric":"PUBLIC_ADVERTISED_PREFIXES","limit":1,"usage":0},{"metric":"PUBLIC_DELEGATED_PREFIXES","limit":10,"usage":0},{"metric":"STATIC_BYOIP_ADDRESSES","limit":128,"usage":0},{"metric":"NETWORK_FIREWALL_POLICIES","limit":10,"usage":0},{"metric":"INTERNAL_TRAFFIC_DIRECTOR_FORWARDING_RULES","limit":15,"usage":0},{"metric":"GLOBAL_EXTERNAL_MANAGED_FORWARDING_RULES","limit":15,"usage":0},{"metric":"GLOBAL_INTERNAL_MANAGED_BACKEND_SERVICES","limit":50,"usage":0},{"metric":"GLOBAL_EXTERNAL_MANAGED_BACKEND_SERVICES","limit":50,"usage":0},{"metric":"GLOBAL_EXTERNAL_PROXY_LB_BACKEND_SERVICES","limit":50,"usage":0},{"metric":"GLOBAL_INTERNAL_TRAFFIC_DIRECTOR_BACKEND_SERVICES","limit":100,"usage":0}],"selfLink":"https://www.googleapis.com/compute/v1/projects/airwatch-benin","defaultServiceAccount":"49855349095-compute@developer.gserviceaccount.com","xpnProjectStatus":"UNSPECIFIED_XPN_PROJECT_STATUS","defaultNetworkTier":"PREMIUM","vmDnsSetting":"ZONAL_ONLY","cloudArmorTier":"CA_STANDARD"}
+[debug] [2025-08-19T15:18:14.396Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:14.396Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:14.396Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/airwatch-benin/versions [none]
+[debug] [2025-08-19T15:18:14.396Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/airwatch-benin/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase","firebase-web-framework":"next_ssr"}}
+[debug] [2025-08-19T15:18:15.599Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/airwatch-benin/versions 200
+[debug] [2025-08-19T15:18:15.599Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/airwatch-benin/versions {"name":"projects/49855349095/sites/airwatch-benin/versions/19df265ae08d2646","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase","firebase-web-framework":"next_ssr"}}
+[debug] [2025-08-19T15:18:15.600Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:15.600Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:15.600Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/airwatch-benin/billingInfo [none]
+[debug] [2025-08-19T15:18:16.648Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/airwatch-benin/billingInfo 200
+[debug] [2025-08-19T15:18:16.648Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/airwatch-benin/billingInfo {"name":"projects/airwatch-benin/billingInfo","projectId":"airwatch-benin","billingAccountName":"billingAccounts/01670B-51F919-87DBA1","billingEnabled":true}
+[debug] [2025-08-19T15:18:16.652Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:16.652Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:18:16.652Z] >>> [apiv2][query] POST https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions:generateUploadUrl [none]
+[debug] [2025-08-19T15:18:18.015Z] <<< [apiv2][status] POST https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions:generateUploadUrl 200
+[debug] [2025-08-19T15:18:18.015Z] <<< [apiv2][body] POST https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions:generateUploadUrl {"uploadUrl":"https://storage.googleapis.com/gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com/b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip?GoogleAccessId=service-49855349095@gcf-admin-robot.iam.gserviceaccount.com&Expires=1755618498&Signature=nt%2B8HGC136LX8LKURnciFWuXKNmt145qpgXS3L92mt5kCglf6BBUdCEHwLniDA3GgKjuWvNu2Gw4ivMw7NpcL8ByzAj9h5vErLlnbShXDIv2NBMm72vBCjx%2BZky3FPN0%2Ff%2B60x4LsQsTqRGmyNz7246q1IgCDR6mITi5SCAsJPX800uULNP3ywMyBz4gc7AHlTrXNxX3fE37VXJtpW2jnfImkPOWB9WyLB0t8f6sbECUnsN3VGrxNGKDrKr6Fl3uUDBZEwhhHpjUS2JWmuKX3HmCz3nxsUY4yAq6zVtVdT1Wld7yKpZKzVs%2BsBYCz5c%2Byl9elzvJg%2Flgio4GQTgQjQ%3D%3D","storageSource":{"bucket":"gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com","object":"b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip"}}
+[debug] [2025-08-19T15:18:18.021Z] >>> [apiv2][query] PUT https://storage.googleapis.com/gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com/b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip GoogleAccessId=service-49855349095%40gcf-admin-robot.iam.gserviceaccount.com&Expires=1755618498&Signature=nt%2B8HGC136LX8LKURnciFWuXKNmt145qpgXS3L92mt5kCglf6BBUdCEHwLniDA3GgKjuWvNu2Gw4ivMw7NpcL8ByzAj9h5vErLlnbShXDIv2NBMm72vBCjx%2BZky3FPN0%2Ff%2B60x4LsQsTqRGmyNz7246q1IgCDR6mITi5SCAsJPX800uULNP3ywMyBz4gc7AHlTrXNxX3fE37VXJtpW2jnfImkPOWB9WyLB0t8f6sbECUnsN3VGrxNGKDrKr6Fl3uUDBZEwhhHpjUS2JWmuKX3HmCz3nxsUY4yAq6zVtVdT1Wld7yKpZKzVs%2BsBYCz5c%2Byl9elzvJg%2Flgio4GQTgQjQ%3D%3D
+[debug] [2025-08-19T15:18:18.021Z] >>> [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com/b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip [stream]
+[debug] [2025-08-19T15:28:16.957Z] <<< [apiv2][status] PUT https://storage.googleapis.com/gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com/b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip 200
+[debug] [2025-08-19T15:28:16.958Z] <<< [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com/b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip [omitted]
+[info] +  functions: .firebase\airwatch-benin\functions folder uploaded successfully
+[info] i  hosting[airwatch-benin]: beginning deploy...
+[info] i  hosting[airwatch-benin]: found 91 files in .firebase\airwatch-benin\hosting
+[debug] [2025-08-19T15:28:17.071Z] [hosting] uploading with 200 concurrency
+[debug] [2025-08-19T15:28:17.269Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:17.270Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:17.273Z] [hosting] hash cache [LmZpcmViYXNlXGFpcndhdGNoLWJlbmluXGhvc3Rpbmc] stored for 91 files
+[debug] [2025-08-19T15:28:17.274Z] [hosting][hash queue][FINAL] {"max":161,"min":0,"avg":75.86813186813185,"active":0,"complete":91,"success":91,"errored":0,"retried":0,"total":91,"elapsed":194}
+[debug] [2025-08-19T15:28:17.278Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/49855349095/sites/airwatch-benin/versions/19df265ae08d2646:populateFiles [none]
+[debug] [2025-08-19T15:28:17.278Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/49855349095/sites/airwatch-benin/versions/19df265ae08d2646:populateFiles {"files":{"/sw.js":"a53970062b0c1e2065b0d9155a3c543eb4458df614722fcc92838a83e2499cc8","/placeholder.svg":"e5d7fc1002e286d37e275880d06005479739e66ca5b5663a6e9cf2da3a709a31","/placeholder.jpg":"a2dc34c6726ccc935929cc75c8337969002cbb50726f40b1555bf267158d2d0f","/placeholder-user.jpg":"c1aa3310bf4da7905b9eed4a2eb6d94761db09b67a4bc32adbf9954aeac77b70","/placeholder-logo.svg":"7155c0a70e8a7b2cbbb64d5bdc94e1f8631490a526b337ff0e9d36ab77545b6e","/placeholder-logo.png":"1b942d149490e2fc5aa4a4a4ce7c36888d3d570e43763be29823487a1358bcb0","/offline.html":"4b59329980f9b0a26e1bba26181341f23b6b955296dba5fd551bff86ef7ad7bc","/manifest.webmanifest":"defcc5e5b32f3102bbac683184789596c2c41236c96d854dff914b1292d8bd02","/verify-email.html":"2ef2b39150fc48cf022fdbc0792e8a03b1070200d3615b44267ef76dd4f923ca","/pending-approval.html":"1879c54e71960f3cbb53fc268797eb17e910c44972b41666c968194bc4d35d51","/dashboard.html":"a5f29874a7ee90b69d6e9ab27b4cc02a7679be8066a5c733aead291c7a18e391","/admin.html":"5c9b5934a9d55e4c90894b9ffda168c29923653deb5cdc14b70d9cddb009ac4a","/_next/static/media/df0a9ae256c0569c-s.woff2":"5ef466d8ca6f4a51fa3751faea59ad2f63b15dbf9782ae4246bcadacc57f6b8f","/404.html":"de8d7a6ce222c0344beb3f24d5e1e3bc3dcd45037b5ced5e22e91cccb6193f41","/_next/static/media/97e0cb1ae144a2a9-s.woff2":"7f297ea688c4600e59ca6534a3f21f53bfa3f286cc0d19a35543315781951381","/_next/static/Hl9rU6hepDqasl2oCqSQD/_ssgManifest.js":"ace5d55a3aafecaac04b3e25c221a654d4437405d469d127ba76759cb76d85dd","/_next/static/Hl9rU6hepDqasl2oCqSQD/_buildManifest.js":"159473b644df656f56a1c8e8e6f8da4e3f445fc71432fe1e5a8a48a0d4b10bb8","/_next/static/css/931b179cff3131dc.css":"6b92a0d336817bc7aab1d28f6520a4f71f1e902a4f4dd344794dc0d4e2a53cd6","/_next/static/chunks/webpack-b4e83ca0cd630d7f.js":"ebf182af466cafbd5ca6e111a8a516e75dffe3897d0dfbf7c1ca1d051a21d5cd","/_next/static/chunks/main-app-fa3802a89e002316.js":"e0e090a2f55212d5313c7985d8aa5201e7c7aff58b821e16f476bc3041dae123","/_next/static/chunks/8915.1a6ef3d1f9ceaeae.js":"468e4986a55766ee69ee3712e03ea67b649136f34307e1b62e19bfdba5f2f85b","/_next/static/chunks/9581-b7ae72cc1adba862.js":"e45601341af00a5f1a82f6daf67d7d8b15c073af0c641fbc0f7d1c062fd096f3","/_next/static/chunks/8703-f80ea5c461bc3d69.js":"14f7828521f3a0ca043268641147b265715fcf2c78fe011a23e09f947b7b0b37","/_next/static/chunks/9341.699dd3459a0f79c5.js":"5794161f8f8ef0944f92ff47b32b218a1216e8341606d2d0b0aae0104a3dfc90","/_next/static/chunks/597-faf086208a99fe02.js":"cc4fd9f86a2035df917978c589b100aca445a4b0cbd0a64107a97a6d76f3a227","/_next/static/chunks/6874-8a16a2f0cb24db5e.js":"144ff36c5f747a313c35272cac876246d6c19443587b3f6707d109e1be8e392a","/_next/static/chunks/472.2c08b965bd9148e2.js":"2384a68c364b196f97b01b17688990e9d8351232047eeb54693551ae3b5ad42a","/_next/static/chunks/3455-7dc8688169771f5b.js":"e9395c8d7ba6ba47f622f83dee6dcdfb0aacdd8d94503519c205db91d30841c2","/_next/static/chunks/3063-3a723ceb1865c9b6.js":"1999a1323e2dd8bc7dc9ab32191c2359f854c1f228c00cd1711b738a0e175293","/icons/web-app-manifest-512x512.png":"4f5a6073b88c2e8c2368d15e1082e72d4fc4af96e82f681e79521dafe4badfe6","/icons/web-app-manifest-192x192.png":"e0127fe5b5fa356d2be2011db8dc1b2f460562e5aa005a5f274373d1e4c1c734","/icons/site.webmanifest":"c30b4b27e2ee01b753d0707b686273c2be0e214c5bef634dbe8d591974d457f7","/icons/favicon.svg":"28d20c2c6945cd571ed6eeae37a740877e4e7a58e7556df258a1274ecb98d2c6","/icons/favicon.ico":"b4fce9581bc740c5f9ae0bbfd7b73e8518975c7c17a727600586dd6d85f3cd58","/icons/favicon-96x96.png":"d95edf848266b9159b37584182eef5037abe9f1dc40f811d382441d45c90a20f","/icons/apple-touch-icon.png":"b5b3197239c94ec5523adebbb198ddb7937c706a02a8ba345ce44b7cca31abae","/_next/static/chunks/2975-86bb52454978497c.js":"2436c9a1e72e4d6c19c7d7dc56e88b34f58a26c6e07ace2809f7f6550b3edbb2","/_next/static/chunks/app/page-a943070745af6183.js":"188f19fdd90c15500e883fd24bf795631a60dc11de62f49b3a3ef9a22e11c80c","/_next/static/chunks/pages/_app-0b0b6e26a728d49c.js":"7dadda3349ec0c7ec5cf352b7c83f4592d95a29a49deb148703ff6847f71076b","/_next/static/chunks/163-6cef75fd09b3751d.js":"532f9882906b04cb4d35fe956be60d77e5e226bc73f302aa25e4de8ac4698174","/_next/static/chunks/app/layout-b6286c23693870ed.js":"81f15f3680bb21926ba787af377ca2b1d9614d9acee980afb4a82da0632ee729","/_next/static/chunks/app/loading-689eef6d6d984f77.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/_not-found/page-1a2e5e895e73f229.js":"157bc80eead719023136a3d9b3edabfbabb36d37670846a7ccddfef4c31cd867","/_next/static/chunks/app/sensors/[id]/page-9263071f4fbf7044.js":"9b024d3168b5e940a17caf21183a8a952f6e1986eb4f0eeb6d491c4fcb53b088","/_next/static/chunks/1840-020c4ae4ba54b178.js":"af07cf97949878137d616b1097cb90e88595fc5ef06eb94b7122b09c4802cbba","/_next/static/chunks/pages/_error-b598fb21118a254b.js":"08c578fdb71e1f51b23018e502b8627b789ef520d3d7dab5ff783b48abff8094","/_next/static/media/581909926a08bbc8-s.woff2":"0e60a16188a2d115835bb0497cc663807ef4c951ea3033aaaa98e4e9605510e1","/_next/static/media/26a46d62cd723877-s.woff2":"ae5c06e2307aad7bf8fb02467ddd2ea6d7f40ea27915c5d9667f7632db6a0dbc","/_next/static/media/55c55f0601d81cf3-s.woff2":"f919b2595b36cbe21633695ac08cbc808d615f1e5e964227b64c6d398caa0332","/_next/static/chunks/6705-0559dbe0754b1945.js":"d8caf419c181c2b642f28d82e3ba4b44bcd094c779e7dcc6cf0f8e9942a41590","/_next/static/chunks/2034-528cc035c93b0008.js":"c02508b04a7c3e2098851739804a97c80cfccb7502d2769fc7218e5fe8ab9676","/_next/static/media/e4af272ccee01ff0-s.p.woff2":"86835ac53a0e1de04820388d01b501389d5e9311509282b5e3bfbfc752754083","/_next/static/chunks/app/verify-email/page-498e237504960bc4.js":"21469bc1aceec19faa0bc04f8be93f8045c996600e38ad4235dc5913994ade56","/_next/static/css/29a3fa6c0fcb7ae6.css":"41078d5e8cabab47c2cbc32f7ecf258c95f8d6ef1e19b73a0af9fd63e46814e6","/_next/static/chunks/main-11ebcdd5983ecd60.js":"54ade6725406514b43f6837067f6f1f8914ac8f6e4ea427560a9ea321e251069","/_next/static/chunks/ae6eea6a-aa2d5edc546dddec.js":"3624e345b9865d49b0f67f8493b38313e9517bc854f0db810df56f57932b3171","/_next/static/chunks/3549-966b06427088ed76.js":"4e58b1f358c22b0e5486355d2f969921ffa04e46dd43e2e68c7f536a29a734f5","/_next/static/chunks/polyfills-42372ed130431b0a.js":"18e28d3214eda45048d80d3925ea7627b809e69ad2e95f7f98459e9146a61c3d","/_next/static/chunks/app/pending-approval/page-6812092c88d15f65.js":"6bcef89af213ef4d076a09899b7ba81c8be6a7162e9b7ce3c06fa1dce68fb29d","/_next/static/chunks/app/auth/verify-email/page-a4e78fb6ad6b769b.js":"1609f4624005940416dc6637876b4c76adf28ac3707513547f20eba13c4f890b","/_next/static/chunks/app/auth/signup/page-2a4403a3e3b9925f.js":"420c1bf79cc0b638cf287b52eb0aa27c2cf9f077153ceebf5df08659997253b3","/_next/static/chunks/app/auth/pending-approval/page-d3efa72a84101deb.js":"5978b7392f2f989c52dcfe2267453f5faec6df06542756ad4bb4af1843adf703","/_next/static/chunks/app/auth/login/page-6b25923287ed7bfc.js":"7264bf946d72b7854c33bfba370ffb5ff5b09e10af964b4af5e173031a5347a7","/_next/static/chunks/app/auth/forgot-password/page-09f5e0ce06b316c4.js":"8886d994eb53fb0fc71f24d44d70b0ec0fbf11450fa4734873d3206231e4129e","/_next/static/chunks/app/manifest.webmanifest/route-67710ef05be9d6f0.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/auth/action/page-909a06f0a9b019d3.js":"7dbcbd302b4e5f90e50d1644f299b9e130ad61dc5e729b8faa9a832b87a9927c","/_next/static/chunks/app/api/test/route-df34ca6400574ace.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/sensors/route-cd3a2c2fead84280.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/sensors/[id]/route-fa596a25a943ee49.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/sensors/[id]/data/route-181b3f02a7c772cd.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/sensors/batch-delete/route-e0a4610f112a4643.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/mqtt/metrics/route-4653343cfea4b5c9.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/access-requests/[id]/route-94bc3a0422ac8094.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/access-requests/route-f5cac040770cfa6b.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/sensors/data/route-e9577b5785114191.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/admin/page-96c7a2c0fb49a6b2.js":"8fcac5b63801dee7f57774c20aa0807bc587c77be46016b6200ff241bfb2d34a","/auth/signup.html":"0ecd6e803248c5f2df33d838f5159bf4dbc607aad08e283e75d3206ada106372","/auth/verify-email.html":"daf013f5acdad3ebdcb9e4d7ce2e3fe4c0d75a575cec45bf00778ba940c52ab8","/auth/pending-approval.html":"dba96dd7c9c772ef1b9bba7bf731e5475689bcabcd3375d84abb7e72a0ea1862","/auth/login.html":"8013cb4a713e0d8a03e7f52fa7423a15bbf321dba30bec574c0552dfce1d1e10","/auth/forgot-password.html":"605fb99c64dcf7fea6b399ef98b200ff5110d465621ddd13086f6a6dc166cad3","/auth/action.html":"fd1cf068e5e0e27ccfa0f91c42ae049a2f811a821f6be193271291e138305c79","/_next/static/chunks/app/api/mqtt/health/route-bc74cc9b1c69e2e4.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/app/api/health/route-cfa8e1dc3e70054f.js":"1fd9593973580d980e683773cad7f70569716b1e7ea65120c4454dd38e3e8b74","/_next/static/chunks/1684-f32c1ea15cc0e0dc.js":"2214111ad38ff459924b3d374eef45b99e4e6c5b3543d28865b34851748b5b13","/_next/static/chunks/framework-47112191c39a1cff.js":"555a42707b408ac614e83f6bc31a80cf0db92b00f6b1b2e4a7dfe9098a314a17","/_next/static/media/8e9860b6e62d6359-s.woff2":"cd2992a875e4939d47289a3cc44c8b8a0e63817f4cc9fbd8b3bdf93b5f66fbb3","/_next/static/chunks/app/dashboard/page-93ea3017f54657f7.js":"14d7ee964b979b8c909bfc3c1ce42ce9ae9505117d2055b4e0592e9a39d880ba","/_next/static/chunks/4bd1b696-e9a967bac8ad7c0c.js":"29cdd232041d0df47f72f7651007e0403722780e68265b7cf52595b3a20e7541","/_next/static/chunks/bc9e92e6-ce7bf17a811c6406.js":"fc6619e2f5311e887239ce64e05d538964f2c2602363df11e48e1e246a5af977","/_next/static/chunks/3927-528426bdcec39365.js":"cd9b38c4c6768b7f9bdf63c2682b0da85f5279b2fbe79226f242a23bb183a865"}}
+[info] i  hosting: adding files to version [0/91] (0%)
+[info] i  hosting: adding files to version [0/91] (0%)
+[debug] [2025-08-19T15:28:21.489Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/49855349095/sites/airwatch-benin/versions/19df265ae08d2646:populateFiles 200
+[debug] [2025-08-19T15:28:21.490Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/49855349095/sites/airwatch-benin/versions/19df265ae08d2646:populateFiles {"uploadRequiredHashes":["8fcac5b63801dee7f57774c20aa0807bc587c77be46016b6200ff241bfb2d34a","14d7ee964b979b8c909bfc3c1ce42ce9ae9505117d2055b4e0592e9a39d880ba","ebf182af466cafbd5ca6e111a8a516e75dffe3897d0dfbf7c1ca1d051a21d5cd","5c9b5934a9d55e4c90894b9ffda168c29923653deb5cdc14b70d9cddb009ac4a","de8d7a6ce222c0344beb3f24d5e1e3bc3dcd45037b5ced5e22e91cccb6193f41","21469bc1aceec19faa0bc04f8be93f8045c996600e38ad4235dc5913994ade56","7dbcbd302b4e5f90e50d1644f299b9e130ad61dc5e729b8faa9a832b87a9927c","5978b7392f2f989c52dcfe2267453f5faec6df06542756ad4bb4af1843adf703","1879c54e71960f3cbb53fc268797eb17e910c44972b41666c968194bc4d35d51","0ecd6e803248c5f2df33d838f5159bf4dbc607aad08e283e75d3206ada106372","8013cb4a713e0d8a03e7f52fa7423a15bbf321dba30bec574c0552dfce1d1e10","605fb99c64dcf7fea6b399ef98b200ff5110d465621ddd13086f6a6dc166cad3","468e4986a55766ee69ee3712e03ea67b649136f34307e1b62e19bfdba5f2f85b","a5f29874a7ee90b69d6e9ab27b4cc02a7679be8066a5c733aead291c7a18e391","fd1cf068e5e0e27ccfa0f91c42ae049a2f811a821f6be193271291e138305c79","81f15f3680bb21926ba787af377ca2b1d9614d9acee980afb4a82da0632ee729","dba96dd7c9c772ef1b9bba7bf731e5475689bcabcd3375d84abb7e72a0ea1862","420c1bf79cc0b638cf287b52eb0aa27c2cf9f077153ceebf5df08659997253b3","daf013f5acdad3ebdcb9e4d7ce2e3fe4c0d75a575cec45bf00778ba940c52ab8","e45601341af00a5f1a82f6daf67d7d8b15c073af0c641fbc0f7d1c062fd096f3","8886d994eb53fb0fc71f24d44d70b0ec0fbf11450fa4734873d3206231e4129e","1609f4624005940416dc6637876b4c76adf28ac3707513547f20eba13c4f890b","ace5d55a3aafecaac04b3e25c221a654d4437405d469d127ba76759cb76d85dd","9b024d3168b5e940a17caf21183a8a952f6e1986eb4f0eeb6d491c4fcb53b088","7264bf946d72b7854c33bfba370ffb5ff5b09e10af964b4af5e173031a5347a7","6bcef89af213ef4d076a09899b7ba81c8be6a7162e9b7ce3c06fa1dce68fb29d","2ef2b39150fc48cf022fdbc0792e8a03b1070200d3615b44267ef76dd4f923ca"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files"}
+[debug] [2025-08-19T15:28:21.498Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.498Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.499Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.500Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.501Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.502Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.502Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.502Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.503Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.504Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:21.505Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8fcac5b63801dee7f57774c20aa0807bc587c77be46016b6200ff241bfb2d34a [none]
+[debug] [2025-08-19T15:28:21.505Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8fcac5b63801dee7f57774c20aa0807bc587c77be46016b6200ff241bfb2d34a [stream]
+[debug] [2025-08-19T15:28:21.509Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/14d7ee964b979b8c909bfc3c1ce42ce9ae9505117d2055b4e0592e9a39d880ba [none]
+[debug] [2025-08-19T15:28:21.509Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/14d7ee964b979b8c909bfc3c1ce42ce9ae9505117d2055b4e0592e9a39d880ba [stream]
+[debug] [2025-08-19T15:28:21.512Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ebf182af466cafbd5ca6e111a8a516e75dffe3897d0dfbf7c1ca1d051a21d5cd [none]
+[debug] [2025-08-19T15:28:21.513Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ebf182af466cafbd5ca6e111a8a516e75dffe3897d0dfbf7c1ca1d051a21d5cd [stream]
+[debug] [2025-08-19T15:28:21.516Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5c9b5934a9d55e4c90894b9ffda168c29923653deb5cdc14b70d9cddb009ac4a [none]
+[debug] [2025-08-19T15:28:21.517Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5c9b5934a9d55e4c90894b9ffda168c29923653deb5cdc14b70d9cddb009ac4a [stream]
+[debug] [2025-08-19T15:28:21.518Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/de8d7a6ce222c0344beb3f24d5e1e3bc3dcd45037b5ced5e22e91cccb6193f41 [none]
+[debug] [2025-08-19T15:28:21.519Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/de8d7a6ce222c0344beb3f24d5e1e3bc3dcd45037b5ced5e22e91cccb6193f41 [stream]
+[debug] [2025-08-19T15:28:21.520Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/21469bc1aceec19faa0bc04f8be93f8045c996600e38ad4235dc5913994ade56 [none]
+[debug] [2025-08-19T15:28:21.520Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/21469bc1aceec19faa0bc04f8be93f8045c996600e38ad4235dc5913994ade56 [stream]
+[debug] [2025-08-19T15:28:21.522Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7dbcbd302b4e5f90e50d1644f299b9e130ad61dc5e729b8faa9a832b87a9927c [none]
+[debug] [2025-08-19T15:28:21.522Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7dbcbd302b4e5f90e50d1644f299b9e130ad61dc5e729b8faa9a832b87a9927c [stream]
+[debug] [2025-08-19T15:28:21.525Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5978b7392f2f989c52dcfe2267453f5faec6df06542756ad4bb4af1843adf703 [none]
+[debug] [2025-08-19T15:28:21.525Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5978b7392f2f989c52dcfe2267453f5faec6df06542756ad4bb4af1843adf703 [stream]
+[debug] [2025-08-19T15:28:21.531Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1879c54e71960f3cbb53fc268797eb17e910c44972b41666c968194bc4d35d51 [none]
+[debug] [2025-08-19T15:28:21.531Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1879c54e71960f3cbb53fc268797eb17e910c44972b41666c968194bc4d35d51 [stream]
+[debug] [2025-08-19T15:28:21.534Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/0ecd6e803248c5f2df33d838f5159bf4dbc607aad08e283e75d3206ada106372 [none]
+[debug] [2025-08-19T15:28:21.534Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/0ecd6e803248c5f2df33d838f5159bf4dbc607aad08e283e75d3206ada106372 [stream]
+[debug] [2025-08-19T15:28:21.536Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8013cb4a713e0d8a03e7f52fa7423a15bbf321dba30bec574c0552dfce1d1e10 [none]
+[debug] [2025-08-19T15:28:21.536Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8013cb4a713e0d8a03e7f52fa7423a15bbf321dba30bec574c0552dfce1d1e10 [stream]
+[debug] [2025-08-19T15:28:21.538Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/605fb99c64dcf7fea6b399ef98b200ff5110d465621ddd13086f6a6dc166cad3 [none]
+[debug] [2025-08-19T15:28:21.538Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/605fb99c64dcf7fea6b399ef98b200ff5110d465621ddd13086f6a6dc166cad3 [stream]
+[debug] [2025-08-19T15:28:21.539Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/468e4986a55766ee69ee3712e03ea67b649136f34307e1b62e19bfdba5f2f85b [none]
+[debug] [2025-08-19T15:28:21.539Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/468e4986a55766ee69ee3712e03ea67b649136f34307e1b62e19bfdba5f2f85b [stream]
+[debug] [2025-08-19T15:28:21.542Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/a5f29874a7ee90b69d6e9ab27b4cc02a7679be8066a5c733aead291c7a18e391 [none]
+[debug] [2025-08-19T15:28:21.542Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/a5f29874a7ee90b69d6e9ab27b4cc02a7679be8066a5c733aead291c7a18e391 [stream]
+[debug] [2025-08-19T15:28:21.543Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/fd1cf068e5e0e27ccfa0f91c42ae049a2f811a821f6be193271291e138305c79 [none]
+[debug] [2025-08-19T15:28:21.543Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/fd1cf068e5e0e27ccfa0f91c42ae049a2f811a821f6be193271291e138305c79 [stream]
+[debug] [2025-08-19T15:28:21.545Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/81f15f3680bb21926ba787af377ca2b1d9614d9acee980afb4a82da0632ee729 [none]
+[debug] [2025-08-19T15:28:21.545Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/81f15f3680bb21926ba787af377ca2b1d9614d9acee980afb4a82da0632ee729 [stream]
+[debug] [2025-08-19T15:28:21.547Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/dba96dd7c9c772ef1b9bba7bf731e5475689bcabcd3375d84abb7e72a0ea1862 [none]
+[debug] [2025-08-19T15:28:21.547Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/dba96dd7c9c772ef1b9bba7bf731e5475689bcabcd3375d84abb7e72a0ea1862 [stream]
+[debug] [2025-08-19T15:28:21.548Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/420c1bf79cc0b638cf287b52eb0aa27c2cf9f077153ceebf5df08659997253b3 [none]
+[debug] [2025-08-19T15:28:21.548Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/420c1bf79cc0b638cf287b52eb0aa27c2cf9f077153ceebf5df08659997253b3 [stream]
+[debug] [2025-08-19T15:28:21.550Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/daf013f5acdad3ebdcb9e4d7ce2e3fe4c0d75a575cec45bf00778ba940c52ab8 [none]
+[debug] [2025-08-19T15:28:21.550Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/daf013f5acdad3ebdcb9e4d7ce2e3fe4c0d75a575cec45bf00778ba940c52ab8 [stream]
+[debug] [2025-08-19T15:28:21.553Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/e45601341af00a5f1a82f6daf67d7d8b15c073af0c641fbc0f7d1c062fd096f3 [none]
+[debug] [2025-08-19T15:28:21.553Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/e45601341af00a5f1a82f6daf67d7d8b15c073af0c641fbc0f7d1c062fd096f3 [stream]
+[debug] [2025-08-19T15:28:21.554Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8886d994eb53fb0fc71f24d44d70b0ec0fbf11450fa4734873d3206231e4129e [none]
+[debug] [2025-08-19T15:28:21.554Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8886d994eb53fb0fc71f24d44d70b0ec0fbf11450fa4734873d3206231e4129e [stream]
+[debug] [2025-08-19T15:28:21.556Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1609f4624005940416dc6637876b4c76adf28ac3707513547f20eba13c4f890b [none]
+[debug] [2025-08-19T15:28:21.557Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1609f4624005940416dc6637876b4c76adf28ac3707513547f20eba13c4f890b [stream]
+[debug] [2025-08-19T15:28:21.561Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ace5d55a3aafecaac04b3e25c221a654d4437405d469d127ba76759cb76d85dd [none]
+[debug] [2025-08-19T15:28:21.561Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ace5d55a3aafecaac04b3e25c221a654d4437405d469d127ba76759cb76d85dd [stream]
+[debug] [2025-08-19T15:28:21.566Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/9b024d3168b5e940a17caf21183a8a952f6e1986eb4f0eeb6d491c4fcb53b088 [none]
+[debug] [2025-08-19T15:28:21.567Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/9b024d3168b5e940a17caf21183a8a952f6e1986eb4f0eeb6d491c4fcb53b088 [stream]
+[debug] [2025-08-19T15:28:21.570Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7264bf946d72b7854c33bfba370ffb5ff5b09e10af964b4af5e173031a5347a7 [none]
+[debug] [2025-08-19T15:28:21.570Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7264bf946d72b7854c33bfba370ffb5ff5b09e10af964b4af5e173031a5347a7 [stream]
+[debug] [2025-08-19T15:28:21.571Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/6bcef89af213ef4d076a09899b7ba81c8be6a7162e9b7ce3c06fa1dce68fb29d [none]
+[debug] [2025-08-19T15:28:21.571Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/6bcef89af213ef4d076a09899b7ba81c8be6a7162e9b7ce3c06fa1dce68fb29d [stream]
+[debug] [2025-08-19T15:28:21.572Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/2ef2b39150fc48cf022fdbc0792e8a03b1070200d3615b44267ef76dd4f923ca [none]
+[debug] [2025-08-19T15:28:21.572Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/2ef2b39150fc48cf022fdbc0792e8a03b1070200d3615b44267ef76dd4f923ca [stream]
+[debug] [2025-08-19T15:28:21.573Z] [hosting][populate queue][FINAL] {"max":4236,"min":4236,"avg":4236,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":4304}
+[debug] [2025-08-19T15:28:21.574Z] [hosting] uploads queued: 27
+[info] i  hosting: uploading new files [0/27] (0%)
+[debug] [2025-08-19T15:28:23.515Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5978b7392f2f989c52dcfe2267453f5faec6df06542756ad4bb4af1843adf703 200
+[debug] [2025-08-19T15:28:23.516Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5978b7392f2f989c52dcfe2267453f5faec6df06542756ad4bb4af1843adf703 [stream]
+[debug] [2025-08-19T15:28:23.534Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1879c54e71960f3cbb53fc268797eb17e910c44972b41666c968194bc4d35d51 200
+[debug] [2025-08-19T15:28:23.535Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1879c54e71960f3cbb53fc268797eb17e910c44972b41666c968194bc4d35d51 [stream]
+[debug] [2025-08-19T15:28:23.587Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8013cb4a713e0d8a03e7f52fa7423a15bbf321dba30bec574c0552dfce1d1e10 200
+[debug] [2025-08-19T15:28:23.588Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8013cb4a713e0d8a03e7f52fa7423a15bbf321dba30bec574c0552dfce1d1e10 [stream]
+[debug] [2025-08-19T15:28:23.589Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/de8d7a6ce222c0344beb3f24d5e1e3bc3dcd45037b5ced5e22e91cccb6193f41 200
+[debug] [2025-08-19T15:28:23.589Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/de8d7a6ce222c0344beb3f24d5e1e3bc3dcd45037b5ced5e22e91cccb6193f41 [stream]
+[debug] [2025-08-19T15:28:23.650Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8fcac5b63801dee7f57774c20aa0807bc587c77be46016b6200ff241bfb2d34a 200
+[debug] [2025-08-19T15:28:23.650Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8fcac5b63801dee7f57774c20aa0807bc587c77be46016b6200ff241bfb2d34a [stream]
+[debug] [2025-08-19T15:28:23.664Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/daf013f5acdad3ebdcb9e4d7ce2e3fe4c0d75a575cec45bf00778ba940c52ab8 200
+[debug] [2025-08-19T15:28:23.665Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/daf013f5acdad3ebdcb9e4d7ce2e3fe4c0d75a575cec45bf00778ba940c52ab8 [stream]
+[debug] [2025-08-19T15:28:23.699Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ebf182af466cafbd5ca6e111a8a516e75dffe3897d0dfbf7c1ca1d051a21d5cd 200
+[debug] [2025-08-19T15:28:23.699Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ebf182af466cafbd5ca6e111a8a516e75dffe3897d0dfbf7c1ca1d051a21d5cd [stream]
+[debug] [2025-08-19T15:28:23.721Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ace5d55a3aafecaac04b3e25c221a654d4437405d469d127ba76759cb76d85dd 200
+[debug] [2025-08-19T15:28:23.721Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/ace5d55a3aafecaac04b3e25c221a654d4437405d469d127ba76759cb76d85dd [stream]
+[debug] [2025-08-19T15:28:23.849Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/2ef2b39150fc48cf022fdbc0792e8a03b1070200d3615b44267ef76dd4f923ca 200
+[debug] [2025-08-19T15:28:23.850Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/2ef2b39150fc48cf022fdbc0792e8a03b1070200d3615b44267ef76dd4f923ca [stream]
+[debug] [2025-08-19T15:28:23.899Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/0ecd6e803248c5f2df33d838f5159bf4dbc607aad08e283e75d3206ada106372 200
+[debug] [2025-08-19T15:28:23.899Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/0ecd6e803248c5f2df33d838f5159bf4dbc607aad08e283e75d3206ada106372 [stream]
+[debug] [2025-08-19T15:28:23.900Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/81f15f3680bb21926ba787af377ca2b1d9614d9acee980afb4a82da0632ee729 200
+[debug] [2025-08-19T15:28:23.900Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/81f15f3680bb21926ba787af377ca2b1d9614d9acee980afb4a82da0632ee729 [stream]
+[debug] [2025-08-19T15:28:24.312Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/605fb99c64dcf7fea6b399ef98b200ff5110d465621ddd13086f6a6dc166cad3 200
+[debug] [2025-08-19T15:28:24.312Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/605fb99c64dcf7fea6b399ef98b200ff5110d465621ddd13086f6a6dc166cad3 [stream]
+[debug] [2025-08-19T15:28:24.420Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5c9b5934a9d55e4c90894b9ffda168c29923653deb5cdc14b70d9cddb009ac4a 200
+[debug] [2025-08-19T15:28:24.421Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/5c9b5934a9d55e4c90894b9ffda168c29923653deb5cdc14b70d9cddb009ac4a [stream]
+[debug] [2025-08-19T15:28:24.563Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/fd1cf068e5e0e27ccfa0f91c42ae049a2f811a821f6be193271291e138305c79 200
+[debug] [2025-08-19T15:28:24.564Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/fd1cf068e5e0e27ccfa0f91c42ae049a2f811a821f6be193271291e138305c79 [stream]
+[debug] [2025-08-19T15:28:24.582Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/6bcef89af213ef4d076a09899b7ba81c8be6a7162e9b7ce3c06fa1dce68fb29d 200
+[debug] [2025-08-19T15:28:24.583Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/6bcef89af213ef4d076a09899b7ba81c8be6a7162e9b7ce3c06fa1dce68fb29d [stream]
+[debug] [2025-08-19T15:28:24.764Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/dba96dd7c9c772ef1b9bba7bf731e5475689bcabcd3375d84abb7e72a0ea1862 200
+[debug] [2025-08-19T15:28:24.764Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/dba96dd7c9c772ef1b9bba7bf731e5475689bcabcd3375d84abb7e72a0ea1862 [stream]
+[debug] [2025-08-19T15:28:24.983Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/e45601341af00a5f1a82f6daf67d7d8b15c073af0c641fbc0f7d1c062fd096f3 200
+[debug] [2025-08-19T15:28:24.984Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/e45601341af00a5f1a82f6daf67d7d8b15c073af0c641fbc0f7d1c062fd096f3 [stream]
+[debug] [2025-08-19T15:28:25.118Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/9b024d3168b5e940a17caf21183a8a952f6e1986eb4f0eeb6d491c4fcb53b088 200
+[debug] [2025-08-19T15:28:25.119Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/9b024d3168b5e940a17caf21183a8a952f6e1986eb4f0eeb6d491c4fcb53b088 [stream]
+[info] i  hosting: uploading new files [18/27] (66%)
+[debug] [2025-08-19T15:28:25.153Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7dbcbd302b4e5f90e50d1644f299b9e130ad61dc5e729b8faa9a832b87a9927c 200
+[debug] [2025-08-19T15:28:25.153Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7dbcbd302b4e5f90e50d1644f299b9e130ad61dc5e729b8faa9a832b87a9927c [stream]
+[debug] [2025-08-19T15:28:25.280Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/420c1bf79cc0b638cf287b52eb0aa27c2cf9f077153ceebf5df08659997253b3 200
+[debug] [2025-08-19T15:28:25.281Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/420c1bf79cc0b638cf287b52eb0aa27c2cf9f077153ceebf5df08659997253b3 [stream]
+[debug] [2025-08-19T15:28:25.448Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/21469bc1aceec19faa0bc04f8be93f8045c996600e38ad4235dc5913994ade56 200
+[debug] [2025-08-19T15:28:25.449Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/21469bc1aceec19faa0bc04f8be93f8045c996600e38ad4235dc5913994ade56 [stream]
+[debug] [2025-08-19T15:28:25.465Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/14d7ee964b979b8c909bfc3c1ce42ce9ae9505117d2055b4e0592e9a39d880ba 200
+[debug] [2025-08-19T15:28:25.465Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/14d7ee964b979b8c909bfc3c1ce42ce9ae9505117d2055b4e0592e9a39d880ba [stream]
+[debug] [2025-08-19T15:28:25.548Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/a5f29874a7ee90b69d6e9ab27b4cc02a7679be8066a5c733aead291c7a18e391 200
+[debug] [2025-08-19T15:28:25.548Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/a5f29874a7ee90b69d6e9ab27b4cc02a7679be8066a5c733aead291c7a18e391 [stream]
+[debug] [2025-08-19T15:28:25.921Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/468e4986a55766ee69ee3712e03ea67b649136f34307e1b62e19bfdba5f2f85b 200
+[debug] [2025-08-19T15:28:25.922Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/468e4986a55766ee69ee3712e03ea67b649136f34307e1b62e19bfdba5f2f85b [stream]
+[debug] [2025-08-19T15:28:26.291Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8886d994eb53fb0fc71f24d44d70b0ec0fbf11450fa4734873d3206231e4129e 200
+[debug] [2025-08-19T15:28:26.291Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/8886d994eb53fb0fc71f24d44d70b0ec0fbf11450fa4734873d3206231e4129e [stream]
+[debug] [2025-08-19T15:28:26.318Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7264bf946d72b7854c33bfba370ffb5ff5b09e10af964b4af5e173031a5347a7 200
+[debug] [2025-08-19T15:28:26.318Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/7264bf946d72b7854c33bfba370ffb5ff5b09e10af964b4af5e173031a5347a7 [stream]
+[debug] [2025-08-19T15:28:26.907Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1609f4624005940416dc6637876b4c76adf28ac3707513547f20eba13c4f890b 200
+[debug] [2025-08-19T15:28:26.907Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/airwatch-benin/versions/19df265ae08d2646/files/1609f4624005940416dc6637876b4c76adf28ac3707513547f20eba13c4f890b [stream]
+[debug] [2025-08-19T15:28:26.907Z] [hosting][upload queue][FINAL] {"max":5403,"min":2018,"avg":3154.222222222222,"active":0,"complete":27,"success":27,"errored":0,"retried":0,"total":27,"elapsed":5417}
+[info] i  hosting: upload complete
+[info] +  hosting[airwatch-benin]: file upload complete
+[debug] [2025-08-19T15:28:26.909Z] [hosting] deploy completed after 9922ms
+[info] i  functions: updating Node.js 20 (2nd Gen) function firebase-frameworks-airwatch-benin:ssrairwatchbenin(us-central1)...
+[debug] [2025-08-19T15:28:26.923Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:26.924Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:26.924Z] >>> [apiv2][query] PATCH https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin updateMask=name%2CbuildConfig.runtime%2CbuildConfig.entryPoint%2CbuildConfig.source.storageSource.bucket%2CbuildConfig.source.storageSource.object%2CbuildConfig.environmentVariables%2CbuildConfig.sourceToken%2CserviceConfig.environmentVariables%2CserviceConfig.ingressSettings%2CserviceConfig.timeoutSeconds%2CserviceConfig.serviceAccountEmail%2CserviceConfig.availableMemory%2CserviceConfig.minInstanceCount%2CserviceConfig.maxInstanceCount%2CserviceConfig.maxInstanceRequestConcurrency%2CserviceConfig.availableCpu%2CserviceConfig.vpcConnector%2CserviceConfig.vpcConnectorEgressSettings%2Clabels
+[debug] [2025-08-19T15:28:26.925Z] >>> [apiv2][body] PATCH https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin {"name":"projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin","buildConfig":{"runtime":"nodejs20","entryPoint":"ssrairwatchbenin","source":{"storageSource":{"bucket":"gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com","object":"b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""}},"serviceConfig":{"environmentVariables":{"DATABASE_URL":"postgresql://neondb_owner:npg_MoBgYES8D5qI@ep-super-lab-a8s9u3ab-pooler.eastus2.azure.neon.tech/neondb?sslmode=require","MQTT_BROKER_URL":"34.38.83.146","MQTT_PORT":"1883","MQTT_USERNAME":"data-platform","MQTT_PASSWORD":"5t4rwZZwfLTjvZG","MQTT_WEBHOOK_SECRET":"K7mP9vX2qR8nF4jL6hB3wE5tY9mN1kS7dA2vC8xZ0pQ4fG6hJ9lM3nB7vX1kE5rT","NEXT_PUBLIC_FIREBASE_API_KEY":"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg","NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN":"airwatch-benin.firebaseapp.com","NEXT_PUBLIC_FIREBASE_PROJECT_ID":"airwatch-benin","NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET":"airwatch-benin.firebasestorage.app","NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID":"49855349095","NEXT_PUBLIC_FIREBASE_APP_ID":"1:49855349095:web:a62a70eb967c321d4c6fc2","NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID":"G-V9166PE5HZ","VERCEL_URL":"airwatch-benin.web.app","__FIREBASE_FRAMEWORKS_ENTRY__":"next.js","__FIREBASE_DEFAULTS__":"{\"config\":{\"projectId\":\"airwatch-benin\",\"appId\":\"1:49855349095:web:a62a70eb967c321d4c6fc2\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\",\"apiKey\":\"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg\",\"authDomain\":\"airwatch-benin.firebaseapp.com\",\"messagingSenderId\":\"49855349095\",\"measurementId\":\"G-V9166PE5HZ\"},\"_authTokenSyncURL\":\"/__session\"}","FIREBASE_CONFIG":"{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}","GCLOUD_PROJECT":"airwatch-benin","EVENTARC_CLOUD_EVENT_SOURCE":"projects/airwatch-benin/locations/us-central1/services/ssrairwatchbenin","FUNCTION_TARGET":"ssrairwatchbenin","LOG_EXECUTION_ID":"true"},"ingressSettings":null,"timeoutSeconds":null,"serviceAccountEmail":null,"availableMemory":"256Mi","minInstanceCount":null,"maxInstanceCount":null,"maxInstanceRequestConcurrency":80,"availableCpu":"1","vpcConnector":null,"vpcConnectorEgressSettings":null},"labels":{"deployment-tool":"cli-firebase","firebase-functions-codebase":"firebase-frameworks-airwatch-benin","firebase-functions-hash":"bc3991fd87cab0de885d389e1bed88869f949f53"}}
+[debug] [2025-08-19T15:28:38.083Z] *** [apiv2] error from fetch(https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin?updateMask=name%2CbuildConfig.runtime%2CbuildConfig.entryPoint%2CbuildConfig.source.storageSource.bucket%2CbuildConfig.source.storageSource.object%2CbuildConfig.environmentVariables%2CbuildConfig.sourceToken%2CserviceConfig.environmentVariables%2CserviceConfig.ingressSettings%2CserviceConfig.timeoutSeconds%2CserviceConfig.serviceAccountEmail%2CserviceConfig.availableMemory%2CserviceConfig.minInstanceCount%2CserviceConfig.maxInstanceCount%2CserviceConfig.maxInstanceRequestConcurrency%2CserviceConfig.availableCpu%2CserviceConfig.vpcConnector%2CserviceConfig.vpcConnectorEgressSettings%2Clabels, {"headers":{},"method":"PATCH","body":"{\"name\":\"projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin\",\"buildConfig\":{\"runtime\":\"nodejs20\",\"entryPoint\":\"ssrairwatchbenin\",\"source\":{\"storageSource\":{\"bucket\":\"gcf-v2-uploads-49855349095.us-central1.cloudfunctions.appspot.com\",\"object\":\"b0ec0a6e-3b24-4b22-8deb-51564ab2f425.zip\"}},\"environmentVariables\":{\"GOOGLE_NODE_RUN_SCRIPTS\":\"\"}},\"serviceConfig\":{\"environmentVariables\":{\"DATABASE_URL\":\"postgresql://neondb_owner:npg_MoBgYES8D5qI@ep-super-lab-a8s9u3ab-pooler.eastus2.azure.neon.tech/neondb?sslmode=require\",\"MQTT_BROKER_URL\":\"34.38.83.146\",\"MQTT_PORT\":\"1883\",\"MQTT_USERNAME\":\"data-platform\",\"MQTT_PASSWORD\":\"5t4rwZZwfLTjvZG\",\"MQTT_WEBHOOK_SECRET\":\"K7mP9vX2qR8nF4jL6hB3wE5tY9mN1kS7dA2vC8xZ0pQ4fG6hJ9lM3nB7vX1kE5rT\",\"NEXT_PUBLIC_FIREBASE_API_KEY\":\"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg\",\"NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN\":\"airwatch-benin.firebaseapp.com\",\"NEXT_PUBLIC_FIREBASE_PROJECT_ID\":\"airwatch-benin\",\"NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET\":\"airwatch-benin.firebasestorage.app\",\"NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID\":\"49855349095\",\"NEXT_PUBLIC_FIREBASE_APP_ID\":\"1:49855349095:web:a62a70eb967c321d4c6fc2\",\"NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID\":\"G-V9166PE5HZ\",\"VERCEL_URL\":\"airwatch-benin.web.app\",\"__FIREBASE_FRAMEWORKS_ENTRY__\":\"next.js\",\"__FIREBASE_DEFAULTS__\":\"{\\\"config\\\":{\\\"projectId\\\":\\\"airwatch-benin\\\",\\\"appId\\\":\\\"1:49855349095:web:a62a70eb967c321d4c6fc2\\\",\\\"storageBucket\\\":\\\"airwatch-benin.firebasestorage.app\\\",\\\"apiKey\\\":\\\"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg\\\",\\\"authDomain\\\":\\\"airwatch-benin.firebaseapp.com\\\",\\\"messagingSenderId\\\":\\\"49855349095\\\",\\\"measurementId\\\":\\\"G-V9166PE5HZ\\\"},\\\"_authTokenSyncURL\\\":\\\"/__session\\\"}\",\"FIREBASE_CONFIG\":\"{\\\"projectId\\\":\\\"airwatch-benin\\\",\\\"storageBucket\\\":\\\"airwatch-benin.firebasestorage.app\\\"}\",\"GCLOUD_PROJECT\":\"airwatch-benin\",\"EVENTARC_CLOUD_EVENT_SOURCE\":\"projects/airwatch-benin/locations/us-central1/services/ssrairwatchbenin\",\"FUNCTION_TARGET\":\"ssrairwatchbenin\",\"LOG_EXECUTION_ID\":\"true\"},\"ingressSettings\":null,\"timeoutSeconds\":null,\"serviceAccountEmail\":null,\"availableMemory\":\"256Mi\",\"minInstanceCount\":null,\"maxInstanceCount\":null,\"maxInstanceRequestConcurrency\":80,\"availableCpu\":\"1\",\"vpcConnector\":null,\"vpcConnectorEgressSettings\":null},\"labels\":{\"deployment-tool\":\"cli-firebase\",\"firebase-functions-codebase\":\"firebase-frameworks-airwatch-benin\",\"firebase-functions-hash\":\"bc3991fd87cab0de885d389e1bed88869f949f53\"}}"}): FetchError: request to https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin?updateMask=name%2CbuildConfig.runtime%2CbuildConfig.entryPoint%2CbuildConfig.source.storageSource.bucket%2CbuildConfig.source.storageSource.object%2CbuildConfig.environmentVariables%2CbuildConfig.sourceToken%2CserviceConfig.environmentVariables%2CserviceConfig.ingressSettings%2CserviceConfig.timeoutSeconds%2CserviceConfig.serviceAccountEmail%2CserviceConfig.availableMemory%2CserviceConfig.minInstanceCount%2CserviceConfig.maxInstanceCount%2CserviceConfig.maxInstanceRequestConcurrency%2CserviceConfig.availableCpu%2CserviceConfig.vpcConnector%2CserviceConfig.vpcConnectorEgressSettings%2Clabels failed, reason: getaddrinfo ENOTFOUND cloudfunctions.googleapis.com
+[warn] !  functions: Failed to make request to https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin?updateMask=name%2CbuildConfig.runtime%2CbuildConfig.entryPoint%2CbuildConfig.source.storageSource.bucket%2CbuildConfig.source.storageSource.object%2CbuildConfig.environmentVariables%2CbuildConfig.sourceToken%2CserviceConfig.environmentVariables%2CserviceConfig.ingressSettings%2CserviceConfig.timeoutSeconds%2CserviceConfig.serviceAccountEmail%2CserviceConfig.availableMemory%2CserviceConfig.minInstanceCount%2CserviceConfig.maxInstanceCount%2CserviceConfig.maxInstanceRequestConcurrency%2CserviceConfig.availableCpu%2CserviceConfig.vpcConnector%2CserviceConfig.vpcConnectorEgressSettings%2Clabels
+[warn] !  functions:  failed to update function projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin
+[error] Failed to update function projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin
+[debug] [2025-08-19T15:28:38.099Z] Total Function Deployment time: 11168
+[debug] [2025-08-19T15:28:38.099Z] 1 Functions Deployed
+[debug] [2025-08-19T15:28:38.100Z] 1 Functions Errored
+[debug] [2025-08-19T15:28:38.100Z] 0 Function Deployments Aborted
+[debug] [2025-08-19T15:28:38.100Z] Average Function Deployment time: 11167
+[info]
+[info] Functions deploy had errors with the following functions:
+	firebase-frameworks-airwatch-benin:ssrairwatchbenin(us-central1)
+[debug] [2025-08-19T15:28:38.966Z] Not printing URL for HTTPS function. Typically this means it didn't match a filter or we failed deployment
+[debug] [2025-08-19T15:28:38.966Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:38.966Z] Checked if tokens are valid: true, expires at: 1755618532809
+[debug] [2025-08-19T15:28:38.966Z] >>> [apiv2][query] GET https://artifactregistry.googleapis.com/v1/projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts [none]
+[debug] [2025-08-19T15:28:40.129Z] <<< [apiv2][status] GET https://artifactregistry.googleapis.com/v1/projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts 200
+[debug] [2025-08-19T15:28:40.130Z] <<< [apiv2][body] GET https://artifactregistry.googleapis.com/v1/projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts {"name":"projects/airwatch-benin/locations/us-central1/repositories/gcf-artifacts","format":"DOCKER","description":"This repository is created and used by Cloud Functions for storing function docker images.","labels":{"goog-managed-by":"cloudfunctions"},"createTime":"2025-07-15T15:11:48.796726Z","updateTime":"2025-08-19T15:00:45.320913Z","mode":"STANDARD_REPOSITORY","cleanupPolicies":{"firebase-functions-cleanup":{"id":"firebase-functions-cleanup","action":"DELETE","condition":{"tagState":"ANY","olderThan":"86400s"}}},"sizeBytes":"685644368","vulnerabilityScanningConfig":{"lastEnableTime":"2025-07-15T15:11:23.104947890Z","enablementState":"SCANNING_DISABLED","enablementStateReason":"API containerscanning.googleapis.com is not enabled."},"satisfiesPzi":true,"registryUri":"us-central1-docker.pkg.dev/airwatch-benin/gcf-artifacts"}
+[debug] [2025-08-19T15:28:40.133Z] Functions deploy failed.
+[debug] [2025-08-19T15:28:40.133Z] {
+  "endpoint": {
+    "id": "ssrairwatchbenin",
+    "project": "airwatch-benin",
+    "region": "us-central1",
+    "entryPoint": "ssrairwatchbenin",
+    "platform": "gcfv2",
+    "runtime": "nodejs20",
+    "httpsTrigger": {},
+    "labels": {
+      "deployment-tool": "cli-firebase"
+    },
+    "serviceAccount": null,
+    "ingressSettings": null,
+    "availableMemoryMb": null,
+    "timeoutSeconds": null,
+    "maxInstances": null,
+    "minInstances": null,
+    "concurrency": 80,
+    "vpc": null,
+    "environmentVariables": {
+      "DATABASE_URL": "postgresql://neondb_owner:npg_MoBgYES8D5qI@ep-super-lab-a8s9u3ab-pooler.eastus2.azure.neon.tech/neondb?sslmode=require",
+      "MQTT_BROKER_URL": "34.38.83.146",
+      "MQTT_PORT": "1883",
+      "MQTT_USERNAME": "data-platform",
+      "MQTT_PASSWORD": "5t4rwZZwfLTjvZG",
+      "MQTT_WEBHOOK_SECRET": "K7mP9vX2qR8nF4jL6hB3wE5tY9mN1kS7dA2vC8xZ0pQ4fG6hJ9lM3nB7vX1kE5rT",
+      "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg",
+      "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "airwatch-benin.firebaseapp.com",
+      "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "airwatch-benin",
+      "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "airwatch-benin.firebasestorage.app",
+      "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "49855349095",
+      "NEXT_PUBLIC_FIREBASE_APP_ID": "1:49855349095:web:a62a70eb967c321d4c6fc2",
+      "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID": "G-V9166PE5HZ",
+      "VERCEL_URL": "airwatch-benin.web.app",
+      "__FIREBASE_FRAMEWORKS_ENTRY__": "next.js",
+      "__FIREBASE_DEFAULTS__": "{\"config\":{\"projectId\":\"airwatch-benin\",\"appId\":\"1:49855349095:web:a62a70eb967c321d4c6fc2\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\",\"apiKey\":\"AIzaSyCc0_JNGPht7W_Oqv14KWUmgfF6NtLGsQg\",\"authDomain\":\"airwatch-benin.firebaseapp.com\",\"messagingSenderId\":\"49855349095\",\"measurementId\":\"G-V9166PE5HZ\"},\"_authTokenSyncURL\":\"/__session\"}",
+      "FIREBASE_CONFIG": "{\"projectId\":\"airwatch-benin\",\"storageBucket\":\"airwatch-benin.firebasestorage.app\"}",
+      "GCLOUD_PROJECT": "airwatch-benin",
+      "EVENTARC_CLOUD_EVENT_SOURCE": "projects/airwatch-benin/locations/us-central1/services/ssrairwatchbenin"
+    },
+    "codebase": "firebase-frameworks-airwatch-benin",
+    "runServiceId": "ssrairwatchbenin",
+    "cpu": 1,
+    "securityLevel": "SECURE_ALWAYS",
+    "targetedByOnly": true,
+    "hash": "bc3991fd87cab0de885d389e1bed88869f949f53"
+  },
+  "op": "update",
+  "original": {
+    "name": "FirebaseError",
+    "children": [],
+    "context": {
+      "function": "projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin"
+    },
+    "exit": 1,
+    "message": "Failed to update function projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin",
+    "original": {
+      "name": "FirebaseError",
+      "children": [],
+      "exit": 1,
+      "message": "Failed to make request to https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin?updateMask=name%2CbuildConfig.runtime%2CbuildConfig.entryPoint%2CbuildConfig.source.storageSource.bucket%2CbuildConfig.source.storageSource.object%2CbuildConfig.environmentVariables%2CbuildConfig.sourceToken%2CserviceConfig.environmentVariables%2CserviceConfig.ingressSettings%2CserviceConfig.timeoutSeconds%2CserviceConfig.serviceAccountEmail%2CserviceConfig.availableMemory%2CserviceConfig.minInstanceCount%2CserviceConfig.maxInstanceCount%2CserviceConfig.maxInstanceRequestConcurrency%2CserviceConfig.availableCpu%2CserviceConfig.vpcConnector%2CserviceConfig.vpcConnectorEgressSettings%2Clabels",
+      "original": {
+        "message": "request to https://cloudfunctions.googleapis.com/v2/projects/airwatch-benin/locations/us-central1/functions/ssrairwatchbenin?updateMask=name%2CbuildConfig.runtime%2CbuildConfig.entryPoint%2CbuildConfig.source.storageSource.bucket%2CbuildConfig.source.storageSource.object%2CbuildConfig.environmentVariables%2CbuildConfig.sourceToken%2CserviceConfig.environmentVariables%2CserviceConfig.ingressSettings%2CserviceConfig.timeoutSeconds%2CserviceConfig.serviceAccountEmail%2CserviceConfig.availableMemory%2CserviceConfig.minInstanceCount%2CserviceConfig.maxInstanceCount%2CserviceConfig.maxInstanceRequestConcurrency%2CserviceConfig.availableCpu%2CserviceConfig.vpcConnector%2CserviceConfig.vpcConnectorEgressSettings%2Clabels failed, reason: getaddrinfo ENOTFOUND cloudfunctions.googleapis.com",
+        "type": "system",
+        "errno": "ENOTFOUND",
+        "code": "ENOTFOUND"
+      },
+      "status": 500
+    },
+    "status": 500,
+    "code": 500
+  }
+}
+[debug] [2025-08-19T15:28:40.386Z] Error: Failed to update function ssrairwatchbenin in region us-central1
+    at D:\Projet\coton\air-quality-platform\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:399:19
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Fabricator.updateV2Function (D:\Projet\coton\air-quality-platform\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:388:32)
+    at async Fabricator.updateEndpoint (D:\Projet\coton\air-quality-platform\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:155:13)
+    at async handle (D:\Projet\coton\air-quality-platform\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:89:17)
+[error]
+[error] Error: There was an error deploying functions

@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from '@/contexts/auth-context'
+import { UnregisterServiceWorker } from "@/components/unregister-sw"
 
 import { startServices } from "@/lib/startup"
 
@@ -86,6 +87,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <UnregisterServiceWorker />
             {children}
           </ThemeProvider>
         </AuthProvider>
