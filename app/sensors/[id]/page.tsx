@@ -18,6 +18,7 @@ import { fr } from "date-fns/locale"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { use } from "react"
 import { DataDownloadModal } from "@/components/data-download-modal"
+import { formatFirestoreTimestamp } from "@/lib/date-utils"
 
 interface Sensor {
   id: string
@@ -25,7 +26,7 @@ interface Sensor {
   latitude: number
   longitude: number
   frequency: number
-  lastSeen: string | null
+  lastSeen: string | null | { seconds: number; nanoseconds: number }
   status: "GREEN" | "ORANGE" | "RED"
 }
 
@@ -119,21 +120,32 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
   const fetchSensor = async () => {
     try {
-      // Get Firebase auth token
-      const auth = (await import('@/lib/firebase')).auth
-      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null
-      
+      const auth = (await import('@/lib/firebase')).auth;
+      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null;
+
       const response = await fetch(`/api/sensors/${id}`, {
         headers: {
-          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
-        }
-      })
-      const data = await response.json()
-      setSensor(data)
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Le capteur n'a pas été trouvé ou une erreur s'est produite" }));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setSensor(data);
     } catch (error) {
-      console.error("Error fetching sensor:", error)
+      console.error("Error fetching sensor details:", error);
+      // Optionnel: Mettre en place un état d'erreur pour informer l'utilisateur
+      setSensor(null); // Garder le chargement ou afficher une erreur
     }
-  }
+  };
 
   const fetchSensorData = async (showLoading = true) => {
     if (!dateRange.from || !dateRange.to) return
@@ -194,16 +206,6 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     }
   }
 
-  const formatLastSeen = (lastSeen: string | null) => {
-    if (!lastSeen) return "Jamais vu"
-    return new Date(lastSeen).toLocaleString("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
 
   const handleMetricToggle = (metricKey: string) => {
     setSelectedMetrics((prev) =>
@@ -279,7 +281,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                 
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <span>Dernière émission</span>
-                  <span className="font-medium text-foreground">{formatLastSeen(sensor.lastSeen)}</span>
+                  <span className="font-medium text-foreground">{formatFirestoreTimestamp(sensor.lastSeen)}</span>
                 </div>
                 
                 <div 
@@ -318,7 +320,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="bg-muted/30 p-2 rounded">
                     <div className="text-muted-foreground">Dernière émission</div>
-                    <div className="font-medium text-foreground">{formatLastSeen(sensor.lastSeen)}</div>
+                  <div className="font-medium text-foreground">{formatFirestoreTimestamp(sensor.lastSeen)}</div>
                   </div>
                   
                   <div className="bg-muted/30 p-2 rounded">

@@ -38,6 +38,7 @@ import { getAllUsers } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { PlusCircle, Trash2, X } from "lucide-react";
+import { parseFirestoreTimestamp } from "@/lib/date-utils";
 
 interface Sensor {
   id: string
@@ -45,7 +46,7 @@ interface Sensor {
   latitude: number
   longitude: number
   frequency: number
-  lastSeen: string | null
+  lastSeen: string | null | { seconds: number; nanoseconds: number }
   status: "GREEN" | "ORANGE" | "RED"
 }
 
@@ -60,7 +61,7 @@ export default function DashboardPage() {
 function Dashboard() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { user, userProfile, loading: authLoading } = useAuth()
+  const { user, userProfile, loading: authLoading, authStatus } = useAuth()
   const { toast } = useToast()
   const isAdmin = userProfile?.role === 'admin'
   
@@ -158,25 +159,30 @@ function Dashboard() {
     }
   }
 
-  // Protection d'authentification
+  // Auth protection based on the reliable authStatus
   useEffect(() => {
+    // Only perform redirects once the auth state is fully resolved
     if (!authLoading) {
-      if (!user) {
-        router.push('/')
-        return
-      }
-      
-      if (!user.emailVerified) {
-        router.push('/auth/verify-email')
-        return
-      }
-      
-      if (!userProfile?.isApproved) {
-        router.push('/auth/pending-approval')
-        return
+      switch (authStatus) {
+        case 'unauthenticated':
+          router.push('/auth/login');
+          break;
+        case 'pending_verification':
+          router.push('/auth/verify-email');
+          break;
+        case 'pending_approval':
+          router.push('/auth/pending-approval');
+          break;
+        // For 'authenticated' and 'admin', stay on the dashboard.
+        case 'authenticated':
+        case 'admin':
+          break;
+        // The 'loading' case is handled by the authLoading check
+        default:
+          break;
       }
     }
-  }, [user, userProfile, authLoading, router])
+  }, [authStatus, authLoading, router]);
 
   // Gérer les paramètres URL pour centrer la carte
   const urlView = searchParams.get('view')
@@ -253,7 +259,9 @@ function Dashboard() {
     const matchesActivity = !activityFilter || (() => {
       if (!sensor.lastSeen) return activityFilter === "never"
       
-      const lastSeenDate = new Date(sensor.lastSeen)
+      const lastSeenDate = parseFirestoreTimestamp(sensor.lastSeen)
+      if (!lastSeenDate) return false; // If date is invalid, filter it out
+
       const now = new Date()
       const diffHours = (now.getTime() - lastSeenDate.getTime()) / (1000 * 60 * 60)
       
@@ -280,14 +288,14 @@ function Dashboard() {
     switch (sortBy) {
       case 'newest':
         return [...sensors].sort((a, b) => {
-          const aDate = a.lastSeen ? new Date(a.lastSeen).getTime() : 0
-          const bDate = b.lastSeen ? new Date(b.lastSeen).getTime() : 0
+          const aDate = parseFirestoreTimestamp(a.lastSeen)?.getTime() ?? 0;
+          const bDate = parseFirestoreTimestamp(b.lastSeen)?.getTime() ?? 0;
           return bDate - aDate
         })
       case 'oldest':
         return [...sensors].sort((a, b) => {
-          const aDate = a.lastSeen ? new Date(a.lastSeen).getTime() : 0
-          const bDate = b.lastSeen ? new Date(b.lastSeen).getTime() : 0
+          const aDate = parseFirestoreTimestamp(a.lastSeen)?.getTime() ?? 0;
+          const bDate = parseFirestoreTimestamp(b.lastSeen)?.getTime() ?? 0;
           return aDate - bDate
         })
       case 'name-asc':
@@ -334,9 +342,11 @@ function Dashboard() {
     )
   }
 
-  // Retourner null si l'utilisateur n'est pas authentifié (la redirection se fait dans useEffect)
-  if (!user || !user.emailVerified || !userProfile?.isApproved) {
-    return null
+  // Render null while redirecting to prevent flashing of content
+  if (authLoading || (authStatus !== 'authenticated' && authStatus !== 'admin')) {
+    // You can keep the main loading spinner here, or return null for a cleaner redirect.
+    // The main loading spinner is already shown if authLoading is true.
+    return null;
   }
 
   // Préparer les options de centrage pour la carte

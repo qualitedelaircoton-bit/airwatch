@@ -99,6 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         displayName: user.displayName,
         photoURL: user.photoURL,
         updatedAt: new Date(),
+        emailVerified: user.emailVerified, // Always sync email verification status
         ...additionalData,
       };
       await updateDoc(userRef, updateData);
@@ -188,7 +189,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               isApproved: data.isApproved || false,
               createdAt: data.createdAt,
               updatedAt: data.updatedAt,
-              emailVerified: data.emailVerified || false,
+              emailVerified: firebaseUser.emailVerified, // Use live value from firebaseUser
               accessReason: data.accessReason || "",
             };
             setUserProfile(profile);

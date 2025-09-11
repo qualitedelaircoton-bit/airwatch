@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react"
 import { SensorCard } from "@/components/sensor-card"
+import { formatFirestoreTimestamp } from "@/lib/date-utils"
 
 interface Sensor {
   id: string
   name: string
   latitude: number
   longitude: number
-  lastSeen: string | null
+  lastSeen: string | null | { seconds: number; nanoseconds: number }
   status: "GREEN" | "ORANGE" | "RED"
   frequency: number
 }
@@ -193,13 +194,7 @@ export function MapView({ sensors, centerOptions }: MapViewProps) {
                 <div class="flex justify-between items-center">
                   <span class="text-muted-foreground">Dernière:</span>
                   <div class="text-xs font-medium text-foreground">
-                    ${sensor.lastSeen ? new Date(sensor.lastSeen).toLocaleString("fr-FR", {
-                      day: "2-digit",
-                      month: "2-digit", 
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }) : "Jamais vu"}
+                    ${formatFirestoreTimestamp(sensor.lastSeen, "dd/MM/yy HH:mm")}
                   </div>
                 </div>
 

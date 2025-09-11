@@ -8,6 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/components/ui/use-toast"
+import { formatFirestoreTimestamp } from "@/lib/date-utils"
 
 export interface Sensor {
   id: string
@@ -15,7 +16,7 @@ export interface Sensor {
   latitude: number
   longitude: number
   frequency: number
-  lastSeen: string | null
+  lastSeen: string | null | { seconds: number; nanoseconds: number }
   status: "GREEN" | "ORANGE" | "RED"
 }
 
@@ -48,10 +49,6 @@ const getStatusText = (status: string) => {
   }
 }
 
-const formatLastSeen = (lastSeen: string | null) => {
-  if (!lastSeen) return "Jamais vu"
-  return new Date(lastSeen).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
-}
 
 const getStatusBadgeClass = (status: string) => {
   switch (status) {
@@ -153,7 +150,7 @@ export function SensorCard({
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Dernière:</span>
-            <div className="text-xs font-medium text-foreground">{formatLastSeen(sensor.lastSeen)}</div>
+            <div className="text-xs font-medium text-foreground">{formatFirestoreTimestamp(sensor.lastSeen, "dd/MM/yy HH:mm")}</div>
           </div>
           {isPopup && (
             <div className="flex justify-between items-center">
