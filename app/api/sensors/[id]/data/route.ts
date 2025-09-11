@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { db } from "@/lib/firebase"
-import { collection, getDocs, addDoc, updateDoc, doc, getDoc, query, where, orderBy } from "firebase/firestore"
+import { adminDb as db } from "@/lib/firebase-admin"
 import { calculateSensorStatus } from "@/lib/firestore-status-calculator"
 import { withAuth } from "@/lib/api-auth"
 
@@ -13,6 +12,9 @@ async function getHandler(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!db) {
+      return NextResponse.json({ error: "Firebase Admin not initialized" }, { status: 503 });
+    }
     const { id } = await params
     const { searchParams } = new URL(request.url)
     const from = searchParams.get("from")
@@ -25,14 +27,13 @@ async function getHandler(
     const fromDate = new Date(from)
     const toDate = new Date(to)
 
-    const dataRef = collection(db, "sensors", id, "data")
-    const q = query(
-      dataRef,
-      where("timestamp", ">=", fromDate),
-      where("timestamp", "<=", toDate),
-      orderBy("timestamp", "asc")
-    )
-    const snapshot = await getDocs(q)
+    const dataRef = db.collection("sensors").doc(id).collection("data")
+    const q = dataRef
+      .where("timestamp", ">=", fromDate)
+      .where("timestamp", "<=", toDate)
+      .orderBy("timestamp", "asc")
+
+    const snapshot = await q.get()
     const data = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
 
     return NextResponse.json(data)
@@ -47,6 +48,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!db) {
+      return NextResponse.json({ error: "Firebase Admin not initialized" }, { status: 503 });
+    }
     const { id: sensorId } = await params
     const body = await request.json()
 
@@ -60,17 +64,17 @@ export async function POST(
     }
 
     // Vérifier que le capteur existe
-    const sensorRef = doc(db, "sensors", sensorId)
-    const sensorSnap = await getDoc(sensorRef)
-    if (!sensorSnap.exists()) {
+    const sensorRef = db.collection("sensors").doc(sensorId)
+    const sensorSnap = await sensorRef.get()
+    if (!sensorSnap.exists) {
       console.warn("⚠️ Capteur inconnu:", sensorId)
       return NextResponse.json({ error: "Sensor not found" }, { status: 404 })
     }
     const sensorData = sensorSnap.data() as any
 
     // Enregistrer les données
-    const dataRef = collection(db, "sensors", sensorId, "data")
-    await addDoc(dataRef, {
+    const dataRef = sensorRef.collection("data")
+    await dataRef.add({
       timestamp: transformedData.timestamp,
       pm1_0: transformedData.pm1_0,
       pm2_5: transformedData.pm2_5,
@@ -86,7 +90,7 @@ export async function POST(
     })
 
     // Mettre à jour le capteur
-    await updateDoc(sensorRef, {
+    await sensorRef.update({
       lastSeen: transformedData.timestamp,
       status: await calculateSensorStatus(sensorId),
       isActive: true,

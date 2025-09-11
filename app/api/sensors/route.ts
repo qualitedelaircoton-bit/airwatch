@@ -63,5 +63,39 @@ async function postHandler(request: NextRequest) {
 }
 
 // Export handlers with authentication
-export const GET = withAuth(getHandler)
+async function authenticatedGetHandler(request: NextRequest) {
+  const { userId, userRole } = request as any; // Cast to access user info from middleware
+
+  try {
+    if (!adminDb) {
+      throw new Error("Firebase Admin SDK not initialized. Check environment variables.");
+    }
+
+    // Mettre à jour les statuts avant de retourner les données
+    await updateAllSensorStatuses()
+
+    const snapshot = await adminDb.collection("sensors").get()
+    const sensors = snapshot.docs.map(docSnap => ({
+      id: docSnap.id,
+      ...docSnap.data(),
+    }))
+
+    // Log de diagnostic
+    console.log(`DIAGNOSTIC: User ${userId} (role: ${userRole}) fetched ${sensors.length} sensors.`);
+
+    return NextResponse.json(sensors, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      }
+    })
+  } catch (error) {
+    console.error(`Error fetching sensors for user ${userId}:`, error)
+    return NextResponse.json({ error: "Failed to fetch sensors" }, { status: 500 })
+  }
+}
+
+export const GET = withAuth(authenticatedGetHandler)
 export const POST = withAdminAuth(postHandler)
