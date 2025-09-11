@@ -119,7 +119,15 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
   const fetchSensor = async () => {
     try {
-      const response = await fetch(`/api/sensors/${id}`)
+      // Get Firebase auth token
+      const auth = (await import('@/lib/firebase')).auth
+      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null
+      
+      const response = await fetch(`/api/sensors/${id}`, {
+        headers: {
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
+        }
+      })
       const data = await response.json()
       setSensor(data)
     } catch (error) {
@@ -132,12 +140,20 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
     if (showLoading) setLoading(true)
     try {
+      // Get Firebase auth token
+      const auth = (await import('@/lib/firebase')).auth
+      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null
+      
       const searchParams = new URLSearchParams({
         from: dateRange.from.toISOString(),
         to: dateRange.to.toISOString(),
       })
 
-      const response = await fetch(`/api/sensors/${id}/data?${searchParams}`)
+      const response = await fetch(`/api/sensors/${id}/data?${searchParams}`, {
+        headers: {
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
+        }
+      })
       const rawData = await response.json()
       const processedData = rawData.map((d: any) => ({
         ...d,

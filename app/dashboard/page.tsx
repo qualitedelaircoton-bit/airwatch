@@ -186,9 +186,11 @@ function Dashboard() {
   const fetchSensors = async (showLoading = false) => {
     if (showLoading) setLoading(true)
     try {
+      const idToken = await user?.getIdToken?.()
       const response = await fetch("/api/sensors", {
         headers: {
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache',
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
         }
       })
       const data = await response.json()

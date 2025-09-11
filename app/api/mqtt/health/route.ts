@@ -28,6 +28,9 @@ interface MQTTHealthStatus {
 async function checkDatabaseHealth(): Promise<{ status: 'connected' | 'error', response_time: number }> {
   const startTime = Date.now();
   try {
+    if (!adminDb) {
+      return { status: 'error', response_time: Date.now() - startTime };
+    }
     await adminDb.collection("sensors").limit(1).get();
     return {
       status: 'connected',
@@ -45,6 +48,9 @@ async function checkDatabaseHealth(): Promise<{ status: 'connected' | 'error', r
 async function getActiveSensorsCount(): Promise<number> {
   try {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    if (!adminDb) {
+      return 0;
+    }
     const sensorsSnapshot = await adminDb
       .collection("sensors")
       .where("lastSeen", ">=", oneHourAgo)
@@ -68,6 +74,15 @@ async function getWebhookMetrics(): Promise<{
     
     // Get webhook logs from the last hour (simulé pour l'exemple)
     // En production, vous pourriez utiliser Firebase Analytics ou une collection dédiée
+    if (!adminDb) {
+      return {
+        last_received: null,
+        success_rate: 0,
+        messages_last_hour: 0,
+        error_rate: 0,
+        avg_processing_time: 0
+      };
+    }
     const logsSnapshot = await adminDb
       .collection("webhook_logs")
       .where("timestamp", ">=", oneHourAgo)
@@ -91,7 +106,7 @@ async function getWebhookMetrics(): Promise<{
       ? processingTimes.reduce((a, b) => a + b, 0) / processingTimes.length 
       : 0;
 
-    const lastReceived = logs.length > 0 ? logs[0].timestamp : null;
+    const lastReceived = logs.length > 0 && (logs[0] as any)?.timestamp ? (logs[0] as any).timestamp : null;
 
     return {
       last_received: lastReceived,

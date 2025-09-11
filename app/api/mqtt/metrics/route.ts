@@ -34,15 +34,28 @@ async function getMQTTMetrics(hours: number = 24): Promise<MQTTMetrics> {
   
   try {
     // Récupérer les logs de webhook pour la période
+    if (!adminDb) {
+      return {
+        timeframe: `${hours}h`,
+        total_messages: 0,
+        successful_messages: 0,
+        failed_messages: 0,
+        unique_sensors: 0,
+        performance: { avg_response_time: 0, p95_response_time: 0, p99_response_time: 0 },
+        topics: {},
+        errors: { database_error: 1 },
+        hourly_breakdown: []
+      };
+    }
     const logsSnapshot = await adminDb
       .collection("webhook_logs")
       .where("timestamp", ">=", startTime)
       .orderBy("timestamp", "desc")
       .get();
 
-    const logs = logsSnapshot.docs.map(doc => ({
+    const logs: any[] = logsSnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      ...(doc.data() as any)
     }));
 
     // Calculer les métriques de base
@@ -78,18 +91,19 @@ async function getMQTTMetrics(hours: number = 24): Promise<MQTTMetrics> {
 
     // Analyse par topic
     const topicStats: { [topic: string]: { message_count: number; last_activity: string } } = {};
-    logs.forEach(log => {
-      if (log.topic) {
-        if (!topicStats[log.topic]) {
-          topicStats[log.topic] = {
-            message_count: 0,
-            last_activity: log.timestamp
-          };
-        }
-        topicStats[log.topic].message_count++;
-        if (new Date(log.timestamp) > new Date(topicStats[log.topic].last_activity)) {
-          topicStats[log.topic].last_activity = log.timestamp;
-        }
+    logs.forEach((log: any) => {
+      const t = log?.topic as string | undefined;
+      const ts = log?.timestamp as string | number | Date | undefined;
+      if (!t) return;
+      if (!topicStats[t]) {
+        topicStats[t] = {
+          message_count: 0,
+          last_activity: ts ? new Date(ts as any).toISOString() : new Date(0).toISOString()
+        };
+      }
+      topicStats[t].message_count++;
+      if (ts && new Date(ts as any) > new Date(topicStats[t].last_activity)) {
+        topicStats[t].last_activity = new Date(ts as any).toISOString();
       }
     });
 
@@ -123,8 +137,10 @@ async function getMQTTMetrics(hours: number = 24): Promise<MQTTMetrics> {
       const hourErrors = hourLogs.filter(log => log.status === 'error').length;
       const successRate = hourMessages > 0 ? ((hourMessages - hourErrors) / hourMessages) * 100 : 100;
 
+      const hourIso = hourStart.toISOString();
+      const hourLabel = (hourIso.split('T')[1] || '').split(':')[0] ? ((hourIso.split('T')[1] as string).split(':')[0] + ':00') : hourStart.getHours().toString().padStart(2, '0') + ':00';
       hourlyBreakdown.unshift({
-        hour: hourStart.toISOString().split('T')[1].split(':')[0] + ':00',
+        hour: hourLabel,
         messages: hourMessages,
         errors: hourErrors,
         success_rate: Math.round(successRate * 100) / 100

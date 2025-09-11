@@ -2,11 +2,13 @@ import { type NextRequest, NextResponse } from "next/server"
 import { adminDb } from "@/lib/firebase-admin"
 import { Timestamp } from "firebase-admin/firestore"
 import { updateAllSensorStatuses } from "@/lib/firestore-status-calculator"
+import { withAuth, withAdminAuth } from "@/lib/api-auth"
 
 
-export const dynamic = "force-static"
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
-export async function GET() {
+async function getHandler(request: NextRequest) {
   try {
     if (!adminDb) {
       throw new Error("Firebase Admin SDK not initialized. Check environment variables.");
@@ -21,14 +23,21 @@ export async function GET() {
       ...docSnap.data(),
     }))
 
-    return NextResponse.json(sensors)
+    return NextResponse.json(sensors, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      }
+    })
   } catch (error) {
     console.error("Error fetching sensors:", error)
     return NextResponse.json({ error: "Failed to fetch sensors" }, { status: 500 })
   }
 }
 
-export async function POST(request: NextRequest) {
+async function postHandler(request: NextRequest) {
   try {
     if (!adminDb) {
       throw new Error("Firebase Admin SDK not initialized. Check environment variables.");
@@ -52,3 +61,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create sensor" }, { status: 500 });
   }
 }
+
+// Export handlers with authentication
+export const GET = withAuth(getHandler)
+export const POST = withAdminAuth(postHandler)

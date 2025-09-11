@@ -2,11 +2,13 @@ import { type NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/firebase"
 import { collection, getDocs, addDoc, updateDoc, doc, getDoc, query, where, orderBy } from "firebase/firestore"
 import { calculateSensorStatus } from "@/lib/firestore-status-calculator"
+import { withAuth } from "@/lib/api-auth"
 
 
-export const dynamic = "force-static"
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
-export async function GET(
+async function getHandler(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -159,3 +161,7 @@ function transformSensorData(rawData: any, sensorId: string) {
     return null
   }
 }
+
+// Export handlers with authentication
+export const GET = withAuth(getHandler)
+// POST reste public pour les capteurs IoT qui envoient des données

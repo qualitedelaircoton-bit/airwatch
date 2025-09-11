@@ -9,7 +9,10 @@ const firebaseAdminConfig = {
     || process.env.GOOGLE_CLOUD_PROJECT
     || "",
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL || "",
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n') || "",
+  privateKey: (process.env.FIREBASE_PRIVATE_KEY
+    // Normalize common newline encodings and strip surrounding quotes if any
+    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\r\n/g, '\n').replace(/\\n/g, '\n').replace(/^"|"$/g, '')
+    : ""),
 }
 
 function createFirebaseAdminApp() {
@@ -19,18 +22,18 @@ function createFirebaseAdminApp() {
     return apps[0]
   }
 
-  // Prefer ADC (Application Default Credentials) on Google environments (Firebase Hosting/Functions)
-  // If GOOGLE_CLOUD_PROJECT or FIREBASE_CONFIG is present, initialize with default credentials
-  if (process.env.GOOGLE_CLOUD_PROJECT || process.env.FIREBASE_CONFIG) {
-    return initializeApp()
-  }
-
-  // Fallback for local/dev: initialize with service account env vars if provided
+  // Prefer explicit Service Account credentials when provided via env (local/dev or self-managed prod)
   if (firebaseAdminConfig.projectId && firebaseAdminConfig.clientEmail && firebaseAdminConfig.privateKey) {
     return initializeApp({
       credential: cert(firebaseAdminConfig),
       projectId: firebaseAdminConfig.projectId,
     })
+  }
+  
+  // Otherwise, fall back to ADC (Application Default Credentials) on Google environments (Hosting/Functions)
+  // If GOOGLE_CLOUD_PROJECT or FIREBASE_CONFIG is present, initialize with default credentials
+  if (process.env.GOOGLE_CLOUD_PROJECT || process.env.FIREBASE_CONFIG) {
+    return initializeApp()
   }
   
   return null

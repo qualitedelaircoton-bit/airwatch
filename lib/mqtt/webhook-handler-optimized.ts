@@ -190,10 +190,14 @@ export class OptimizedWebhookHandler {
     this.metricsBuffer = [];
 
     try {
+      if (!adminDb) {
+        console.warn('adminDb not initialized, skipping metrics flush');
+        return;
+      }
       const batch = adminDb.batch();
       
       metricsToFlush.forEach(metric => {
-        const docRef = adminDb.collection('webhook_logs').doc();
+        const docRef = adminDb!.collection('webhook_logs').doc();
         batch.set(docRef, metric);
       });
 
@@ -228,6 +232,9 @@ export class OptimizedWebhookHandler {
 
     try {
       // Simulation du rate limiting avec Firestore
+      if (!adminDb) {
+        return { allowed: true };
+      }
       const rateLimitDoc = await adminDb
         .collection('rate_limits')
         .doc(rateLimitKey)
@@ -284,6 +291,9 @@ export class OptimizedWebhookHandler {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     
     try {
+      if (!adminDb) {
+        return;
+      }
       // Nettoyer les anciens logs de webhook
       const oldLogsQuery = adminDb
         .collection('webhook_logs')
