@@ -60,10 +60,13 @@ export default function EditSensorModal({ isOpen, onClose, onSensorUpdated, sens
     setSuccess(false)
 
     try {
+      const auth = (await import('@/lib/firebase')).auth
+      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null
       const response = await fetch(`/api/sensors/${sensorToEdit.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
         },
         body: JSON.stringify({
           name: formData.name,

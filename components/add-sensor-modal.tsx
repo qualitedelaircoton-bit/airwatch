@@ -81,7 +81,13 @@ export default function AddSensorModal({ isOpen, onClose, onSensorAdded }: AddSe
   const startConnectionCheck = (sensorId: string) => {
     const checkConnection = async () => {
       try {
-        const response = await fetch(`/api/sensors/${sensorId}`)
+        const auth = (await import('@/lib/firebase')).auth
+        const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null
+        const response = await fetch(`/api/sensors/${sensorId}`, {
+          headers: {
+            ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
+          }
+        })
         const sensor = await response.json()
 
         if (sensor.lastSeen) {

@@ -34,7 +34,37 @@ async function getHandler(
       .orderBy("timestamp", "asc")
 
     const snapshot = await q.get()
-    const data = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+    const data = snapshot.docs.map(docSnap => {
+      const d = docSnap.data() as Record<string, any>
+      const ts = d.timestamp
+      // Normalize Firestore Timestamp to { seconds, nanoseconds }
+      const toSecNano = (v: any): { seconds: number; nanoseconds: number } | null => {
+        if (!v) return null
+        if (typeof v?.toDate === 'function') {
+          const date = v.toDate() as Date
+          return { seconds: Math.floor(date.getTime() / 1000), nanoseconds: (date.getTime() % 1000) * 1e6 }
+        }
+        if (typeof v?.seconds === 'number' && typeof v?.nanoseconds === 'number') {
+          return { seconds: v.seconds, nanoseconds: v.nanoseconds }
+        }
+        if (typeof v?._seconds === 'number' && typeof v?._nanoseconds === 'number') {
+          return { seconds: v._seconds, nanoseconds: v._nanoseconds }
+        }
+        if (typeof v === 'string') {
+          const date = new Date(v)
+          if (!isNaN(date.getTime())) {
+            return { seconds: Math.floor(date.getTime() / 1000), nanoseconds: (date.getTime() % 1000) * 1e6 }
+          }
+        }
+        return null
+      }
+
+      return {
+        id: docSnap.id,
+        ...d,
+        timestamp: toSecNano(ts),
+      }
+    })
 
     return NextResponse.json(data)
   } catch (error) {

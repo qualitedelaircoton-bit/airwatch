@@ -78,6 +78,11 @@ export function SensorCard({
   isSelected = false,
   onSelectionChange
 }: SensorCardProps) {
+  // Log to inspect the value and type of lastSeen for each sensor card
+  if (sensor.name === 'Coton 1') {
+    console.log(`SensorCard props for '${sensor.name}': lastSeen =`, sensor.lastSeen, `(type: ${typeof sensor.lastSeen})`);
+  }
+
   const { toast } = useToast()
 
   const stopPropagation = (e: React.MouseEvent) => {
@@ -85,12 +90,8 @@ export function SensorCard({
   }
 
   const handleWrapperClick = (e: React.MouseEvent) => {
-    if (isAdmin && onSelectionChange) {
-      // Allow navigation if the user clicks on a link, otherwise select the card
-      if ((e.target as HTMLElement).tagName !== 'A') {
-        onSelectionChange(sensor.id, !isSelected)
-      }
-    }
+    // Ne plus gérer la sélection ici - seule la checkbox doit permettre la sélection
+    // Le clic sur la carte navigue vers les détails
   }
 
   const handleActionClick = (e: React.MouseEvent, action: () => void) => {
@@ -114,7 +115,14 @@ export function SensorCard({
       style={isPopup ? {} : { animationDelay: `${index * 0.05}s` }}
     >
       {isAdmin && onSelectionChange && (
-        <div onClick={(e) => handleActionClick(e, () => onSelectionChange(sensor.id, !isSelected))} className="absolute top-3 right-3 z-20 p-2 cursor-pointer">
+        <div 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onSelectionChange(sensor.id, !isSelected);
+          }} 
+          className="absolute top-3 right-3 z-20 p-2 cursor-pointer"
+        >
            <Checkbox
             checked={isSelected}
             aria-label={`Sélectionner le capteur ${sensor.name}`}
@@ -172,10 +180,28 @@ export function SensorCard({
               </Button>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="w-full" onClick={(e) => handleActionClick(e, () => onEdit?.(sensor))}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onEdit?.(sensor);
+                }}
+              >
                 <Pencil className="h-3.5 w-3.5 mr-2" />Modifier
               </Button>
-              <Button variant="destructive" size="sm" className="w-full" onClick={(e) => handleActionClick(e, () => onDelete?.(sensor))}>
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                className="w-full" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onDelete?.(sensor);
+                }}
+              >
                 <Trash2 className="h-3.5 w-3.5 mr-2" />Supprimer
               </Button>
             </div>
@@ -213,7 +239,7 @@ export function SensorCard({
 
   if (isPopup) return cardContent;
   
-  // If admin is selecting, use a div wrapper to handle clicks.
-  // Otherwise, use a Link wrapper for navigation.
-  return isAdmin && onSelectionChange ? divWrapper : linkWrapper;
+  // Toujours utiliser Link wrapper pour la navigation vers les détails
+  // La sélection se fait uniquement via la checkbox
+  return linkWrapper;
 }

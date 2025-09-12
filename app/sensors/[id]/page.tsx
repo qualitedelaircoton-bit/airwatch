@@ -252,7 +252,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
       <div className="glass-effect border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto p-6">
           <div className="mb-4">
-            <Link href="/">
+            <Link href="/dashboard">
               <Button variant="outline" size="sm" className="shadow-sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Retour au tableau de bord

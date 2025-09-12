@@ -137,8 +137,12 @@ function Dashboard() {
   const handleDeleteSensor = async (sensorToDelete: Sensor) => {
     if (window.confirm(`Êtes-vous sûr de vouloir supprimer le capteur "${sensorToDelete.name}" ? Cette action est irréversible.`)) {
       try {
+        const idToken = await user?.getIdToken?.();
         const response = await fetch(`/api/sensors/${sensorToDelete.id}`, {
           method: 'DELETE',
+          headers: {
+            ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
+          }
         });
 
         if (!response.ok) {
@@ -200,6 +204,11 @@ function Dashboard() {
         }
       })
       const data = await response.json()
+      // Log to inspect the raw data for the problematic sensor
+      const problematicSensor = Array.isArray(data) ? data.find(s => s.name === 'Coton 1') : null;
+      if (problematicSensor) {
+        console.log("API response for 'Coton 1':", JSON.stringify(problematicSensor, null, 2));
+      }
       const sensorsArray: Sensor[] = Array.isArray(data) ? data : []
       setSensors(sensorsArray)
     } catch (error) {
@@ -222,6 +231,11 @@ function Dashboard() {
 
   useEffect(() => {
     fetchSensors(true)
+    // Fallback polling every 60s to ensure data stays fresh even if webhook misses
+    const interval = setInterval(() => {
+      fetchSensors()
+    }, 60000)
+    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
@@ -517,11 +531,12 @@ function Dashboard() {
         <div className="max-w-7xl mx-auto p-4 sm:p-6">
           {viewMode === "map" ? (
             <div className="animate-fade-in">
-              <MapView sensors={sortedSensors} centerOptions={mapCenterOptions} />
+              {/* Display all sensors on map to avoid filter-based hiding */}
+              <MapView sensors={sensors} centerOptions={mapCenterOptions} />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 animate-fade-in">
-              {sortedSensors.map((sensor, index) => (
+              {sortedSensors.map((sensor) => (
                 <SensorCard
                   key={sensor.id}
                   sensor={sensor}

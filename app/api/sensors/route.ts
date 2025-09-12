@@ -18,10 +18,37 @@ async function getHandler(request: NextRequest) {
     await updateAllSensorStatuses()
 
     const snapshot = await adminDb.collection("sensors").get()
-    const sensors = snapshot.docs.map(docSnap => ({
-      id: docSnap.id,
-      ...docSnap.data(),
-    }))
+    const sensors = snapshot.docs.map(docSnap => {
+      const data = docSnap.data() as Record<string, any>
+      const serializeTsToIso = (value: any): string | null => {
+        if (!value) return null
+        // Firestore Timestamp object from Admin SDK
+        if (typeof value?.toDate === 'function') {
+          return value.toDate().toISOString()
+        }
+        // Support for shapes like { seconds, nanoseconds } or { _seconds, _nanoseconds }
+        const seconds = typeof value?.seconds === 'number' ? value.seconds : (typeof value?._seconds === 'number' ? value._seconds : undefined)
+        if (typeof seconds === 'number') {
+          const date = new Date(seconds * 1000)
+          return isNaN(date.getTime()) ? null : date.toISOString()
+        }
+        // ISO string already
+        if (typeof value === 'string') {
+          const d = new Date(value)
+          return isNaN(d.getTime()) ? null : d.toISOString()
+        }
+        return null
+      }
+
+      return {
+        id: docSnap.id,
+        ...data,
+        // Normalize common date fields
+        createdAt: serializeTsToIso((data as any).createdAt),
+        updatedAt: serializeTsToIso((data as any).updatedAt),
+        lastSeen: serializeTsToIso((data as any).lastSeen),
+      }
+    })
 
     return NextResponse.json(sensors, {
       headers: {
@@ -54,7 +81,9 @@ async function postHandler(request: NextRequest) {
     });
 
     const newSnap = await newDocRef.get();
-    const newSensor = { id: newDocRef.id, ...newSnap.data() };
+    const newData = newSnap.data() as Record<string, any>
+    const createdAtIso = typeof newData?.createdAt?.toDate === 'function' ? newData.createdAt.toDate().toISOString() : null
+    const newSensor = { id: newDocRef.id, ...newData, createdAt: createdAtIso };
     return NextResponse.json(newSensor, { status: 201 });
   } catch (error) {
     console.error("Error creating sensor:", error);
@@ -63,39 +92,5 @@ async function postHandler(request: NextRequest) {
 }
 
 // Export handlers with authentication
-async function authenticatedGetHandler(request: NextRequest) {
-  const { userId, userRole } = request as any; // Cast to access user info from middleware
-
-  try {
-    if (!adminDb) {
-      throw new Error("Firebase Admin SDK not initialized. Check environment variables.");
-    }
-
-    // Mettre à jour les statuts avant de retourner les données
-    await updateAllSensorStatuses()
-
-    const snapshot = await adminDb.collection("sensors").get()
-    const sensors = snapshot.docs.map(docSnap => ({
-      id: docSnap.id,
-      ...docSnap.data(),
-    }))
-
-    // Log de diagnostic
-    console.log(`DIAGNOSTIC: User ${userId} (role: ${userRole}) fetched ${sensors.length} sensors.`);
-
-    return NextResponse.json(sensors, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Surrogate-Control': 'no-store'
-      }
-    })
-  } catch (error) {
-    console.error(`Error fetching sensors for user ${userId}:`, error)
-    return NextResponse.json({ error: "Failed to fetch sensors" }, { status: 500 })
-  }
-}
-
-export const GET = withAuth(authenticatedGetHandler)
+export const GET = withAuth(getHandler)
 export const POST = withAdminAuth(postHandler)

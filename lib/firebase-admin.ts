@@ -32,7 +32,7 @@ function createFirebaseAdminApp() {
   
   // Otherwise, fall back to ADC (Application Default Credentials) on Google environments (Hosting/Functions)
   // If GOOGLE_CLOUD_PROJECT or FIREBASE_CONFIG is present, initialize with default credentials
-  if (process.env.GOOGLE_CLOUD_PROJECT || process.env.FIREBASE_CONFIG) {
+  if (process.env.GOOGLE_CLOUD_PROJECT || process.env.FIREBASE_CONFIG || process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     return initializeApp()
   }
   
