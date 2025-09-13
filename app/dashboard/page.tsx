@@ -103,10 +103,12 @@ function Dashboard() {
     const idsToDelete = Array.from(selectedSensorIds);
 
     try {
+      const idToken = await user?.getIdToken?.();
       const response = await fetch('/api/sensors/batch-delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
         },
         body: JSON.stringify({ sensorIds: idsToDelete }),
       });
@@ -226,7 +228,8 @@ function Dashboard() {
       fetchSensors()
     },
     enablePolling: false, // Pas de polling automatique
-    pollingInterval: 0
+    pollingInterval: 0,
+    enabled: authStatus === 'authenticated' || authStatus === 'admin'
   })
 
   useEffect(() => {

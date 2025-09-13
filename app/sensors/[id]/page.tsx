@@ -19,6 +19,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { use } from "react"
 import { DataDownloadModal } from "@/components/data-download-modal"
 import { formatFirestoreTimestamp } from "@/lib/date-utils"
+import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
+import { db } from "@/lib/firebase"
+import { doc as fsDoc, onSnapshot, collection, query, orderBy, limit } from "firebase/firestore"
 
 interface Sensor {
   id: string
@@ -60,12 +64,14 @@ const METRICS = [
 
 export default function SensorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  const router = useRouter()
+  const { authStatus, loading: authLoading } = useAuth()
   const [sensor, setSensor] = useState<Sensor | null>(null)
   const [sensorData, setSensorData] = useState<SensorData[]>([])
   const [filteredData, setFilteredData] = useState<SensorData[]>([])
   const [loading, setLoading] = useState(true)
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
+    from: new Date(Date.now() - 24 * 60 * 60 * 1000), // Dernières 24h pour accélérer le premier rendu
     to: new Date(),
   })
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["pm2_5", "pm10", "o3_corrige"])
@@ -73,31 +79,124 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
   const [displayedRows, setDisplayedRows] = useState<number>(50)
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
 
+  // Protection de la page par état d'authentification (cohérent avec Dashboard)
   useEffect(() => {
-    fetchSensor()
-    
-    // Rafraîchissement automatique toutes les 60 secondes
-    const interval = setInterval(() => {
-      fetchSensor()
-    }, 60000) // 60 secondes
-    
-    return () => clearInterval(interval)
-  }, [id])
+    if (!authLoading) {
+      switch (authStatus) {
+        case 'unauthenticated':
+          router.push('/auth/login')
+          break
+        case 'pending_verification':
+          router.push('/auth/verify-email')
+          break
+        case 'pending_approval':
+          router.push('/auth/pending-approval')
+          break
+        default:
+          break
+      }
+    }
+  }, [authStatus, authLoading, router])
 
   useEffect(() => {
-    if (dateRange.from && dateRange.to) {
+    if (authStatus === 'authenticated' || authStatus === 'admin') {
+      fetchSensor()
+      // Rafraîchissement automatique toutes les 60 secondes
+      const interval = setInterval(() => {
+        fetchSensor()
+      }, 60000)
+      return () => clearInterval(interval)
+    }
+  }, [id, authStatus])
+
+  useEffect(() => {
+    if ((authStatus === 'authenticated' || authStatus === 'admin') && dateRange.from && dateRange.to) {
       fetchSensorData()
-      
       // Rafraîchissement automatique des données toutes les 30 secondes
       const interval = setInterval(() => {
         if (dateRange.from && dateRange.to) {
-          fetchSensorData(false) // Pas de loading pour les rafraîchissements automatiques
+          fetchSensorData(false)
         }
-      }, 30000) // 30 secondes pour les données
-      
+      }, 30000)
       return () => clearInterval(interval)
     }
-  }, [dateRange, id])
+  }, [dateRange, id, authStatus])
+
+  // Abonnement temps réel: document capteur (statut/lastSeen)
+  useEffect(() => {
+    if (!(authStatus === 'authenticated' || authStatus === 'admin')) return
+    if (!id) return
+    const ref = fsDoc(db, 'sensors', id)
+    const unsub = onSnapshot(ref, (snap) => {
+      const data = snap.data() as any
+      if (!data) return
+      setSensor((prev) => prev ? ({
+        ...prev,
+        name: data.name ?? prev.name,
+        latitude: typeof data.latitude === 'number' ? data.latitude : prev.latitude,
+        longitude: typeof data.longitude === 'number' ? data.longitude : prev.longitude,
+        frequency: typeof data.frequency === 'number' ? data.frequency : prev.frequency,
+        lastSeen: data.lastSeen ?? prev.lastSeen,
+        status: data.status ?? prev.status,
+      }) : prev)
+    })
+    return () => unsub()
+  }, [authStatus, id])
+
+  // Abonnement temps réel: dernier point de données
+  useEffect(() => {
+    if (!(authStatus === 'authenticated' || authStatus === 'admin')) return
+    if (!id) return
+    const dataQ = query(
+      collection(db, 'sensors', id, 'data'),
+      orderBy('timestamp', 'desc'),
+      limit(1)
+    )
+    const unsub = onSnapshot(dataQ, (snap) => {
+      snap.docChanges().forEach((change) => {
+        if (change.type === 'added' || change.type === 'modified') {
+          const d = change.doc.data() as any
+          const ts = d?.timestamp
+          let millis: number | null = null
+          if (ts?.toDate) {
+            millis = ts.toDate().getTime()
+          } else if (typeof ts?.seconds === 'number') {
+            millis = ts.seconds * 1000
+          } else if (typeof ts === 'string') {
+            const date = new Date(ts)
+            if (!isNaN(date.getTime())) millis = date.getTime()
+          }
+          if (millis == null) return
+          // Ne conserver que si dans l'intervalle affiché
+          if (dateRange.from && dateRange.to && (millis < dateRange.from.getTime() || millis > dateRange.to.getTime())) {
+            return
+          }
+          const newItem: SensorData = {
+            id: `${change.doc.id}-${Math.floor(millis/1000)}`,
+            timestamp: millis,
+            pm1_0: Number(d.pm1_0 ?? d.PM1 ?? 0),
+            pm2_5: Number(d.pm2_5 ?? d.PM25 ?? 0),
+            pm10: Number(d.pm10 ?? d.PM10 ?? 0),
+            o3_raw: Number(d.o3_raw ?? d.O3 ?? 0),
+            o3_corrige: Number(d.o3_corrige ?? d.O3c ?? 0),
+            no2_voltage_v: Number(d.no2_voltage_v ?? d.NO2v ?? 0),
+            no2_ppb: Number(d.no2_ppb ?? d.NO2 ?? 0),
+            voc_voltage_v: Number(d.voc_voltage_v ?? d.VOCv ?? 0),
+            co_voltage_v: Number(d.co_voltage_v ?? d.COv ?? 0),
+            co_ppb: Number(d.co_ppb ?? d.CO ?? 0),
+          }
+          setSensorData((prev) => {
+            // éviter les doublons
+            const exists = prev.some(p => p.id === newItem.id)
+            const next = exists ? prev.map(p => p.id === newItem.id ? newItem : p) : [newItem, ...prev]
+            // maintenir tri décroissant par timestamp
+            return next.sort((a, b) => b.timestamp - a.timestamp)
+          })
+        }
+      })
+    })
+    return () => unsub()
+  }, [authStatus, id, dateRange.from, dateRange.to])
 
   useEffect(() => {
     // Filter data based on date range and sort by timestamp descending (most recent first)
@@ -121,13 +220,25 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
   const fetchSensor = async () => {
     try {
       const auth = (await import('@/lib/firebase')).auth;
-      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null;
+      let idToken = auth?.currentUser ? await auth.currentUser.getIdToken(true) : null;
 
-      const response = await fetch(`/api/sensors/${id}`, {
+      let response = await fetch(`/api/sensors/${id}`, {
         headers: {
+          'Cache-Control': 'no-cache',
           ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
         },
       });
+
+      // Retry une fois si 401 (token expiré)
+      if (response.status === 401 && auth?.currentUser) {
+        idToken = await auth.currentUser.getIdToken(true)
+        response = await fetch(`/api/sensors/${id}`, {
+          headers: {
+            'Cache-Control': 'no-cache',
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: "Le capteur n'a pas été trouvé ou une erreur s'est produite" }));
@@ -154,18 +265,32 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     try {
       // Get Firebase auth token
       const auth = (await import('@/lib/firebase')).auth
-      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null
+      let idToken = auth?.currentUser ? await auth.currentUser.getIdToken(true) : null
       
       const searchParams = new URLSearchParams({
         from: dateRange.from.toISOString(),
         to: dateRange.to.toISOString(),
       })
 
-      const response = await fetch(`/api/sensors/${id}/data?${searchParams}`, {
+      let response = await fetch(`/api/sensors/${id}/data?${searchParams}`, {
         headers: {
+          'Cache-Control': 'no-cache',
           ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
         }
       })
+      if (response.status === 401 && auth?.currentUser) {
+        // Retry une fois avec refresh forcé
+        idToken = await auth.currentUser.getIdToken(true)
+        response = await fetch(`/api/sensors/${id}/data?${searchParams}`, {
+          headers: {
+            'Cache-Control': 'no-cache',
+            Authorization: `Bearer ${idToken}`
+          }
+        })
+      }
+      if (!response.ok) {
+        console.warn('Fetch sensor data failed with status:', response.status)
+      }
       const rawData = await response.json()
       const processedData = rawData.map((d: any) => ({
         ...d,

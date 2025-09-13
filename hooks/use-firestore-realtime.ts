@@ -20,10 +20,11 @@ interface UseFirestoreRealtimeOptions {
   onSensorUpdate?: (sensor: SensorUpdate) => void
   onDataUpdate?: (data: DataUpdate) => void
   onSensorStatusChange?: (sensorId: string, newStatus: string) => void
+  enabled?: boolean
 }
 
 export function useFirestoreRealtime(options: UseFirestoreRealtimeOptions = {}) {
-  const { onSensorUpdate, onDataUpdate, onSensorStatusChange } = options
+  const { onSensorUpdate, onDataUpdate, onSensorStatusChange, enabled = true } = options
   
   const [sensors, setSensors] = useState<SensorUpdate[]>([])
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
@@ -32,8 +33,12 @@ export function useFirestoreRealtime(options: UseFirestoreRealtimeOptions = {}) 
 
   // Hook pour écouter les changements de capteurs en temps réel
   useEffect(() => {
+    if (!enabled || !db) {
+      return; // Do not subscribe if disabled or Firestore not ready
+    }
+
     console.log('🔥 Démarrage de l\'écoute Firestore temps réel...')
-    
+
     const sensorsQuery = query(
       collection(db, 'sensors'),
       orderBy('lastSeen', 'desc')
@@ -94,12 +99,14 @@ export function useFirestoreRealtime(options: UseFirestoreRealtimeOptions = {}) 
       console.log('🛑 Arrêt de l\'écoute Firestore')
       unsubscribe()
     }
-  }, [onSensorUpdate, onSensorStatusChange])
+  }, [onSensorUpdate, onSensorStatusChange, enabled])
 
   // Hook pour écouter les nouvelles données de capteurs
   const subscribeToSensorData = useCallback((sensorId: string) => {
+    if (!db) return () => {};
+
     const dataQuery = query(
-      collection(db, `sensors/${sensorId}/data`),
+      collection(db, `sensors/${sensorId}/sensorData`),
       orderBy('timestamp', 'desc'),
       limit(1)
     )
@@ -132,6 +139,8 @@ export function useFirestoreRealtime(options: UseFirestoreRealtimeOptions = {}) 
 
   // Fonction pour écouter les notifications admin en temps réel
   const subscribeToAdminNotifications = useCallback(() => {
+    if (!db) return () => {};
+
     const notificationsQuery = query(
       collection(db, 'admin_notifications'),
       where('read', '==', false),

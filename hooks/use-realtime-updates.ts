@@ -14,6 +14,7 @@ interface UseRealtimeUpdatesOptions {
   onWebhookUpdate?: (update: RealtimeUpdate) => void
   enablePolling?: boolean // Ignoré - Firestore real-time ne fait pas de polling
   pollingInterval?: number // Ignoré - Firestore real-time est instantané
+  enabled?: boolean
 }
 
 /**
@@ -21,7 +22,7 @@ interface UseRealtimeUpdatesOptions {
  * Hook de compatibilité qui redirige vers Firestore real-time
  */
 export function useRealtimeUpdates(options: UseRealtimeUpdatesOptions = {}) {
-  const { onWebhookUpdate } = options
+  const { onWebhookUpdate, enabled = true } = options
 
   // Redirection vers le nouveau hook Firestore
   const {
@@ -40,7 +41,8 @@ export function useRealtimeUpdates(options: UseRealtimeUpdatesOptions = {}) {
         }
         onWebhookUpdate(update)
       }
-    }
+    },
+    enabled
   })
 
   // Fonction de simulation pour compatibilité (plus nécessaire avec Firestore real-time)

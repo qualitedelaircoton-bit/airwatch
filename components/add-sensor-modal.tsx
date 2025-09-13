@@ -51,10 +51,13 @@ export default function AddSensorModal({ isOpen, onClose, onSensorAdded }: AddSe
     setIsSubmitting(true)
 
     try {
+      const auth = (await import('@/lib/firebase')).auth
+      const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null
       const response = await fetch("/api/sensors", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {})
         },
         body: JSON.stringify({
           name: formData.name,

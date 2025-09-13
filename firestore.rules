@@ -56,6 +56,21 @@ service cloud.firestore {
         // This must be done by a trusted server environment (like our MQTT listener).
         allow write: if false;
       }
+
+      // Rules for legacy 'data' subcollection used by client detail page
+      match /data/{dataId} {
+        // Any approved user or any admin can read historical data
+        allow get, list: if isApproved() || isAdmin();
+
+        // Client must not write here; ingestion via backend only
+        allow write: if false;
+      }
+    }
+
+    // Rules for admin notifications
+    match /admin_notifications/{notifId} {
+      // Only admins can read and write admin notifications
+      allow get, list, create, update, delete: if isAdmin();
     }
   }
 }
