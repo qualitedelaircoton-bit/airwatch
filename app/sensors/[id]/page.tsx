@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,14 +15,14 @@ import { ArrowLeft, CalendarIcon, BarChart3, TableIcon, Filter, Download, Clock,
 import Link from "next/link"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from "recharts"
 import { use } from "react"
 import { DataDownloadModal } from "@/components/data-download-modal"
 import { formatFirestoreTimestamp } from "@/lib/date-utils"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 import { db } from "@/lib/firebase"
-import { doc as fsDoc, onSnapshot, collection, query, orderBy, limit } from "firebase/firestore"
+import { doc as fsDoc, onSnapshot, collection, query, orderBy, limit, where } from "firebase/firestore"
 
 interface Sensor {
   id: string
@@ -75,9 +75,31 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     to: new Date(),
   })
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["pm2_5", "pm10", "o3_corrige"])
-  const [activePreset, setActivePreset] = useState<string>("7days")
+  const [activePreset, setActivePreset] = useState<string>("24hours")
   const [displayedRows, setDisplayedRows] = useState<number>(50)
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
+  const [tabValue, setTabValue] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const url = new URL(window.location.href)
+        const tabParam = url.searchParams.get('tab')
+        // Essayer d'abord la clé spécifique au capteur (extraite de l'URL)
+        const path = url.pathname
+        const m = path.match(/\/sensors\/([^/]+)/)
+        const sensorIdFromPath = m?.[1]
+        if (sensorIdFromPath) {
+          const specific = localStorage.getItem(`sensorTab:${sensorIdFromPath}`)
+          if (specific === 'graph' || specific === 'table') return specific
+        }
+        // Sinon, on prend le paramètre d'URL si présent
+        if (tabParam === 'graph' || tabParam === 'table') return tabParam
+        // Sinon, on retombe sur la clé générique
+        const generic = localStorage.getItem('sensorTab')
+        if (generic === 'graph' || generic === 'table') return generic
+      } catch {}
+    }
+    return 'table'
+  })
 
   // Protection de la page par état d'authentification (cohérent avec Dashboard)
   useEffect(() => {
@@ -100,27 +122,92 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
 
   useEffect(() => {
     if (authStatus === 'authenticated' || authStatus === 'admin') {
+      // Une seule récupération initiale; mises à jour ensuite via onSnapshot du document capteur
       fetchSensor()
-      // Rafraîchissement automatique toutes les 60 secondes
-      const interval = setInterval(() => {
-        fetchSensor()
-      }, 60000)
-      return () => clearInterval(interval)
     }
   }, [id, authStatus])
 
+  // Restaurer/affiner l'onglet par capteur quand l'id est disponible
   useEffect(() => {
-    if ((authStatus === 'authenticated' || authStatus === 'admin') && dateRange.from && dateRange.to) {
-      fetchSensorData()
-      // Rafraîchissement automatique des données toutes les 30 secondes
-      const interval = setInterval(() => {
-        if (dateRange.from && dateRange.to) {
-          fetchSensorData(false)
-        }
-      }, 30000)
-      return () => clearInterval(interval)
+    if (!id) return
+    if (typeof window === 'undefined') return
+    try {
+      const sensorKey = `sensorTab:${id}`
+      const v = localStorage.getItem(sensorKey)
+      if (v === 'graph' || v === 'table') {
+        setTabValue(v)
+      } else {
+        // si pas de clé spécifique, garder la valeur courante (peut venir de l'URL)
+      }
+    } catch {}
+  }, [id])
+
+  // Abonnement temps réel: données dans la plage sélectionnée (illimitée côté "to" si preset actif)
+  useEffect(() => {
+    if (!(authStatus === 'authenticated' || authStatus === 'admin')) return
+    if (!id) return
+    if (!dateRange.from) return
+    setLoading(true)
+    const baseCol = collection(db, 'sensors', id, 'data')
+    // Si un preset est actif, on ne met pas de borne supérieure pour capter les nouveaux points en temps réel sans rafraîchir window
+    const constraints = [
+      where('timestamp', '>=', dateRange.from),
+      orderBy('timestamp', 'asc')
+    ] as any[]
+    if (!activePreset && dateRange.to) {
+      constraints.splice(1, 0, where('timestamp', '<=', dateRange.to))
     }
-  }, [dateRange, id, authStatus])
+    const dataQ = query(baseCol, ...constraints)
+    const unsub = onSnapshot(dataQ, (snap) => {
+      // Debug minimal: taille du snapshot
+      if (process.env.NODE_ENV !== 'production') {
+        try { console.debug('[sensor realtime]', id, 'docs:', snap.size) } catch {}
+      }
+      const next: SensorData[] = snap.docs.map((docSnap) => {
+        const d = docSnap.data() as any
+        const ts = d?.timestamp
+        let millis: number | null = null
+        if (ts?.toDate) {
+          millis = ts.toDate().getTime()
+        } else if (typeof ts?.seconds === 'number') {
+          millis = ts.seconds * 1000
+        } else if (typeof ts === 'string') {
+          const date = new Date(ts)
+          if (!isNaN(date.getTime())) millis = date.getTime()
+        } else if (typeof ts === 'number') {
+          // Accepter timestamps numériques en ms ou en secondes
+          // Heuristique: si < 10^11, considérer comme secondes
+          millis = ts < 1e11 ? ts * 1000 : ts
+        } else if (ts instanceof Date) {
+          millis = ts.getTime()
+        }
+        const timestamp = millis ?? Date.now()
+        return {
+          id: docSnap.id + '-' + Math.floor(timestamp / 1000),
+          timestamp,
+          pm1_0: Number(d.pm1_0 ?? d.PM1 ?? 0),
+          pm2_5: Number(d.pm2_5 ?? d.PM25 ?? 0),
+          pm10: Number(d.pm10 ?? d.PM10 ?? 0),
+          o3_raw: Number(d.o3_raw ?? d.O3 ?? 0),
+          o3_corrige: Number(d.o3_corrige ?? d.O3c ?? 0),
+          no2_voltage_v: Number(d.no2_voltage_v ?? d.NO2v ?? 0),
+          no2_ppb: Number(d.no2_ppb ?? d.NO2 ?? 0),
+          voc_voltage_v: Number(d.voc_voltage_v ?? d.VOCv ?? 0),
+          co_voltage_v: Number(d.co_voltage_v ?? d.COv ?? 0),
+          co_ppb: Number(d.co_ppb ?? d.CO ?? 0),
+        }
+      })
+      // Conserver dans l'état; tri ascendant pour la timeline, la table gérera son propre tri via filteredData
+      setSensorData(next)
+      setLoading(false)
+    }, (err) => {
+      console.error('Firestore onSnapshot error for sensor data:', err)
+      setLoading(false)
+    })
+    return () => unsub()
+  }, [authStatus, id, dateRange.from, dateRange.to, activePreset])
+
+  // (supprimé) Auto slide de la fenêtre temporelle; non nécessaire avec requête sans borne supérieure
 
   // Abonnement temps réel: document capteur (statut/lastSeen)
   useEffect(() => {
@@ -143,79 +230,34 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
     return () => unsub()
   }, [authStatus, id])
 
-  // Abonnement temps réel: dernier point de données
-  useEffect(() => {
-    if (!(authStatus === 'authenticated' || authStatus === 'admin')) return
-    if (!id) return
-    const dataQ = query(
-      collection(db, 'sensors', id, 'data'),
-      orderBy('timestamp', 'desc'),
-      limit(1)
-    )
-    const unsub = onSnapshot(dataQ, (snap) => {
-      snap.docChanges().forEach((change) => {
-        if (change.type === 'added' || change.type === 'modified') {
-          const d = change.doc.data() as any
-          const ts = d?.timestamp
-          let millis: number | null = null
-          if (ts?.toDate) {
-            millis = ts.toDate().getTime()
-          } else if (typeof ts?.seconds === 'number') {
-            millis = ts.seconds * 1000
-          } else if (typeof ts === 'string') {
-            const date = new Date(ts)
-            if (!isNaN(date.getTime())) millis = date.getTime()
-          }
-          if (millis == null) return
-          // Ne conserver que si dans l'intervalle affiché
-          if (dateRange.from && dateRange.to && (millis < dateRange.from.getTime() || millis > dateRange.to.getTime())) {
-            return
-          }
-          const newItem: SensorData = {
-            id: `${change.doc.id}-${Math.floor(millis/1000)}`,
-            timestamp: millis,
-            pm1_0: Number(d.pm1_0 ?? d.PM1 ?? 0),
-            pm2_5: Number(d.pm2_5 ?? d.PM25 ?? 0),
-            pm10: Number(d.pm10 ?? d.PM10 ?? 0),
-            o3_raw: Number(d.o3_raw ?? d.O3 ?? 0),
-            o3_corrige: Number(d.o3_corrige ?? d.O3c ?? 0),
-            no2_voltage_v: Number(d.no2_voltage_v ?? d.NO2v ?? 0),
-            no2_ppb: Number(d.no2_ppb ?? d.NO2 ?? 0),
-            voc_voltage_v: Number(d.voc_voltage_v ?? d.VOCv ?? 0),
-            co_voltage_v: Number(d.co_voltage_v ?? d.COv ?? 0),
-            co_ppb: Number(d.co_ppb ?? d.CO ?? 0),
-          }
-          setSensorData((prev) => {
-            // éviter les doublons
-            const exists = prev.some(p => p.id === newItem.id)
-            const next = exists ? prev.map(p => p.id === newItem.id ? newItem : p) : [newItem, ...prev]
-            // maintenir tri décroissant par timestamp
-            return next.sort((a, b) => b.timestamp - a.timestamp)
-          })
-        }
-      })
-    })
-    return () => unsub()
-  }, [authStatus, id, dateRange.from, dateRange.to])
+  // Remplacé par l'abonnement de plage ci-dessus
 
   useEffect(() => {
-    // Filter data based on date range and sort by timestamp descending (most recent first)
-    if (sensorData.length > 0 && dateRange.from && dateRange.to) {
+    // Filtrage dépendant du preset: si preset actif, on n'applique que la borne inférieure (from)
+    if (sensorData.length > 0 && dateRange.from) {
       const filtered = sensorData.filter((data) => {
-        const dataDate = new Date(data.timestamp)
-        return dataDate >= dateRange.from! && dataDate <= dateRange.to!
-      });
-      // Sort by timestamp descending (most recent first)
-      const sorted = filtered.sort((a, b) => b.timestamp - a.timestamp);
+        const t = data.timestamp
+        if (activePreset) {
+          return t >= dateRange.from!.getTime()
+        }
+        if (dateRange.to) {
+          return t >= dateRange.from!.getTime() && t <= dateRange.to.getTime()
+        }
+        return t >= dateRange.from!.getTime()
+      })
+      const sorted = filtered.sort((a, b) => b.timestamp - a.timestamp)
       setFilteredData(sorted)
     } else {
-      // Sort by timestamp descending (most recent first)
-      const sorted = [...sensorData].sort((a, b) => b.timestamp - a.timestamp);
+      const sorted = [...sensorData].sort((a, b) => b.timestamp - a.timestamp)
       setFilteredData(sorted)
     }
-    // Reset displayed rows when data changes
     setDisplayedRows(50)
-  }, [sensorData, dateRange])
+  }, [sensorData, dateRange, activePreset])
+
+  // Données du graphique en ordre chronologique croissant
+  const chartDataAsc = useMemo(() => {
+    return [...filteredData].sort((a, b) => a.timestamp - b.timestamp)
+  }, [filteredData])
 
   const fetchSensor = async () => {
     try {
@@ -411,7 +453,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                 
                 <div 
                   className="flex items-center gap-1 hover:text-primary cursor-pointer transition-colors group"
-                  onClick={() => window.open(`/?view=map&center=${sensor.latitude},${sensor.longitude}&zoom=15`, '_blank')}
+                  onClick={() => window.open(`/dashboard?view=map&center=${sensor.latitude},${sensor.longitude}&zoom=15`, '_blank')}
                 >
                   <span className="text-muted-foreground group-hover:text-primary">📍 Coordonnées (cliquer pour voir sur la carte)</span>
                   <span className="font-medium text-foreground group-hover:text-primary">
@@ -456,7 +498,7 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                 
                 <div 
                   className="bg-muted/30 p-2 rounded cursor-pointer hover:bg-muted/50 transition-colors text-xs"
-                  onClick={() => window.open(`/?view=map&center=${sensor.latitude},${sensor.longitude}&zoom=15`, '_blank')}
+                  onClick={() => window.open(`/dashboard?view=map&center=${sensor.latitude},${sensor.longitude}&zoom=15`, '_blank')}
                 >
                   <div className="text-muted-foreground">📍 Coordonnées</div>
                   <div className="font-medium text-foreground">
@@ -472,9 +514,20 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Data Visualization avec filtres compacts */}
-        <Tabs defaultValue="table" className="w-full">
+        <Tabs value={tabValue} onValueChange={(v) => {
+          setTabValue(v)
+          try {
+            const sensorKey = `sensorTab:${id}`
+            localStorage.setItem('sensorTab', v)
+            if (id) localStorage.setItem(sensorKey, v)
+            // mettre à jour l'URL (sans recharger) pour persister l'onglet
+            const url = new URL(window.location.href)
+            url.searchParams.set('tab', v)
+            window.history.replaceState({}, '', url.toString())
+          } catch {}
+        }} className="w-full">
           <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-6">
-            <TabsList className="grid grid-cols-2 glass-effect hidden md:grid">
+            <TabsList className="grid grid-cols-2 glass-effect">
               <TabsTrigger value="graph" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <BarChart3 className="w-4 h-4" />
                 Graphique
@@ -681,10 +734,13 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                   </div>
                 ) : filteredData.length > 0 ? (
                   <ResponsiveContainer width="100%" height={500}>
-                    <LineChart data={filteredData}>
+                    <LineChart data={chartDataAsc}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
                       <XAxis
                         dataKey="timestamp"
+                        type="number"
+                        domain={["dataMin", "dataMax"]}
+                        allowDuplicatedCategory={false}
                         tickFormatter={(value) => format(new Date(value), "dd/MM HH:mm")}
                         stroke="var(--color-muted-foreground)"
                       />
@@ -715,6 +771,13 @@ export default function SensorDetailPage({ params }: { params: Promise<{ id: str
                           />
                         ) : null
                       })}
+                      <Brush
+                        dataKey="timestamp"
+                        height={30}
+                        stroke="var(--color-primary)"
+                        travellerWidth={8}
+                        tickFormatter={(value) => format(new Date(value), "dd/MM HH:mm")}
+                      />
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
