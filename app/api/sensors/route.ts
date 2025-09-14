@@ -4,10 +4,17 @@ import { Timestamp } from "firebase-admin/firestore"
 import { updateAllSensorStatuses } from "@/lib/firestore-status-calculator"
 import { withAuth, withAdminAuth } from "@/lib/api-auth"
 
-
+// Configuration CORS pour Vercel
 export const dynamic = "force-dynamic"
 export const revalidate = 0
 export const runtime = 'nodejs'
+
+// Headers CORS pour les réponses API
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
 
 async function getHandler(request: NextRequest) {
   try {
@@ -52,12 +59,11 @@ async function getHandler(request: NextRequest) {
     })
 
     return NextResponse.json(sensors, {
+      status: 200,
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Surrogate-Control': 'no-store'
-      }
+        'Cache-Control': 'no-store, max-age=0',
+        ...corsHeaders
+      },
     })
   } catch (error) {
     console.error("Error fetching sensors:", error)
@@ -93,5 +99,15 @@ async function postHandler(request: NextRequest) {
 }
 
 // Export handlers with authentication
+// Gestion des requêtes OPTIONS pour CORS
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      ...corsHeaders
+    },
+  })
+}
+
 export const GET = withAuth(getHandler)
 export const POST = withAdminAuth(postHandler)

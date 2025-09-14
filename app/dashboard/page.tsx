@@ -445,25 +445,23 @@ function Dashboard() {
                   </Link>
                 )}
                 <ThemeToggle />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setIsDownloadModalOpen(true)}
+                  title="Télécharger les données"
+                >
+                  <Download className="h-4 w-4" />
+                  <span className="sr-only">Télécharger les données</span>
+                </Button>
                 {isAdmin && (
-                  <>
-                    <Button 
-                      onClick={() => setIsAddSensorModalOpen(true)}
-                      className="gradient-primary text-white hover:scale-105 hover:shadow-xl transition-all duration-300"
-                    >
-                      <Plus className="w-4 h-4 mr-2 hidden sm:block" />
-                      Ajouter un Capteur
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setIsDownloadModalOpen(true)}
-                      title="Télécharger les données"
-                    >
-                      <Download className="h-4 w-4" />
-                      <span className="sr-only">Télécharger les données</span>
-                    </Button>
-                  </>
+                  <Button 
+                    onClick={() => setIsAddSensorModalOpen(true)}
+                    className="gradient-primary text-white hover:scale-105 hover:shadow-xl transition-all duration-300"
+                  >
+                    <Plus className="w-4 h-4 mr-2 hidden sm:block" />
+                    Ajouter un Capteur
+                  </Button>
                 )}
               </div>
             </div>
@@ -590,9 +588,11 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Modal de téléchargement accessible à tous les utilisateurs authentifiés */}
+      <DataDownloadModal isOpen={isDownloadModalOpen} onClose={() => setIsDownloadModalOpen(false)} sensors={sensors} />
+      
       {isAdmin && (
         <>
-          <DataDownloadModal isOpen={isDownloadModalOpen} onClose={() => setIsDownloadModalOpen(false)} sensors={sensors} />
           <AddSensorModal 
             isOpen={isAddSensorModalOpen} 
             onClose={() => setIsAddSensorModalOpen(false)} 
