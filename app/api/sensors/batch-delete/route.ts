@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { type NextRequest } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { withAdminAuth } from '@/lib/api-auth';
+import { getCorsHeaders, createOptionsResponse } from '@/lib/cors';
 
 
 export const dynamic = "force-dynamic"
@@ -40,7 +41,10 @@ async function postHandler(request: NextRequest) {
 
     return new NextResponse(JSON.stringify({ message: `${sensorIds.length} sensor(s) deleted successfully.` }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        ...getCorsHeaders(request)
+      },
     });
   } catch (error) {
     console.error('Error during batch deletion:', error);
@@ -55,6 +59,11 @@ async function postHandler(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+}
+
+// Gestion des requêtes OPTIONS pour CORS
+export async function OPTIONS(request: NextRequest) {
+  return createOptionsResponse(request)
 }
 
 export const POST = withAdminAuth(postHandler)
