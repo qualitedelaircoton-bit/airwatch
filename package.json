@@ -13,7 +13,9 @@
     "lint": "next lint",
     "deploy:rules": "firebase deploy --only firestore:rules",
     "db:reset-firestore": "dotenv -- tsx scripts/reset-firestore.ts",
-    "db:stats-firestore": "dotenv -- tsx scripts/get-firestore-stats.ts"
+    "db:stats-firestore": "dotenv -- tsx scripts/get-firestore-stats.ts",
+    "db:migrate:dry": "dotenv -- tsx scripts/migrate-postgres-to-firestore.ts --dry-run",
+    "db:migrate": "dotenv -- tsx scripts/migrate-postgres-to-firestore.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -56,6 +58,7 @@
     "events": "latest",
     "firebase": "^11.10.0",
     "firebase-admin": "^13.4.0",
+    "pg": "^8.12.0",
     "input-otp": "1.4.2",
     "lucide-react": "^0.513.0",
     "mqtt": "latest",

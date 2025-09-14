@@ -1,0 +1,173 @@
+{
+  "discovery": [
+    {
+      "table": "alerts",
+      "columns": [
+        "id",
+        "sensorId",
+        "type",
+        "severity",
+        "message",
+        "threshold",
+        "actualValue",
+        "isResolved",
+        "resolvedAt",
+        "createdAt",
+        "updatedAt"
+      ],
+      "count": 0,
+      "sample": []
+    },
+    {
+      "table": "sensor_data",
+      "columns": [
+        "id",
+        "sensorId",
+        "timestamp",
+        "pm1_0",
+        "pm2_5",
+        "pm10",
+        "o3_raw",
+        "o3_corrige",
+        "no2_voltage_mv",
+        "no2_ppb",
+        "voc_voltage_mv",
+        "co_voltage_mv",
+        "co_ppb",
+        "aqi",
+        "aqiCategory",
+        "humidity",
+        "pressure",
+        "processed",
+        "rawData",
+        "temperature",
+        "voc_index"
+      ],
+      "count": 54048,
+      "sample": [
+        {
+          "id": "cmcw3pgdo0002l9043fycmbrk",
+          "sensorId": "cmcw3g4el0000l904yuqtugln",
+          "timestamp": "2025-07-09T15:11:07.000Z",
+          "pm1_0": 0,
+          "pm2_5": 0,
+          "pm10": 0,
+          "o3_raw": 0,
+          "o3_corrige": 0,
+          "no2_voltage_mv": 0,
+          "no2_ppb": 0,
+          "voc_voltage_mv": 0,
+          "co_voltage_mv": 0,
+          "co_ppb": 0,
+          "aqi": null,
+          "aqiCategory": null,
+          "humidity": null,
+          "pressure": null,
+          "processed": false,
+          "rawData": {
+            "CO": 0,
+            "O3": 0,
+            "ts": 1752073867,
+            "COv": 0,
+            "NO2": 0,
+            "O3c": 0,
+            "PM1": 0,
+            "NO2v": 0,
+            "PM10": 0,
+            "PM25": 0,
+            "VOCv": 0
+          },
+          "temperature": null,
+          "voc_index": null
+        },
+        {
+          "id": "cmcw3pgt70004l904af39joom",
+          "sensorId": "cmcw3g4el0000l904yuqtugln",
+          "timestamp": "2025-07-09T15:15:00.000Z",
+          "pm1_0": 10,
+          "pm2_5": 14,
+          "pm10": 14,
+          "o3_raw": 30,
+          "o3_corrige": 0,
+          "no2_voltage_mv": 120,
+          "no2_ppb": 5,
+          "voc_voltage_mv": 320,
+          "co_voltage_mv": 660,
+          "co_ppb": 0,
+          "aqi": null,
+          "aqiCategory": null,
+          "humidity": null,
+          "pressure": null,
+          "processed": false,
+          "rawData": {
+            "CO": 0,
+            "O3": 30,
+            "ts": 1752074100,
+            "COv": 0.66,
+            "NO2": 5,
+            "O3c": 0,
+            "PM1": 10,
+            "NO2v": 0.12,
+            "PM10": 14,
+            "PM25": 14,
+            "VOCv": 0.32
+          },
+          "temperature": null,
+          "voc_index": null
+        }
+      ]
+    },
+    {
+      "table": "sensors",
+      "columns": [
+        "id",
+        "name",
+        "latitude",
+        "longitude",
+        "frequency",
+        "lastSeen",
+        "status",
+        "createdAt",
+        "updatedAt",
+        "isActive",
+        "location",
+        "metadata"
+      ],
+      "count": 21,
+      "sample": [
+        {
+          "id": "cmf3t6sgb000oky047x0dz19l",
+          "name": "BLOLAB",
+          "latitude": 6.3891713,
+          "longitude": 2.3819788,
+          "frequency": 15,
+          "lastSeen": "2025-09-13T21:30:08.000Z",
+          "status": "GREEN",
+          "createdAt": "2025-09-03T10:02:49.355Z",
+          "updatedAt": "2025-09-13T22:30:41.839Z",
+          "isActive": true,
+          "location": null,
+          "metadata": null
+        },
+        {
+          "id": "cmd7ye2cr0000jo04jf3z54vf",
+          "name": "XWLACODJI",
+          "latitude": 6.354706,
+          "longitude": 2.439649,
+          "frequency": 15,
+          "lastSeen": "2025-09-13T21:30:07.000Z",
+          "status": "GREEN",
+          "createdAt": "2025-07-17T22:20:06.892Z",
+          "updatedAt": "2025-09-13T22:31:26.607Z",
+          "isActive": true,
+          "location": null,
+          "metadata": null
+        }
+      ]
+    }
+  ],
+  "mapping": {
+    "sensorsTable": "sensors"
+  },
+  "generatedAt": "2025-09-13T22:39:03.454Z"
+}

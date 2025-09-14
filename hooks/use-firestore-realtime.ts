@@ -106,7 +106,7 @@ export function useFirestoreRealtime(options: UseFirestoreRealtimeOptions = {}) 
     if (!db) return () => {};
 
     const dataQuery = query(
-      collection(db, `sensors/${sensorId}/sensorData`),
+      collection(db, `sensors/${sensorId}/data`),
       orderBy('timestamp', 'desc'),
       limit(1)
     )

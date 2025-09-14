@@ -30,12 +30,14 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950">
+
       {/* Header */}
       <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-gray-900/95 dark:supports-[backdrop-filter]:bg-gray-900/60">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <Link href="/" className="flex items-center gap-2">
+
               <Image 
                 src="/placeholder-logo.svg" 
                 alt="AirWatch Bénin Logo" 
@@ -47,15 +49,15 @@ export default async function LandingPage() {
                 AirWatch Bénin
               </h1>
             </Link>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               <Link href="/auth/login">
-                <Button variant="outline">
+                <Button variant="outline" className="text-sm px-3">
                   <Lock className="h-4 w-4 mr-2" />
                   Connexion
                 </Button>
               </Link>
               <Link href="/auth/signup">
-                <Button>
+                <Button className="text-sm px-3">
                   <Users className="h-4 w-4 mr-2" />
                   Demande d'accès
                 </Button>

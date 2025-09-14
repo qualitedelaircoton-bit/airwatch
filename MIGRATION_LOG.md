@@ -269,3 +269,73 @@ npx @tailwindcss/upgrade --force
 
 **Date de finalisation**: Janvier 2025  
 **Statut**: ✅ Migration complète et fonctionnelle 
+
+---
+
+## 2025-09-14: Migration Postgres (Neon) → Firestore
+
+**Contexte**: Migration de la base historique (PostgreSQL/Neon) vers Firestore, en respectant la structure utilisée par l'application (collections `sensors` et sous-collection `data`).
+
+**Scripts & Dépendances**:
+
+- `package.json`
+  - Scripts ajoutés:
+    - `db:migrate:dry` — découverte du schéma et mapping (sans écriture)
+    - `db:migrate` — migration complète
+  - Dépendance: `pg`
+- Scripts créés:
+  - `scripts/migrate-postgres-to-firestore.ts`
+  - `scripts/backfill-last-seen.ts`
+
+**Commandes exécutées**:
+
+```bash
+# Découverte avec .env.local
+pnpm exec dotenv -e .env.local -- tsx scripts/migrate-postgres-to-firestore.ts --dry-run
+
+# Migration de test (lot limité)
+pnpm exec dotenv -e .env.local -- tsx scripts/migrate-postgres-to-firestore.ts \
+ --limit=500 --batch-size=500 --sensors-table=sensors --data-table=sensor_data
+
+# Migration complète
+pnpm exec dotenv -e .env.local -- tsx scripts/migrate-postgres-to-firestore.ts \
+ --batch-size=1000 --sensors-table=sensors --data-table=sensor_data
+
+# Backfill lastSeen et recalcul des statuts
+pnpm exec dotenv -e .env.local -- tsx scripts/backfill-last-seen.ts
+
+# Validation post-migration
+pnpm exec dotenv -e .env.local -- tsx scripts/get-firestore-stats.ts
+pnpm exec dotenv -e .env.local -- tsx scripts/inspect-firestore.ts
+```
+
+**Mapping appliqué**:
+
+- `sensors` (Postgres) → `sensors/{sensorId}` (Firestore)
+  - Champs migrés: `name, latitude, longitude, frequency, status, isActive, createdAt, updatedAt, lastSeen`
+- `sensor_data` (Postgres) → `sensors/{sensorId}/data/{dataId}` (Firestore)
+  - Champs migrés: `timestamp, pm1_0, pm2_5, pm10, o3_raw, o3_corrige, no2_voltage_v, no2_ppb, voc_voltage_v, co_voltage_v, co_ppb, rawData`
+  - Conversion d'unités: `*_voltage_mv` → `*_voltage_v` (mV → V)
+
+**Résultats** (après migration + backfill):
+
+- Capteurs: 22
+- Données: 54 607 points
+- Timestamp le plus ancien: 1973-02-21T16:31:44Z
+- Timestamp le plus récent: 2030-04-24T02:45:17Z
+- Statuts capteurs: GREEN=13, RED=9
+
+**Notes**:
+
+- Le script de migration est idempotent (merge: true). Relancer ne crée pas de doublons si `id` existe.
+- Les dates très anciennes proviennent des données sources; une passe de nettoyage peut être planifiée si nécessaire.
+- Harmonisation de la sous-collection en `data` dans:
+  - `scripts/get-firestore-stats.ts`
+  - `hooks/use-firestore-realtime.ts`
+  - Les règles Firestore supportent `sensorData` et `data` (lecture) pour compatibilité.
+
+**Prochaines étapes suggérées**:
+
+1. Si une table `users` existe dans Postgres, fournir son nom exact pour migration des profils.
+2. Optionnel: filtre/correction des timestamps aberrants côté `sensor_data`.
+3. Vérification fonctionnelle sur l'UI (`/dashboard`, `/sensors/[id]`).

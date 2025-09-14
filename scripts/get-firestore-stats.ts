@@ -24,7 +24,7 @@ async function getFirestoreStats() {
     const sensorData = sensorDoc.data();
     const status = sensorData.status || 'UNKNOWN';
 
-    const sensorDataRef = sensorDoc.ref.collection('sensorData');
+    const sensorDataRef = sensorDoc.ref.collection('data');
     const countSnapshot = await sensorDataRef.count().get();
     const dataCount = countSnapshot.data().count;
 

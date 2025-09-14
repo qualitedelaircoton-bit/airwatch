@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     const allDataPromises = sensorIds.map(async (sensorId) => {
       const dataQuery = adminDb!
-        .collection(`sensors/${sensorId}/sensorData`)
+        .collection(`sensors/${sensorId}/data`)
         .where("timestamp", ">=", fromTimestamp)
         .where("timestamp", "<=", toTimestamp)
         .orderBy("timestamp", "asc");

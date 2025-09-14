@@ -61,7 +61,7 @@ async function resetFirestore() {
 
   for (const sensorDoc of sensorsSnapshot.docs) {
     console.log(`  - Suppression des données pour le capteur ${sensorDoc.id}...`);
-    const subcollectionPath = `sensors/${sensorDoc.id}/sensorData`;
+    const subcollectionPath = `sensors/${sensorDoc.id}/data`;
     await deleteCollection(subcollectionPath, 50);
     console.log(`    ...données de ${sensorDoc.id} supprimées.`);
     
