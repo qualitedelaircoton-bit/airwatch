@@ -6,11 +6,13 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15.3.3-000000?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.1.8-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-Latest-2D3748?logo=prisma)](https://www.prisma.io/)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 
 ## 📋 Description
 
 AirWatch Bénin est une plateforme moderne de surveillance de la qualité de l'air qui permet de monitorer en temps réel les niveaux de pollution atmosphérique sur le territoire béninois. Le système collecte, analyse et visualise les données de capteurs IoT pour fournir des informations cruciales sur la qualité de l'air aux citoyens, aux autorités et aux chercheurs.
+
+**URL de production** : https://www.airquality.africa
 
 ## ✨ Fonctionnalités
 
@@ -49,9 +51,9 @@ AirWatch Bénin est une plateforme moderne de surveillance de la qualité de l'a
 - **[Recharts](https://recharts.org/)** - Graphiques et visualisations
 
 ### Backend
-- **[Prisma ORM](https://www.prisma.io/)** - ORM moderne avec type safety
-- **[PostgreSQL](https://www.postgresql.org/)** - Base de données relationnelle
-- **[MQTT](https://mqtt.org/)** - Protocole IoT pour la réception des données capteurs
+- **[Firebase](https://firebase.google.com/)** - Authentification et base de données en temps réel
+- **[Firestore](https://firebase.google.com/docs/firestore)** - Base de données NoSQL
+- **[Cloud Functions](https://firebase.google.com/docs/functions)** - Fonctions serverless
 - **[Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)** - API REST intégrée
 
 ### Outils de Développement
@@ -65,7 +67,7 @@ AirWatch Bénin est une plateforme moderne de surveillance de la qualité de l'a
 ### Prérequis
 - **Node.js** 18.17+ ou 20.3+
 - **pnpm** 8.0+ (gestionnaire de packages)
-- **Compte Neon DB** (base de données cloud)
+- **Compte Firebase** (base de données cloud)
 - **Git**
 
 ### 1. Clonage du Repository
@@ -83,35 +85,36 @@ pnpm install
 Créez un fichier `.env.local` à la racine du projet :
 
 ```env
-# Database (Neon DB)
-DATABASE_URL="postgresql://username:password@host/database?sslmode=require"
+# Firebase
+NEXT_PUBLIC_FIREBASE_API_KEY="votre_api_key"
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="votre-projet.firebaseapp.com"
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="votre-projet"
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="votre-projet.appspot.com"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="votre_sender_id"
+NEXT_PUBLIC_FIREBASE_APP_ID="votre_app_id"
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="G-XXXXXX"
 
-# EMQX Cloud (sans mot de passe)
-MQTT_BROKER_URL="z166d525.ala.us-east-1.emqxsl.com"
-MQTT_PORT="8883"
-MQTT_WS_PORT="8084"
-MQTT_USERNAME="your_username"
-MQTT_PASSWORD="votre_password"
+# Configuration MQTT (optionnel)
+NEXT_PUBLIC_MQTT_BROKER_URL="broker.hivemq.com"
+NEXT_PUBLIC_MQTT_TOPIC="airquality/benin"
 
-# Next.js
-NEXTAUTH_URL="http://localhost:3000"
+# Configuration de l'application
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 NEXTAUTH_SECRET="votre_secret_nextauth"
-
-# APIs externes (optionnel)
-WEATHER_API_KEY="votre_cle_api_meteo"
 ```
 
-### 4. Configuration de la Base de Données
-```bash
-# Génération du client Prisma
-pnpm prisma generate
-
-# Application des migrations
-pnpm prisma migrate deploy
-
-# (Optionnel) Seed de données de test
-pnpm prisma db seed
-```
+### 4. Configuration de Firebase
+1. Créez un projet sur la [console Firebase](https://console.firebase.google.com/)
+2. Activez l'authentification par email/mot de passe
+3. Créez une application web et récupérez les identifiants
+4. Activez Firestore en mode test ou production
+5. Configurez les règles de sécurité Firestore selon `firestore.rules`
+6. Déployez les Cloud Functions si nécessaire :
+   ```bash
+   cd functions
+   pnpm install
+   firebase deploy --only functions
+   ```
 
 ### 5. Lancement du Développement
 ```bash
@@ -126,33 +129,35 @@ L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 air-quality-platform/
 ├── app/                          # App Router Next.js 15
 │   ├── api/                      # API Routes
+│   │   ├── access-requests/     # Gestion des demandes d'accès
 │   │   ├── health/              # Health check endpoint
 │   │   └── sensors/             # API capteurs
-│   ├── sensors/                 # Pages capteurs
-│   │   ├── [id]/               # Page détail capteur
-│   │   └── new/                # Création capteur
-│   ├── globals.css             # Styles globaux Tailwind CSS 4
-│   ├── layout.tsx              # Layout principal
-│   └── page.tsx                # Page d'accueil
+│   ├── auth/                    # Pages d'authentification
+│   ├── dashboard/               # Tableau de bord principal
+│   ├── admin/                   # Section administration
+│   ├── globals.css              # Styles globaux Tailwind CSS
+│   ├── layout.tsx               # Layout principal
+│   └── page.tsx                 # Page d'accueil
 ├── components/                  # Composants React
-│   ├── ui/                     # Composants UI Radix/Shadcn
-│   └── ...                     # Composants métier
-├── hooks/                      # Custom React Hooks
-├── lib/                        # Utilitaires et configuration
-│   ├── prisma.ts              # Configuration Prisma
-│   ├── mqtt-listener.ts       # Service MQTT
-│   └── utils.ts               # Fonctions utilitaires
-├── prisma/                     # Schema et migrations Prisma
-│   ├── schema.prisma          # Modèle de données
-│   └── migrations/            # Migrations DB
-├── scripts/                    # Scripts utilitaires
-│   ├── database-utils.ts      # Outils de maintenance DB
-│   └── migration-2025.ts      # Script de migration
-├── public/                     # Assets statiques
-├── styles/                     # Styles CSS additionnels
-└── docs/                       # Documentation
-    ├── MIGRATION_LOG.md       # Journal de migration
-    └── ai-rules.md            # Règles de collaboration IA
+│   ├── ui/                      # Composants UI (shadcn/ui)
+│   ├── admin/                   # Composants admin
+│   ├── auth/                    # Composants d'authentification
+│   └── ...                      # Autres composants
+├── contexts/                    # Contextes React
+│   └── auth-context.tsx         # Contexte d'authentification
+├── lib/                         # Utilitaires et configuration
+│   ├── firebase.ts             # Configuration Firebase
+│   └── date-utils.ts           # Utilitaires de date
+├── public/                      # Assets statiques
+│   └── icons/                   # Icônes et images
+├── functions/                   # Cloud Functions (Firebase)
+│   ├── src/                    # Code source des fonctions
+│   └── package.json            # Dépendances des fonctions
+├── .firebaserc                 # Configuration Firebase
+├── firebase.json              # Configuration du déploiement
+├── firestore.rules            # Règles de sécurité Firestore
+├── next.config.mjs            # Configuration Next.js
+└── package.json               # Dépendances du projet
 ```
 
 ## 🎨 Composants UI
@@ -167,7 +172,147 @@ Le projet utilise une bibliothèque de composants personnalisée basée sur **Ra
 
 Tous les composants sont **accessibles**, **personnalisables** et **compatibles** avec le dark mode.
 
-## 📊 Modèle de Données
+## 🔒 Authentification
+
+L'application utilise Firebase Authentication avec les fonctionnalités suivantes :
+- Inscription avec email/mot de passe
+- Vérification d'email obligatoire
+- Gestion des sessions avec JWT
+- Rôles utilisateurs (admin, utilisateur, en attente)
+- Mot de passe oublié
+
+## 🔄 Déploiement
+
+### Prérequis
+- Compte [Vercel](https://vercel.com/)
+- Compte [Firebase](https://firebase.google.com/)
+- Domaine personnalisé configuré (optionnel)
+
+### Étapes de déploiement
+
+1. **Cloner le dépôt**
+   ```bash
+   git clone https://github.com/votre-username/air-quality-platform.git
+   cd air-quality-platform
+   ```
+
+2. **Installer les dépendances**
+   ```bash
+   pnpm install
+   ```
+
+3. **Configurer les variables d'environnement**
+   Créez un fichier `.env.local` avec les variables nécessaires (voir section Configuration)
+
+4. **Déployer sur Vercel**
+   - Connectez votre compte GitHub à Vercel
+   - Importez le dépôt
+   - Configurez les variables d'environnement dans les paramètres du projet Vercel
+   - Déclenchez un déploiement
+
+5. **Configurer le domaine personnalisé** (optionnel)
+   - Allez dans les paramètres du projet Vercel
+   - Ajoutez votre domaine personnalisé
+   - Suivez les instructions pour configurer les enregistrements DNS
+
+## 🚦 Points d'API
+
+### Capteurs
+- `GET /api/sensors` - Liste tous les capteurs
+- `GET /api/sensors/[id]` - Détails d'un capteur
+- `POST /api/sensors` - Créer un nouveau capteur (admin)
+- `DELETE /api/sensors/[id]` - Supprimer un capteur (admin)
+- `POST /api/sensors/batch-delete` - Supprimer plusieurs capteurs (admin)
+
+### Authentification
+- `POST /api/auth/register` - S'inscrire
+- `POST /api/auth/login` - Se connecter
+- `POST /api/auth/logout` - Se déconnecter
+- `POST /api/auth/forgot-password` - Réinitialiser le mot de passe
+
+### Demandes d'accès
+- `GET /api/access-requests` - Lister les demandes (admin)
+- `POST /api/access-requests` - Créer une demande
+- `PATCH /api/access-requests/[id]` - Mettre à jour une demande (admin)
+
+### Système
+- `GET /api/health` - Health check de l'API
+
+## 🔍 Développement
+
+### Scripts disponibles
+
+```bash
+# Démarrer l'environnement de développement
+pnpm dev
+
+# Lancer les tests
+pnpm test
+
+# Construire pour la production
+pnpm build
+
+# Démarrer en mode production
+pnpm start
+
+# Linter le code
+pnpm lint
+
+# Formater le code
+pnpm format
+```
+
+### Contributions
+
+1. Créez une branche pour votre fonctionnalité : `git checkout -b feature/ma-nouvelle-fonctionnalite`
+2. Committez vos changements : `git commit -am 'Ajouter une nouvelle fonctionnalité'`
+3. Poussez vers la branche : `git push origin feature/ma-nouvelle-fonctionnalite`
+4. Créez une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 🙏 Remerciements
+
+- [Next.js](https://nextjs.org/) - Le framework React pour le web
+- [Firebase](https://firebase.google.com/) - Backend as a Service
+- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitaire
+- [shadcn/ui](https://ui.shadcn.com/) - Composants UI accessibles
+
+```json
+{
+  "ts": 1672531200,
+  "PM1": 10.1,
+  "PM25": 25.2,
+  "PM10": 50.3,
+  "O3": 0.45,
+  "O3c": 0.42,
+  "NO2v": 1.23,
+  "NO2": 55.6,
+  "VOCv": 0.88,
+  "COv": 2.15,
+  "CO": 150.7
+}
+```
+
+## 📈 Performance
+
+### Optimisations Appliquées
+- **Server Side Rendering** avec Next.js 15
+- **Streaming** des composants React 19
+- **Code splitting** automatique
+- **Image optimization** Next.js
+- **CSS-first approach** Tailwind CSS 4
+- **Bundle analysis** avec `@next/bundle-analyzer`
+
+### Métriques Cibles
+- **First Contentful Paint** < 1.5s
+- **Largest Contentful Paint** < 2.5s
+- **Cumulative Layout Shift** < 0.1
+- **Time to Interactive** < 3s
+
+## 📁 Modèle de Données
 
 ### Capteurs (`Sensor`)
 ```prisma
@@ -266,15 +411,6 @@ pnpm db:check           # Vérifier l'intégrité des données
 ### Système
 - `GET /api/health` - Health check de l'API
 
-## 📨 Payload MQTT
-
-Les données des capteurs sont envoyées sur le topic `sensors/{sensorId}/data` au format JSON. Voici la structure attendue :
-
-```json
-{
-  "ts": 1672531200,
-  "PM1": 10.1,
-  "PM25": 25.2,
   "PM10": 50.3,
   "O3": 0.45,
   "O3c": 0.42,

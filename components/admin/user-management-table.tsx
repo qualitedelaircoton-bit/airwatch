@@ -3,7 +3,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { getAllUsers, updateUserProfile } from '@/lib/firebase';
+import { db, updateUserProfile } from '@/lib/firebase';
 import type { UserProfile } from '@/types';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { Loader2, Shield, User, CheckCircle, XCircle, Trash2, Mail } from 'lucide-react';
@@ -21,6 +21,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import { collection, onSnapshot, query } from 'firebase/firestore';
 
 interface UserManagementTableProps {
   onPendingCountChange?: (count: number) => void;
@@ -35,23 +36,28 @@ export default function UserManagementTable({ onPendingCountChange }: UserManage
   const [userToDelete, setUserToDelete] = useState<UserProfile | null>(null);
 
   useEffect(() => {
-    async function fetchUsers() {
-      try {
-        setLoading(true);
-        const fetchedUsers = await getAllUsers();
-        const pending = fetchedUsers.filter(u => !u.isApproved).sort((a, b) => a.email.localeCompare(b.email));
-        const approved = fetchedUsers.filter(u => u.isApproved).sort((a, b) => a.email.localeCompare(b.email));
-        setPendingUsers(pending);
-        setApprovedUsers(approved);
-        setError(null);
-      } catch (err) {
-        setError('Erreur lors de la récupération des utilisateurs.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+    if (!db) {
+      setError('Firestore non initialisé.');
+      setLoading(false);
+      return;
     }
-    fetchUsers();
+    setLoading(true);
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef);
+    const unsub = onSnapshot(q, (snapshot) => {
+      const users = snapshot.docs.map(doc => ({ uid: doc.id, ...(doc.data() as any) })) as UserProfile[];
+      const pending = users.filter(u => !u.isApproved).sort((a, b) => a.email.localeCompare(b.email));
+      const approved = users.filter(u => u.isApproved).sort((a, b) => a.email.localeCompare(b.email));
+      setPendingUsers(pending);
+      setApprovedUsers(approved);
+      setError(null);
+      setLoading(false);
+    }, (err) => {
+      console.error('Error listening users:', err);
+      setError('Erreur lors de l\'écoute des utilisateurs.');
+      setLoading(false);
+    });
+    return () => unsub();
   }, []);
 
   useEffect(() => {
@@ -167,6 +173,7 @@ export default function UserManagementTable({ onPendingCountChange }: UserManage
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Utilisateur</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Raison de la demande</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Téléphone</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Rôle</th>
               <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Statut</th>
               <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
@@ -184,6 +191,7 @@ export default function UserManagementTable({ onPendingCountChange }: UserManage
                 <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate" title={user.accessReason}>
                   {user.accessReason || 'N/A'}
                 </td>
+                <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{user.phoneNumber || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Select value={user.role} onValueChange={(value: 'admin' | 'consultant') => handleRoleChange(user.uid, value)}>
                     <SelectTrigger className="w-[150px]"><SelectValue placeholder="Sélectionner un rôle" /></SelectTrigger>

@@ -36,11 +36,13 @@ export async function PATCH(
       const userEmail = data?.email as string | undefined;
       if (userEmail) {
         const subject = "Votre demande d'accès a été refusée";
-        const text = `Bonjour,\n\nVotre demande d'accès à la plateforme a été refusée par un administrateur.\nSi vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.`;
+        const text = `Bonjour,\n\nVotre demande d'accès à la plateforme a été refusée par un administrateur.\nSi vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.\n\n—\nAirWatch Bénin\nhttps://www.airquality.africa/`;
         const html = `
           <p>Bonjour,</p>
           <p>Votre demande d'accès à la plateforme a été refusée par un administrateur.</p>
           <p>Si vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.</p>
+          <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;" />
+          <p style=\"color:#6b7280;font-size:12px;\">AirWatch Bénin — <a href=\"https://www.airquality.africa/\" target=\"_blank\" rel=\"noopener\">www.airquality.africa</a></p>
         `;
         await adminDb.collection('mail').add({
           to: userEmail,

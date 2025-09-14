@@ -11,6 +11,7 @@ export interface UserProfile {
   updatedAt: Timestamp;
   emailVerified: boolean;
   accessReason: string;
+  phoneNumber?: string | null;
 }
 
 export interface AdminNotification {

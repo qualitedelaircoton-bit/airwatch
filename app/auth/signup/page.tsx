@@ -20,6 +20,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [accessReason, setAccessReason] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   
@@ -31,7 +32,7 @@ export default function SignUpPage() {
     setLoading(true)
     setError("")
 
-    if (!displayName.trim() || !email.trim() || !password.trim() || !accessReason.trim()) {
+    if (!displayName.trim() || !email.trim() || !password.trim() || !accessReason.trim() || !phoneNumber.trim()) {
       setError("Tous les champs sont requis.")
       setLoading(false)
       return
@@ -43,8 +44,16 @@ export default function SignUpPage() {
       return
     }
 
+    // Basic phone format validation (accepts +, spaces, dashes and digits, 8-20 chars total)
+    const phoneNormalized = phoneNumber.replace(/[^+\d]/g, "");
+    if (!/^\+?\d{8,20}$/.test(phoneNormalized)) {
+      setError("Le numéro de téléphone n'est pas valide. Utilisez un format international, ex: +229XXXXXXXX.")
+      setLoading(false)
+      return
+    }
+
     try {
-      await signUp(email, password, displayName, accessReason)
+      await signUp(email, password, displayName, accessReason, phoneNumber)
       // Create the access request server-side with authenticated token
       const idToken = await auth?.currentUser?.getIdToken();
       if (idToken) {
@@ -55,7 +64,7 @@ export default function SignUpPage() {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${idToken}`,
             },
-            body: JSON.stringify({ reason: accessReason }),
+            body: JSON.stringify({ reason: accessReason, phone: phoneNumber }),
           });
         } catch (e) {
           // Non-blocking: the admin will see the profile anyway
@@ -83,7 +92,7 @@ export default function SignUpPage() {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <UserPlus className="h-12 w-12 text-emerald-600" />
+            <UserPlus className="h-10 w-10 text-emerald-600" />
           </div>
           <CardTitle className="text-2xl font-bold">
             Créer un compte
@@ -93,7 +102,7 @@ export default function SignUpPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-2">
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
@@ -121,6 +130,19 @@ export default function SignUpPage() {
                 placeholder="votre@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Numéro de téléphone</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="Ex: +229 01 61 23 45 67"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 required
                 disabled={loading}
               />

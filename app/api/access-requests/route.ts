@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
         id: docSnap.id,
         email: data.email,
         reason: data.reason,
+        phone: data.phone || null,
         status: data.status,
         createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
       };
@@ -60,9 +61,13 @@ export async function POST(request: NextRequest) {
     const email = decoded.email;
 
     const body = await request.json();
-    const { reason } = body;
+    const { reason, phone } = body as { reason?: string; phone?: string };
     if (!reason) {
       return NextResponse.json({ error: "Reason is required." }, { status: 400 });
+    }
+
+    if (!phone || typeof phone !== 'string' || !phone.trim()) {
+      return NextResponse.json({ error: "Phone number is required." }, { status: 400 });
     }
 
     if (!email) {
@@ -84,6 +89,7 @@ export async function POST(request: NextRequest) {
       uid,
       email,
       reason,
+      phone,
       status: "pending",
       createdAt: Timestamp.now(),
     });

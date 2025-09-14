@@ -319,7 +319,7 @@ exports.approveUserAndSendVerificationEmail = (0, https_1.onCall)({ cors: true, 
         // 5. Create email document for the Trigger Email extension (Gmail/SMTP)
         // 5. Notify approval without forcing password/reset (user already has credentials)
         const displayName = userRecord.displayName || "Utilisateur";
-        const subject = "Votre accès a été approuvé";
+        const subject = "Votre accès a AirQuality été approuvé";
         const text = `Bonjour ${displayName},\n\nVotre demande d'accès à la plateforme a été approuvée.\nVous pouvez maintenant vous connecter normalement avec vos identifiants: ${userEmail}.`;
         const html = `
       <p>Bonjour ${displayName},</p>

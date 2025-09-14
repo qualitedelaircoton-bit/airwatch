@@ -62,6 +62,8 @@ export default function AdminPage() {
             </div>
             <UserManagementTable />
           </div>
+
+          
         </div>
       </div>
     </div>

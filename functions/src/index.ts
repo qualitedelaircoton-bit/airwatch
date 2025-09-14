@@ -11,7 +11,14 @@ admin.initializeApp();
 
 const mqttWebhookSecret = defineSecret('MQTT_WEBHOOK_SECRET');
 
+// Branding and email footer helpers
+const BRAND_NAME = 'AirQuality';
+const ORG_NAME = 'AirWatch Bénin';
+const SITE_URL = 'https://www.airquality.africa/';
+const LOGIN_URL = 'https://www.airquality.africa/auth/login';
 
+const footerText = () => `—\n${ORG_NAME} · ${BRAND_NAME}\n${SITE_URL}`;
+const footerHtml = () => `\n<hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;" />\n<p style=\"color:#6b7280;font-size:12px;\">${ORG_NAME} — <a href=\"${SITE_URL}\" target=\"_blank\" rel=\"noopener\">www.airquality.africa</a></p>`;
 
 /**
  * Scheduled function to update sensor statuses and create alerts for faulty sensors.
@@ -263,18 +270,22 @@ export const deleteUser = onCall({ cors: true, enforceAppCheck: false }, async (
         ? "Votre compte a été supprimé"
         : "Votre demande d'accès a été refusée";
       const text = wasApproved
-        ? `Bonjour,\n\nVotre compte a été supprimé suite au non-respect des règles d'utilisation.\nPour toute question, vous pouvez répondre à cet e‑mail.`
-        : `Bonjour,\n\nVotre demande d'accès à la plateforme a été refusée par un administrateur.\nSi vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.`;
+        ? `Bonjour,\n\nVotre compte a été supprimé suite au non-respect des règles d'utilisation.\nPour toute question, vous pouvez répondre à cet e‑mail.\n\n—\nAirWatch Bénin\nhttps://www.airquality.africa/`
+        : `Bonjour,\n\nVotre demande d'accès à la plateforme a été refusée par un administrateur.\nSi vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.\n\n—\nAirWatch Bénin\nhttps://www.airquality.africa/`;
       const html = wasApproved
         ? `
         <p>Bonjour,</p>
         <p>Votre compte a été supprimé suite au non-respect des règles d'utilisation.</p>
         <p>Pour toute question, vous pouvez répondre à cet e‑mail.</p>
+        <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;" />
+        <p style="color:#6b7280;font-size:12px;">AirWatch Bénin — <a href="https://www.airquality.africa/" target="_blank" rel="noopener">www.airquality.africa</a></p>
       `
         : `
         <p>Bonjour,</p>
         <p>Votre demande d'accès à la plateforme a été refusée par un administrateur.</p>
         <p>Si vous pensez qu'il s'agit d'une erreur, répondez à cet e‑mail.</p>
+        <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;" />
+        <p style="color:#6b7280;font-size:12px;">AirWatch Bénin — <a href="https://www.airquality.africa/" target="_blank" rel="noopener">www.airquality.africa</a></p>
       `;
       await admin.firestore().collection("mail").add({
         to: userEmail,
@@ -404,13 +415,14 @@ export const approveUserAndSendVerificationEmail = onCall({ cors: true, enforceA
     // 5. Create email document for the Trigger Email extension (Gmail/SMTP)
   // 5. Notify approval without forcing password/reset (user already has credentials)
   const displayName = userRecord.displayName || "Utilisateur";
-  const subject = "Votre accès a été approuvé";
-  const text = `Bonjour ${displayName},\n\nVotre demande d'accès à la plateforme a été approuvée.\nVous pouvez maintenant vous connecter normalement avec vos identifiants: ${userEmail}.`;
+  const subject = `Bienvenue sur ${BRAND_NAME} — Accès approuvé`;
+  const text = `Bonjour ${displayName},\n\nVotre accès à ${BRAND_NAME} a été approuvé. Vous pouvez vous connecter dès maintenant :\n${LOGIN_URL}\n\nNous sommes ravis de vous compter parmi nous pour mieux comprendre et agir sur la qualité de l'air en Afrique.\n\n${footerText()}`;
   const html = `
       <p>Bonjour ${displayName},</p>
-      <p>Votre demande d'accès à la plateforme a été approuvée.</p>
-      <p>Vous pouvez maintenant vous connecter normalement avec vos identifiants: <strong>${userEmail}</strong>.</p>
-      <p>Si vous avez oublié votre mot de passe, utilisez la fonctionnalité “Mot de passe oublié”.</p>
+      <p>Votre accès à <strong>${BRAND_NAME}</strong> a été approuvé.</p>
+      <p><a href="${LOGIN_URL}" target="_blank" rel="noopener" style="display:inline-block;background:#10b981;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;">Se connecter</a></p>
+      <p style="margin-top:12px;color:#374151;">Nous sommes ravis de vous compter parmi nous pour mieux comprendre et agir sur la qualité de l'air en Afrique.</p>
+      ${footerHtml()}
     `;
   await admin.firestore().collection("mail").add({
     to: userEmail,
@@ -461,6 +473,18 @@ export const approveAccessRequest = onCall({ cors: true, enforceAppCheck: false 
     const userRecord = await admin.auth().createUser({ email });
 
     // 2. Create the user profile in Firestore
+    // Try to read phone from the access request
+    let phoneFromRequest: string | null = null;
+    try {
+      const reqSnap = await admin.firestore().collection("accessRequests").doc(requestId).get();
+      if (reqSnap.exists) {
+        const reqData = reqSnap.data() as any;
+        phoneFromRequest = (reqData?.phone && typeof reqData.phone === 'string') ? reqData.phone : null;
+      }
+    } catch (e) {
+      // ignore
+    }
+
     const userProfile = {
       email: userRecord.email,
       displayName: userRecord.displayName || null,
@@ -470,6 +494,7 @@ export const approveAccessRequest = onCall({ cors: true, enforceAppCheck: false 
       createdAt: new Date(),
       updatedAt: new Date(),
       emailVerified: false,
+      phoneNumber: phoneFromRequest,
     } as const;
     await admin.firestore().collection("users").doc(userRecord.uid).set(userProfile);
 
@@ -486,7 +511,7 @@ export const approveAccessRequest = onCall({ cors: true, enforceAppCheck: false 
 
     // 5. Send approval notification email via Trigger Email extension
     const subject = "Votre demande d'accès a été approuvée";
-    const text = `Bonjour,\n\nVotre accès à la plateforme a été approuvé.\nPour définir votre mot de passe, ouvrez ce lien :\n${passwordResetLink}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`;
+    const text = `Bonjour,\n\nVotre accès à la plateforme a été approuvé.\nPour définir votre mot de passe, ouvrez ce lien :\n${passwordResetLink}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.\n\n—\nAirWatch Bénin\nhttps://www.airquality.africa/`;
     const html = `
       <p>Bonjour,</p>
       <p>Votre accès à la plateforme a été approuvé.</p>
@@ -495,6 +520,8 @@ export const approveAccessRequest = onCall({ cors: true, enforceAppCheck: false 
       <p>Si le lien ne fonctionne pas, copiez-collez cette URL dans votre navigateur :</p>
       <p style="word-break: break-all;">${passwordResetLink}</p>
       <p style="color:#6b7280;font-size:12px;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+      <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;" />
+      <p style="color:#6b7280;font-size:12px;">AirWatch Bénin — <a href="https://www.airquality.africa/" target="_blank" rel="noopener">www.airquality.africa</a></p>
     `;
     await admin.firestore().collection("mail").add({
       to: email,

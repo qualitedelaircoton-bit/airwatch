@@ -7,8 +7,6 @@ import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndP
 import { doc, getDoc, setDoc, updateDoc, Timestamp, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 
-
-
 export type AuthStatus = 'loading' | 'unauthenticated' | 'pending_approval' | 'pending_verification' | 'authenticated' | 'admin';
 
 export interface AuthContextType {
@@ -17,7 +15,7 @@ export interface AuthContextType {
   loading: boolean;
   authStatus: AuthStatus;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, displayName: string, accessReason: string) => Promise<void>;
+  signUp: (email: string, password: string, displayName: string, accessReason: string, phoneNumber?: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
@@ -59,6 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           updatedAt: data.updatedAt, // Keep as Firestore Timestamp
           emailVerified: data.emailVerified || false,
           accessReason: data.accessReason || "", // Add missing required field with a fallback
+          phoneNumber: data.phoneNumber ?? null,
         };
         return profile;
       }
@@ -90,6 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         updatedAt: Timestamp.now(),
         emailVerified: user.emailVerified,
         accessReason: additionalData.accessReason, // Explicitly set required field
+        phoneNumber: (additionalData as any).phoneNumber ?? null,
         ...additionalData, // Spread the rest
       };
       await setDoc(userRef, { ...newUserProfile });
@@ -100,6 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         photoURL: user.photoURL,
         updatedAt: new Date(),
         emailVerified: user.emailVerified, // Always sync email verification status
+        phoneNumber: (additionalData as any).phoneNumber ?? null,
         ...additionalData,
       };
       await updateDoc(userRef, updateData);
@@ -118,13 +119,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signUp = async (email: string, password: string, displayName: string, accessReason: string): Promise<void> => {
+  const signUp = async (email: string, password: string, displayName: string, accessReason: string, phoneNumber?: string): Promise<void> => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       // Send email verification immediately
       await sendEmailVerification(result.user);
-      // Create initial profile with access reason
-      await createOrUpdateUserProfile(result.user, { displayName, accessReason });
+      // Create initial profile with access reason and phoneNumber
+      await createOrUpdateUserProfile(result.user, { displayName, accessReason, phoneNumber: phoneNumber ?? null });
     } catch (error) {
       console.error("Signup error:", error);
       throw error;
@@ -160,8 +161,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-
-
   useEffect(() => {
     let profileUnsub: (() => void) | null = null;
 
@@ -191,6 +190,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               updatedAt: data.updatedAt,
               emailVerified: firebaseUser.emailVerified, // Use live value from firebaseUser
               accessReason: data.accessReason || "",
+              phoneNumber: data.phoneNumber ?? null,
             };
             setUserProfile(profile);
 

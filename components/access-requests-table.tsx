@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 // import Firestore client removed
 // import db removed
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +19,7 @@ interface AccessRequest {
   id: string;
   email: string;
   reason: string;
+  phone?: string | null;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: Date;
 }
@@ -62,28 +65,33 @@ export function AccessRequestsTable() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/access-requests?status=pending');
-        if (!res.ok) throw new Error('Failed to load access requests');
-        const data = await res.json();
-        setRequests(data.map((r: any) => ({
-          id: r.id,
-          email: r.email,
-          reason: r.reason,
-          status: r.status,
-          createdAt: new Date(r.createdAt),
-        })));
-      } catch (err) {
-        console.error('Error loading access requests:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRequests();
-    const interval = setInterval(fetchRequests, 5000);
-    return () => clearInterval(interval);
+    if (!db) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const colRef = collection(db, 'accessRequests');
+    const q = query(colRef, where('status', '==', 'pending'), orderBy('createdAt', 'desc'));
+    const unsub = onSnapshot(q, (snap) => {
+      const list = snap.docs.map((doc) => {
+        const data = doc.data() as any;
+        const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() as Date : new Date();
+        return {
+          id: doc.id,
+          email: data.email as string,
+          reason: data.reason as string,
+          phone: (data.phone ?? null) as string | null,
+          status: data.status as 'pending' | 'approved' | 'rejected',
+          createdAt,
+        } as AccessRequest;
+      });
+      setRequests(list);
+      setLoading(false);
+    }, (err) => {
+      console.error('Error listening access requests:', err);
+      setLoading(false);
+    });
+    return () => unsub();
   }, []);
     
 
@@ -102,6 +110,7 @@ export function AccessRequestsTable() {
             <TableRow>
               <TableHead>Email</TableHead>
               <TableHead>Reason</TableHead>
+              <TableHead>Phone</TableHead>
               <TableHead>Submitted</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -113,6 +122,7 @@ export function AccessRequestsTable() {
                 <TableRow key={request.id}>
                   <TableCell>{request.email}</TableCell>
                   <TableCell className="max-w-xs truncate">{request.reason}</TableCell>
+                  <TableCell>{request.phone || '-'}</TableCell>
                   <TableCell>{request.createdAt.toLocaleDateString()}</TableCell>
                   <TableCell>
                     <Badge variant={request.status === 'pending' ? 'default' : 'outline'}>
@@ -127,7 +137,7 @@ export function AccessRequestsTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">No pending requests.</TableCell>
+                <TableCell colSpan={6} className="text-center">No pending requests.</TableCell>
               </TableRow>
             )}
           </TableBody>
