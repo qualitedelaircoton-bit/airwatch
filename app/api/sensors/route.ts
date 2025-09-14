@@ -3,18 +3,12 @@ import { adminDb } from "@/lib/firebase-admin"
 import { Timestamp } from "firebase-admin/firestore"
 import { updateAllSensorStatuses } from "@/lib/firestore-status-calculator"
 import { withAuth, withAdminAuth } from "@/lib/api-auth"
+import { getCorsHeaders, createOptionsResponse } from "@/lib/cors"
 
-// Configuration CORS pour Vercel
+// Configuration CORS pour Vercel - Gestion dynamique des origines
 export const dynamic = "force-dynamic"
 export const revalidate = 0
 export const runtime = 'nodejs'
-
-// Headers CORS pour les réponses API
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-}
 
 async function getHandler(request: NextRequest) {
   try {
@@ -62,7 +56,7 @@ async function getHandler(request: NextRequest) {
       status: 200,
       headers: {
         'Cache-Control': 'no-store, max-age=0',
-        ...corsHeaders
+        ...getCorsHeaders(request)
       },
     })
   } catch (error) {
@@ -91,7 +85,10 @@ async function postHandler(request: NextRequest) {
     const newData = newSnap.data() as Record<string, any>
     const createdAtIso = typeof newData?.createdAt?.toDate === 'function' ? newData.createdAt.toDate().toISOString() : null
     const newSensor = { id: newDocRef.id, ...newData, createdAt: createdAtIso };
-    return NextResponse.json(newSensor, { status: 201 });
+    return NextResponse.json(newSensor, { 
+      status: 201,
+      headers: getCorsHeaders(request)
+    });
   } catch (error) {
     console.error("Error creating sensor:", error);
     return NextResponse.json({ error: "Failed to create sensor" }, { status: 500 });
@@ -100,13 +97,8 @@ async function postHandler(request: NextRequest) {
 
 // Export handlers with authentication
 // Gestion des requêtes OPTIONS pour CORS
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      ...corsHeaders
-    },
-  })
+export async function OPTIONS(request: NextRequest) {
+  return createOptionsResponse(request)
 }
 
 export const GET = withAuth(getHandler)

@@ -26,14 +26,13 @@ const nextConfig = {
   },
   async headers() {
     return [
-      // CORS pour les API
+      // CORS pour les API - Configuration sécurisée pour domaine personnalisé
       {
         source: '/api/:path*',
         headers: [
-          { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: '*' },
           { key: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS' },
           { key: 'Access-Control-Allow-Headers', value: 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization' },
+          { key: 'Access-Control-Max-Age', value: '86400' },
         ],
       },
       // En-têtes de sécurité pour toutes les routes

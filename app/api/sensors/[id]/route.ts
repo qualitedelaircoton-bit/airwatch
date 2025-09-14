@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { adminDb as db } from "@/lib/firebase-admin";
 import { withAuth, withAdminAuth } from "@/lib/api-auth";
+import { getCorsHeaders, createOptionsResponse } from "@/lib/cors";
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -41,7 +42,9 @@ async function getHandler(
       updatedAt: toIso(raw.updatedAt),
       lastSeen: toIso(raw.lastSeen),
     };
-    return NextResponse.json(sensorData);
+    return NextResponse.json(sensorData, {
+      headers: getCorsHeaders(request)
+    });
   } catch (error) {
     console.error("Error fetching sensor:", error);
     return NextResponse.json(
@@ -70,7 +73,10 @@ async function deleteHandler(
 
     await sensorRef.delete();
 
-    return NextResponse.json({ message: "Sensor deleted successfully" }, { status: 200 });
+    return NextResponse.json({ message: "Sensor deleted successfully" }, { 
+      status: 200,
+      headers: getCorsHeaders(request)
+    });
   } catch (error: any) {
     console.error("Error deleting sensor:", error);
     return NextResponse.json(
@@ -112,7 +118,10 @@ async function putHandler(
       frequency,
     });
 
-    return NextResponse.json({ message: "Sensor updated successfully" }, { status: 200 });
+    return NextResponse.json({ message: "Sensor updated successfully" }, { 
+      status: 200,
+      headers: getCorsHeaders(request)
+    });
 
   } catch (error: any) {
     console.error("Error updating sensor:", error);
@@ -121,6 +130,11 @@ async function putHandler(
       { status: 500 }
     );
   }
+}
+
+// Gestion des requêtes OPTIONS pour CORS
+export async function OPTIONS(request: NextRequest) {
+  return createOptionsResponse(request)
 }
 
 // Export handlers with authentication
