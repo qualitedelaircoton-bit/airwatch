@@ -19,23 +19,39 @@ function createFirebaseAdminApp() {
   const apps = getApps()
   
   if (apps.length > 0) {
+    console.log("Firebase Admin SDK already initialized.")
     return apps[0]
   }
 
-  // Prefer explicit Service Account credentials when provided via env (local/dev or self-managed prod)
+  console.log("Attempting to initialize Firebase Admin SDK...")
+
+  // Prefer explicit Service Account credentials when provided via env
   if (firebaseAdminConfig.projectId && firebaseAdminConfig.clientEmail && firebaseAdminConfig.privateKey) {
-    return initializeApp({
-      credential: cert(firebaseAdminConfig),
-      projectId: firebaseAdminConfig.projectId,
-    })
+    console.log("Initializing Firebase Admin with explicit service account credentials.")
+    try {
+      return initializeApp({
+        credential: cert(firebaseAdminConfig),
+        projectId: firebaseAdminConfig.projectId,
+      })
+    } catch (error) {
+      console.error("ERROR: Failed to initialize Firebase Admin with explicit credentials.", error)
+      // Do not fall back, as the presence of variables implies an intent that should not fail silently.
+      return null
+    }
   }
   
-  // Otherwise, fall back to ADC (Application Default Credentials) on Google environments (Hosting/Functions)
-  // If GOOGLE_CLOUD_PROJECT or FIREBASE_CONFIG is present, initialize with default credentials
+  // Otherwise, fall back to ADC (Application Default Credentials) on Google environments
   if (process.env.GOOGLE_CLOUD_PROJECT || process.env.FIREBASE_CONFIG || process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    return initializeApp()
+    console.log("Explicit credentials not found, falling back to Application Default Credentials (ADC).")
+    try {
+      return initializeApp()
+    } catch(error) {
+      console.error("ERROR: Failed to initialize Firebase Admin with ADC.", error)
+      return null
+    }
   }
   
+  console.error("CRITICAL: Firebase Admin SDK initialization failed. No credentials provided or found.")
   return null
 }
 
