@@ -5,6 +5,7 @@ import { withAdminAuth } from '@/lib/api-auth';
 
 
 export const dynamic = "force-dynamic"
+export const runtime = 'nodejs'
 
 async function postHandler(request: NextRequest) {
   if (!adminDb) {

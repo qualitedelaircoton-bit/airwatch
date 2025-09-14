@@ -9,6 +9,7 @@ import { Timestamp, CollectionReference, Query } from "firebase-admin/firestore"
  */
 
 export const dynamic = "force-static"
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   if (!adminDb) {

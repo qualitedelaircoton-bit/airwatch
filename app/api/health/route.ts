@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 
+export const runtime = 'nodejs'
+
 export async function GET() {
   try {
     // Test de la base de données (Firestore Admin)

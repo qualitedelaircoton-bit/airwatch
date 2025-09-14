@@ -152,9 +152,16 @@ function Dashboard() {
           throw new Error(errorData.message || 'Failed to delete sensor');
         }
 
-        // Mettre à jour l'état local pour retirer le capteur supprimé
-        setSensors(sensors.filter((sensor: Sensor) => sensor.id !== sensorToDelete.id));
-        // Optionnel: afficher une notification de succès
+        // Mise à jour locale immédiate et safe (évite l'état obsolète)
+        setSensors((prev) => prev.filter((sensor: Sensor) => sensor.id !== sensorToDelete.id));
+        // Retirer l'élément de la sélection s'il y est
+        setSelectedSensorIds((prev) => {
+          const next = new Set(prev);
+          next.delete(sensorToDelete.id);
+          return next;
+        });
+        // Re-fetch pour s'assurer de la cohérence avec la base (et la carte)
+        fetchSensors();
         // toast({ title: "Succès", description: "Le capteur a été supprimé." });
 
       } catch (error) {

@@ -6,6 +6,25 @@ import { withAuth } from "@/lib/api-auth"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
+export const runtime = 'nodejs'
+
+function convertToCSV(data: Array<Record<string, unknown>>) {
+  if (data.length === 0) return ""
+  const headers = Object.keys(data[0]!)
+  const csvContent = [
+    headers.join(","),
+    ...data.map((row) => headers.map((header) => String((row as any)[header] ?? "")).join(","))
+  ].join("\n")
+  return csvContent
+}
+
+function slugify(input: string) {
+  return input
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
 
 async function getHandler(
   request: NextRequest,
@@ -19,6 +38,7 @@ async function getHandler(
     const { searchParams } = new URL(request.url)
     const from = searchParams.get("from")
     const to = searchParams.get("to")
+    const format = (searchParams.get("format") || "json").toLowerCase()
 
     if (!from || !to) {
       return NextResponse.json({ error: "Missing date range parameters" }, { status: 400 })
@@ -27,46 +47,69 @@ async function getHandler(
     const fromDate = new Date(from)
     const toDate = new Date(to)
 
-    const dataRef = db.collection("sensors").doc(id).collection("data")
+    const sensorRef = db.collection("sensors").doc(id)
+    const sensorSnap = await sensorRef.get()
+    const sensorName: string = (sensorSnap.exists ? (sensorSnap.data() as any)?.name : undefined) || 'sensor'
+
+    const dataRef = sensorRef.collection("data")
     const q = dataRef
       .where("timestamp", ">=", fromDate)
       .where("timestamp", "<=", toDate)
       .orderBy("timestamp", "asc")
 
     const snapshot = await q.get()
-    const data = snapshot.docs.map(docSnap => {
+    // Build sanitized export items: exclude document id and only keep relevant fields
+    const items = snapshot.docs.map(docSnap => {
       const d = docSnap.data() as Record<string, any>
       const ts = d.timestamp
-      // Normalize Firestore Timestamp to { seconds, nanoseconds }
-      const toSecNano = (v: any): { seconds: number; nanoseconds: number } | null => {
+      const toIso = (v: any): string | null => {
         if (!v) return null
-        if (typeof v?.toDate === 'function') {
-          const date = v.toDate() as Date
-          return { seconds: Math.floor(date.getTime() / 1000), nanoseconds: (date.getTime() % 1000) * 1e6 }
-        }
-        if (typeof v?.seconds === 'number' && typeof v?.nanoseconds === 'number') {
-          return { seconds: v.seconds, nanoseconds: v.nanoseconds }
-        }
-        if (typeof v?._seconds === 'number' && typeof v?._nanoseconds === 'number') {
-          return { seconds: v._seconds, nanoseconds: v._nanoseconds }
-        }
+        if (typeof v?.toDate === 'function') return (v.toDate() as Date).toISOString()
+        const seconds = typeof v?.seconds === 'number' ? v.seconds : (typeof v?._seconds === 'number' ? v._seconds : undefined)
+        if (typeof seconds === 'number') return new Date(seconds * 1000).toISOString()
         if (typeof v === 'string') {
           const date = new Date(v)
-          if (!isNaN(date.getTime())) {
-            return { seconds: Math.floor(date.getTime() / 1000), nanoseconds: (date.getTime() % 1000) * 1e6 }
-          }
+          return isNaN(date.getTime()) ? null : date.toISOString()
         }
         return null
       }
 
+      // Whitelist data fields
       return {
-        id: docSnap.id,
-        ...d,
-        timestamp: toSecNano(ts),
+        timestamp: toIso(ts),
+        pm1_0: d.pm1_0,
+        pm2_5: d.pm2_5,
+        pm10: d.pm10,
+        o3_raw: d.o3_raw,
+        o3_corrige: d.o3_corrige,
+        no2_voltage_v: d.no2_voltage_v,
+        no2_ppb: d.no2_ppb,
+        voc_voltage_v: d.voc_voltage_v,
+        co_voltage_v: d.co_voltage_v,
+        co_ppb: d.co_ppb,
       }
     })
 
-    return NextResponse.json(data)
+    const fromStr = fromDate.toISOString().slice(0, 10)
+    const toStr = toDate.toISOString().slice(0, 10)
+    const baseName = `${slugify(sensorName)}_${fromStr}_to_${toStr}`
+
+    if (format === 'csv') {
+      const csv = convertToCSV(items as Array<Record<string, unknown>>)
+      return new NextResponse(csv, {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': `attachment; filename="${baseName}.csv"`,
+        }
+      })
+    }
+
+    return new NextResponse(JSON.stringify(items, null, 2), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Disposition': `attachment; filename="${baseName}.json"`,
+      }
+    })
   } catch (error) {
     console.error("Error fetching sensor data:", error)
     return NextResponse.json({ error: "Failed to fetch sensor data" }, { status: 500 })

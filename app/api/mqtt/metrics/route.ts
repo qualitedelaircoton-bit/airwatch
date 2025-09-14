@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 
+export const runtime = 'nodejs'
+
 interface MQTTMetrics {
   timeframe: string;
   total_messages: number;

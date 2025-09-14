@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { CalendarIcon, Download, CheckCircle2, Circle, FileText, FileCode, Sparkles } from "lucide-react"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
+import { useAuth } from "@/contexts/auth-context"
 
 interface Sensor {
   id: string
@@ -32,6 +33,7 @@ export function DataDownloadModal({
   preselectedSensors = [], 
   preselectedDateRange 
 }: DataDownloadModalProps) {
+  const { user } = useAuth()
   const [selectedSensors, setSelectedSensors] = useState<string[]>(preselectedSensors)
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: preselectedDateRange?.from,
@@ -48,27 +50,54 @@ export function DataDownloadModal({
     setIsDownloading(true)
 
     try {
-      const params = new URLSearchParams({
-        sensors: selectedSensors.join(","),
-        from: dateRange.from.toISOString(),
-        to: dateRange.to.toISOString(),
-        format: fileFormat,
-      })
+      // Helper: slugify for clean filenames
+      const slugify = (input: string) =>
+        input
+          .toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
 
-      const response = await fetch(`/api/sensors/data?${params}`)
+      const fromStr = format(dateRange.from, "yyyy-MM-dd")
+      const toStr = format(dateRange.to, "yyyy-MM-dd")
 
-      if (response.ok) {
-        const blob = await response.blob()
+      // Retrieve auth token once for all requests
+      const idToken = await user?.getIdToken?.()
+
+      // Download per sensor, sequentially for reliability
+      for (const sensorId of selectedSensors) {
+        const sensorName = sensors.find(s => s.id === sensorId)?.name || 'sensor'
+        const baseName = `${slugify(sensorName)}_${fromStr}_to_${toStr}`
+        const params = new URLSearchParams({
+          from: dateRange.from.toISOString(),
+          to: dateRange.to.toISOString(),
+          format: fileFormat,
+        })
+
+        const resp = await fetch(`/api/sensors/${sensorId}/data?${params.toString()}`, {
+          headers: {
+            ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
+          }
+        })
+        if (!resp.ok) {
+          // Skip this one but continue others
+          // eslint-disable-next-line no-console
+          console.error("Download failed for sensor:", sensorId)
+          continue
+        }
+
+        const blob = await resp.blob()
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
-        a.download = `sensor-data-${fileFormat === "csv" ? "export.csv" : "export.json"}`
+        a.download = `${baseName}.${fileFormat}`
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
-        onClose()
       }
+
+      onClose()
     } catch (error) {
       console.error("Error downloading data:", error)
     } finally {

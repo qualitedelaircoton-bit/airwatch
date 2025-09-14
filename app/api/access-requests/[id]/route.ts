@@ -9,6 +9,7 @@ import { Timestamp } from "firebase-admin/firestore";
  */
 
 export const dynamic = "force-static"
+export const runtime = 'nodejs'
 
 export async function PATCH(
   request: NextRequest,

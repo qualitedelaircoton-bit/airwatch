@@ -4,6 +4,7 @@ import { withAuth, withAdminAuth } from "@/lib/api-auth";
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
+export const runtime = 'nodejs'
 
 async function getHandler(
   request: NextRequest,
